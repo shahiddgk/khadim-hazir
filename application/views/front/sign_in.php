@@ -15,7 +15,7 @@
         </div>
 
      
-        <form action="<?=base_url('user/login_user');?>" method="post" class="w-50" id="registrationForm">
+        <form action="<?=base_url('welcome/login_user');?>" method="post" class="w-50" id="registrationForm">
             <div class="form-group row">
                 <label for="email" class="col-sm-3 col-form-label">
                     <i class="fas fa-envelope"></i> Email
@@ -40,46 +40,3 @@
         </form>
     </div>
 </div>
-
-
-<script src="text/javascript">
-
-    // function handleCredentialResponse(response) {
-    //     // decodeJwtResponse() is a custom function defined by you
-    //     // to decode the credential response.
-    //     const responsePayload = decodeJwtResponse(response.credential);
-
-    //     console.log("ID: " + responsePayload.sub);
-    //     console.log('Full Name: ' + responsePayload.name);
-    //     console.log('Given Name: ' + responsePayload.given_name);
-    //     console.log('Family Name: ' + responsePayload.family_name);
-    //     console.log("Image URL: " + responsePayload.picture);
-    //     console.log("Email: " + responsePayload.email);
-    // }
-
-    // function onSignIn(googleUser) {
-    //     // send the Google user profile to your server
-    //     var profile = googleUser.getBasicProfile();
-    //     console.log("Profile".profile);
-    //     var xhr = new XMLHttpRequest();
-    //     xhr.open('POST', '/user/google_login');
-    //     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    //     xhr.onload = function() {
-    //         console.log(xhr.responseText);
-    //     };
-    //     xhr.send('id_token=' + googleUser.getAuthResponse().id_token);
-    // }
-
-    // function signInWithGoogle() {
-    //     alert('Signing in with Google');
-    //     gapi.auth2.getAuthInstance().signIn().then(
-    //     function(googleUser) {
-    //         alert('here success');  
-    //         console.log(googleUser);
-    //     }, 
-    //     function(error) {
-    //         alert('here failure');  
-    //         console.log(googleUser);
-    //     });
-    // }
-</script>

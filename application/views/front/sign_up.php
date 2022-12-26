@@ -7,7 +7,7 @@
 
 <div class="container">
     <div class="row justify-content-center">
-    <form action="<?=base_url('user/create_user');?>" method="post" class="w-50 p-3" id="registrationForm">
+    <form action="<?=base_url('welcome/create_user');?>" method="post" class="w-50 p-3" id="registrationForm">
             <div class="form-group row">
                 <label for="fullName" class="col-sm-3 col-form-label">
                     <i class="fas fa-user"></i> Full Name
