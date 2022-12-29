@@ -74,13 +74,13 @@ class Keywords extends CI_Controller {
 	$data['name'] = $this->input->post('part_name');
 	$this->common_model->insert_array('autoparts', $data);
 	$this->session->set_userdata('success',$data['name']);
-	redirect(site_url().'/autoparts'); 
+	redirect(site_url().'autoparts'); 
 	}
 	
 	function delete_part($id)
 	{
 		$this->common_model->delete_where(array('table_id'=>$id), 'autoparts');
-		redirect(site_url().'/autoparts');  
+		redirect(site_url().'autoparts');  
 	}
 	function edit_part($id)
 	{
@@ -121,7 +121,7 @@ class Keywords extends CI_Controller {
 		$this->common_model->update_array(array('id'=>$id), 'autoparts', $data);
 		$this->session->set_userdata('update','data updated successfully');
 		
-		redirect(site_url().'/autoparts'); 
+		redirect(site_url().'autoparts'); 
 	}
 	
 }

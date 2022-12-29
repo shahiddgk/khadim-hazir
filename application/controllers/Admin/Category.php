@@ -78,14 +78,14 @@ class Category extends CI_Controller {
 
 		$this->session->set_userdata('success',$data['name']);
 		
-		redirect(site_url().'/admin/category'); 
+		redirect(site_url().'admin/category'); 
 	}
 
 	function delete_category($id)
 	{
 		$this->common_model->delete_where(array('category_id'=>$id), 'categories');
 		// $this->common_model->delete_where(array('category_id'=>$id), 'category_img');
-		redirect(site_url().'/admin/category');  
+		redirect(site_url().'admin/category');  
 	}
 
 	function edit_category($id)
@@ -129,7 +129,7 @@ class Category extends CI_Controller {
 		}
 		$this->session->set_userdata('success',$data['name']);
 		
-		redirect(site_url().'/admin/category'); 
+		redirect(site_url().'admin/category'); 
 	}
 	
 }

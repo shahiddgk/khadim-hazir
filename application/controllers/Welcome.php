@@ -109,8 +109,8 @@ class Welcome extends CI_Controller {
 		$data['user_type']= $this->input->post('user_type');
 		$result = $this->common_model->insert_array('users', $data);
 		if($result){
-			$this->session->set_flashdata('flash_message', 'User Registered successfully.');
-			redirect('/', 'refresh');
+			$this->session->set_flashdata('flash_message', 'User Registered successfully please login.');
+			redirect('user/sign_in', 'refresh');
 		}
 	}
 
@@ -169,10 +169,10 @@ class Welcome extends CI_Controller {
 		);
 		
 		$this->session->set_userdata($data);
-			redirect(site_url().'/welcome/user_settings');
+			redirect(site_url().'welcome/user_settings');
 		}else{
 			$this->session->set_userdata('msg','Your user name or password is wrong');
-			redirect(site_url().'/welcome');    
+			redirect(site_url().'welcome');    
 		} 
 	}
 
@@ -183,21 +183,19 @@ class Welcome extends CI_Controller {
         $this->session->unset_userdata('usertype');
         $this->session->unset_userdata('username');
         $this->session->unset_userdata('email');
-        redirect(site_url().'/welcome'); 
+        redirect(site_url().'welcome'); 
 	}
 
 	public function user_settings() {
 		$data['setting'] = $this->common_model->select_where("*", "users", array('id'=> $this->session->userdata('user_id')));
-
-		if($data['setting']->num_rows()>0){
-			
-			// echo "<pre>"; print_r($data['setting']->result()); exit;
+		if($data['setting']->num_rows()>0){	
 			foreach($data['setting']->result() as $row) {
 				$data['id'] = $row->id;
 				$data['name'] = $row->name;
 				$data['email'] = $row->email;
 				$data['phone_no'] = $row->phone_no;
 				$data['password'] = $row->password;
+				$data['images'] = $row->images;
 				$data['status'] = $row->status;
 				$data['created_at'] = $row->created_at;
 			}
@@ -207,12 +205,63 @@ class Welcome extends CI_Controller {
 		}
 
 		
-		$this->load->view('user/user_header');
+		$this->load->view('user/user_header',$data);
 		$this->load->view('user/settings',$data);
 		$this->load->view('user/user_footer');
 	}
 
+
+
+	public function update() {
 	
+		  $id = $this->input->post('id');
+		  $data['name']= $this->input->post('name');
+		  $data['phone_no']= $this->input->post('phone_no');
+		  $data['email']= $this->input->post('email');
+		  $data['password']= sha1($this->input->post('password'));
+	  
+		  if (isset($_FILES['images'])) {
+			$file = $_FILES['images'];
+	  
+			if ($file['error'] == UPLOAD_ERR_OK) {
+			  $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+	  
+			  $filename = uniqid() . '.' . $ext;
+	  
+			  $destination = "images/$filename";
+	  
+			  move_uploaded_file($file['tmp_name'], $destination);
+	  
+			  $data['images'] = $filename;
+			}
+		  }
+	  
+		  	$this->common_model->update_array(array('id' => $id), 'users', $data);
+			$this->session->set_flashdata('success', 'Your profile was updated successfully.');
+		  	redirect(base_url() . 'welcome/user_settings');
+	}
+	  
+	  
+	  
+	  
+
+	
+	// public function update() {
+	// 	$id = $this->input->post('id');
+	// 	$data = array(
+	// 	  'name' => $this->input->post('name'),
+	// 	  'phone_no' => $this->input->post('phone_no'),
+	// 	  'email' => $this->input->post('email'),
+	// 	  'password' => sha1($this->input->post('password')),
+	// 	  'images' => $this->input->post('images'),
+	// 	);
+	// 	$this->common_model->update_array(array('id' => $id), 'users', $data);
+	// 	redirect(base_url() . 'welcome/user_settings');
+	//   }
+	  
+	  
+
+
 	public function user_dashboard() {
 		
 		$this->load->view('user/user_header');
@@ -220,5 +269,30 @@ class Welcome extends CI_Controller {
 		$this->load->view('user/user_footer');
 		
 	}
+
+	public function change_password() {
+		$old_password = $this->input->post('old_password');
+		$new_password = $this->input->post('new_password');
+		
+		$user = $this->common_model->select_where(
+		  "*",
+		  "users",
+		  array('id' => $this->session->userdata('userid'), 'password' => sha1($old_password))
+		);
+	  
+		if ($user->num_rows() > 0) {
+		  $result = $this->common_model->update_array(
+			array('id' => $this->session->userdata('userid')),
+			'users',
+			array('password' => sha1($new_password))
+		  );
+		  echo "ok";
+		  exit;
+		} else {
+		  echo "incorrect";
+		  exit;
+		}
+	  }
+	  
 	
 }

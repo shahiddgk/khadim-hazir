@@ -6,7 +6,7 @@
         <div class="row">
     <div class="col-md-12">
             <div class="card">
-                <a href="<?=site_url().'/admin/service/add_service'?>"> <button type="button" class="btn btn-outline-success btn-sm">Add Subcategory</button></a>
+                <a href="<?=site_url().'admin/service/add_service'?>"> <button type="button" class="btn btn-outline-success btn-sm">Add Subcategory</button></a>
                 <div class="card-header">
                     <strong class="card-title">Sub Categories</strong>
                 </div>

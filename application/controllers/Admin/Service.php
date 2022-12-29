@@ -82,13 +82,13 @@ class Service extends CI_Controller {
 
 		$this->session->set_userdata('success',$eng_data['name']);
 		
-		redirect(site_url().'/admin/service'); 
+		redirect(site_url().'admin/service'); 
 	}
 
 	function delete_service($id) {
 
 		$this->common_model->delete_where(array('sub_id'=>$id), 'sub_categories');
-		redirect(site_url().'/admin/service');  
+		redirect(site_url().'admin/service');  
 	}
 
 	function edit_service($id) {
@@ -131,6 +131,6 @@ class Service extends CI_Controller {
 		}
 		$this->session->set_userdata('update','data updated successfully');
 		
-		redirect(site_url().'/admin/service'); 
+		redirect(site_url().'admin/service'); 
 	}	
 }

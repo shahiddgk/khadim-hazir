@@ -56,9 +56,9 @@
                                 </a>
 
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                    <a class="dropdown-item" href="#" <?php if($this->session->userdata('paymentstatus')=='paid'){ ?> data-toggle="modal" data-target="#subscriptionModal" <?php } ?>><?php echo $this->lang->line('cancel_my_susbscription')?></a>
-                                    <a class="dropdown-item" href="#"  data-toggle="modal" data-target="#changepassword"><?php echo $this->lang->line('change_password')?></a>
-                                    <a class="dropdown-item" href="<?php echo base_url()?>welcome/logout"><?php echo $this->lang->line('logout'); ?></a>
+                                    <a class="dropdown-item" href="<?=site_url('welcome/user_settings')?>"><i class="fa fa-cog"></i> Settings</a>
+                                    <a class="dropdown-item" href="<?=site_url('welcome/change_password')?>"><i class="fa fa-lock"></i> Change Password</a>
+                                    <a class="dropdown-item" href="<?=site_url('welcome/user_logout')?>"><i class="bi bi-door-open-fill"></i> Logout</a>
                                 </div>
                             </div>
                         </p> 

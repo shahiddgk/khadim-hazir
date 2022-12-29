@@ -36,11 +36,11 @@ class Welcome extends CI_Controller {
 	public function setting() {
 		$data['setting'] = $this->common_model->select_all("*", "admin");
 		foreach($data['setting']->result() as $row) {
-			//print_r($data['setting']); exit;
-		$data['name'] = $row->name;
-		$data['email'] = $row->email;
-		$data['id'] = $row->id;
-		$data['password'] = $row->password;
+			$data['name'] = $row->name;
+			$data['email'] = $row->email;
+			$data['password'] = $row->password;
+			$data['image'] = $row->image;
+			$data['id'] = $row->id;
 		}
 		$this->load->view('admin/admin_header');
 		$this->load->view('admin/admin_setting/setting',$data);
@@ -51,9 +51,26 @@ class Welcome extends CI_Controller {
 		$id= $this->input->post('id');
 		$data['name']= $this->input->post('username');
 		$data['email']= $this->input->post('email');
-		$data['password']= $this->input->post('password');
+		$data['password']= sha1($this->input->post('password'));
+
+		if (isset($_FILES['image'])) {
+			$file = $_FILES['image'];
+	  
+			if ($file['error'] == UPLOAD_ERR_OK) {
+			  $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+	  
+			  $filename = uniqid() . '.' . $ext;
+	  
+			  $destination = "images/$filename";
+	  
+			  move_uploaded_file($file['tmp_name'], $destination);
+	  
+			  $data['image'] = $filename;
+			}
+		  }
+	  
 		$this->common_model->update_array(array('id'=>$id), 'admin', $data);
-		redirect(site_url().'/admin/welcome/setting');
+		redirect(site_url().'admin/welcome/setting');
 	}
 	
 	public function login_action() {
@@ -65,54 +82,56 @@ class Welcome extends CI_Controller {
 		
 		if($data['login']->num_rows()>0){
 			
-		  if($this->input->post('rememberme')=='on')   
-		 {
-			$cookieUsername = array(
-				'name'   => 'user',
-				'value'  => $username,
-				'expire' => time()+1000,
-				'path'   => '/',
-				'secure' => false
-			);
-			$cookiePassword = array(
-				'name'   => 'pass',
-				'value'  => $password,
-				'expire' => time()+1000,
-				'path'   => '/',
-				'secure' => false
-			);
-			$check_rem = array(
-				'name'   => 'check_rem',
-				'value'  => 1,
-				'expire' => time()+1000,
-				'path'   => '/',
-				'secure' => false
-			);
-	
-			$this->input->set_cookie($cookieUsername);
-			$this->input->set_cookie($check_rem);
-			$this->input->set_cookie($cookiePassword);
-		}
-		else
-		{
-			delete_cookie('user');
-			delete_cookie('pass');
-			delete_cookie('check_rem');	
-			
-		}
-	
-		$row = $data['login']->row(); 
-		$data = array(
-			'user_logged_in'  =>  TRUE,
-			'usertype' => $row->type,
-			'username' => $row->name
-		);
+		  	if($this->input->post('rememberme')=='on')   
+			{
+				$cookieUsername = array(
+					'name'   => 'user',
+					'value'  => $username,
+					'expire' => time()+1000,
+					'path'   => '/',
+					'secure' => false
+				);
+				$cookiePassword = array(
+					'name'   => 'pass',
+					'value'  => $password,
+					'expire' => time()+1000,
+					'path'   => '/',
+					'secure' => false
+				);
+				$check_rem = array(
+					'name'   => 'check_rem',
+					'value'  => 1,
+					'expire' => time()+1000,
+					'path'   => '/',
+					'secure' => false
+				);
 		
-		$this->session->set_userdata($data);
-		redirect(site_url().'/admin/welcome/dashboard');
+				$this->input->set_cookie($cookieUsername);
+				$this->input->set_cookie($check_rem);
+				$this->input->set_cookie($cookiePassword);
+			}
+			else
+			{
+				delete_cookie('user');
+				delete_cookie('pass');
+				delete_cookie('check_rem');	
+				
+			}
+	
+			$row = $data['login']->row(); 
+			$data = array(
+				'user_logged_in'  =>  TRUE,
+				'usertype' => $row->type,
+				'username' => $row->name,
+				'image' => $row->image
+
+			);
+		
+			$this->session->set_userdata($data);
+			redirect(site_url().'admin/welcome/dashboard');
 		}else{
 			$this->session->set_userdata('msg','Your user name or password is wrong');
-			redirect(site_url().'/admin/welcome');    
+			redirect(site_url().'admin/welcome');    
 		} 
 		
 	}
@@ -140,7 +159,7 @@ class Welcome extends CI_Controller {
 		if($id!="" && $status!=""){
 			$data['status'] = $status; 
 			$this->common_model->update_array(array('id'=>$id), 'admin', $data);
-			redirect(site_url().'/admin/welcome/userslisting'); 
+			redirect(site_url().'admin/welcome/userslisting'); 
 		}
 	}
 
@@ -149,7 +168,7 @@ class Welcome extends CI_Controller {
         $this->session->unset_userdata('user_logged_in');
         $this->session->unset_userdata('usertype');
         $this->session->unset_userdata('username');
-        redirect(site_url().'/admin/welcome'); 
+        redirect(site_url().'admin/welcome'); 
 	}
 
 	public function forget_password() {
@@ -207,7 +226,7 @@ class Welcome extends CI_Controller {
 
 		$this->session->set_userdata('valid_email','Enter your Given email');
 		
-		redirect(site_url("/admin/welcome/forget_password")); 
+		redirect(site_url("admin/welcome/forget_password")); 
 
 		}
     
@@ -227,7 +246,7 @@ class Welcome extends CI_Controller {
 		$data['arabic_privacy'] = $this->input->post('arabic_privacy');
 		$data['privacy_policy'] = $this->input->post('privacy');
 		$this->common_model->update_array(array('id'=>1), 'settings', $data);
-		redirect(site_url().'/admin/welcome/settings'); 
+		redirect(site_url().'admin/welcome/settings'); 
 	}
 	
 }

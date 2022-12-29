@@ -27,7 +27,7 @@
                                     </div>
                                   <?php $this->session->unset_userdata('email'); } ?>
                 <div class="login-form">
-                    <form action="<?=site_url("welcome/send_mail")?>" method="POST">
+                    <form action="<?=site_url("admin/welcome/send_mail")?>" method="POST">
                         <div class="form-group">
                             <label>Enter valid Email to Reset password</label>
                             <input type="email" name="email" class="form-control" placeholder="Email" required>
@@ -40,4 +40,4 @@
                 
             </div>
         </div>
-    </div>
+</div>

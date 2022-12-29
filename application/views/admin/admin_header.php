@@ -6,7 +6,7 @@
 <html class="no-js" lang="en">
 <!--<![endif]-->
 <?php
-
+// echo"<pre>"; print_r($_SESSION); exit;
 if($this->session->userdata('user_logged_in')){
     if($this->session->userdata('usertype')!='admin'){
        redirect(site_url()); 
@@ -14,7 +14,7 @@ if($this->session->userdata('user_logged_in')){
 }
 else{
     $this->session->set_userdata('msg','Login to access your account');
-    redirect(site_url().'/admin/welcome');
+    redirect(site_url().'admin/welcome');
 }
 ?>
 <head>
@@ -185,7 +185,7 @@ else{
             <div class="col-sm-5">
                 <div class="user-area dropdown float-right">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img class="user-avatar rounded-circle" src="<?=base_url();?>images/admin.jpg" alt="User Avatar">
+                        <img class="user-avatar rounded-circle" src="<?php echo base_url(); ?>images/<?php echo $_SESSION['image']?>" alt="User Avatar">
                     </a>
 
                     <div class="user-menu dropdown-menu">
@@ -193,6 +193,7 @@ else{
 
                         <a class="nav-link" href="#"><i class="fa fa-user"></i> Notifications <span class="count">13</span></a> -->
 
+                        <a class="nav-link" href="<?=site_url('welcome')?>"><i class="fa fa-globe"></i> Website</a>
                         <a class="nav-link" href="<?=site_url('admin/welcome/setting')?>"><i class="fa fa-cog"></i> Settings</a>
 
                         <a class="nav-link" href="<?=site_url('admin/welcome/logout')?>"><i class="fa fa-power-off"></i> Logout</a>
@@ -237,6 +238,6 @@ else{
                 </div>
             </div>
         </div>
-    </div>
+</div>
 
     
