@@ -41,10 +41,6 @@ class Welcome extends CI_Controller {
 	// Loading home page on front end.
 	public function index($subcate='') {
 	    
-	   // $this->load->view('front/under-construction');
-	    
-		// $data['categories'] = $this->common_model->select_where("*", "categories", array('language'=>$this->language));
-
 		$data['category'] = $this->common_model->select_all("*", "categories");
 
 		foreach($data['category']->result() as $row) {
@@ -60,7 +56,6 @@ class Welcome extends CI_Controller {
 		}
 		
 		$data['subcateid'] = $subcate;
-		//if user not logged in then registraiton popup will show else payment popup will show up.
 		$data['popup'] = '';
 		if($this->session->userdata('user_logged_in') && $subcate!=''){
 			if($this->session->userdata('paymentstatus')=='unpaid'){
@@ -106,58 +101,23 @@ class Welcome extends CI_Controller {
 		$data['email']= $this->input->post('email');
 		$data['phone_no']= $this->input->post('phone_no');
 		$data['password']= sha1($this->input->post('password'));
-		$data['user_type']= $this->input->post('user_type');
+		$data['user_type']= $this->input->post('user_type');	
 		$result = $this->common_model->insert_array('users', $data);
 		if($result){
 			$this->session->set_flashdata('flash_message', 'User Registered successfully please login.');
 			redirect('user/sign_in', 'refresh');
 		}
 	}
+	
 
 	public function login_user() {
 	
-		$username	=	$this->input->post('email');
+		$email	=	$this->input->post('email');
 		$password	=	$this->input->post('password');
 			
-		$data['login'] = $this->common_model->select_where("*","users", array('email'=>$username,'password'=>sha1($password)));
+		$data['login'] = $this->common_model->select_where("*","users", array('email'=>$email,'password'=>sha1($password)));
 		
 		if($data['login']->num_rows()>0){
-			
-		// if($this->input->post('rememberme')=='on')   
-		// {
-		// 	$cookieUsername = array(
-		// 		'name'   => 'user',
-		// 		'value'  => $username,
-		// 		'expire' => time()+1000,
-		// 		'path'   => '/',
-		// 		'secure' => false
-		// 	);
-		// 	$cookiePassword = array(
-		// 		'name'   => 'pass',
-		// 		'value'  => $password,
-		// 		'expire' => time()+1000,
-		// 		'path'   => '/',
-		// 		'secure' => false
-		// 	);
-		// 	$check_rem = array(
-		// 		'name'   => 'check_rem',
-		// 		'value'  => 1,
-		// 		'expire' => time()+1000,
-		// 		'path'   => '/',
-		// 		'secure' => false
-		// 	);
-	
-		// 	$this->input->set_cookie($cookieUsername);
-		// 	$this->input->set_cookie($check_rem);
-		// 	$this->input->set_cookie($cookiePassword);
-		// }
-		// else
-		// {
-		// 	delete_cookie('user');
-		// 	delete_cookie('pass');
-		// 	delete_cookie('check_rem');	
-			
-		// }
 	
 		$row = $data['login']->row(); 
 		$data = array(
@@ -166,13 +126,14 @@ class Welcome extends CI_Controller {
 			'usertype' => $row->user_type,
 			'username' => $row->name,
 			'email' => $row->email,
+			'images' => $row->images
 		);
 		
 		$this->session->set_userdata($data);
-			redirect(site_url().'welcome/user_settings');
+			redirect(site_url().'welcome/update_profile');
 		}else{
-			$this->session->set_userdata('msg','Your user name or password is wrong');
-			redirect(site_url().'welcome');    
+			$this->session->set_flashdata('msg','Your Email or password is wrong');
+			redirect(site_url().'user/sign_in');    
 		} 
 	}
 
@@ -186,7 +147,7 @@ class Welcome extends CI_Controller {
         redirect(site_url().'welcome'); 
 	}
 
-	public function user_settings() {
+	public function update_profile() {
 		$data['setting'] = $this->common_model->select_where("*", "users", array('id'=> $this->session->userdata('user_id')));
 		if($data['setting']->num_rows()>0){	
 			foreach($data['setting']->result() as $row) {
@@ -205,8 +166,8 @@ class Welcome extends CI_Controller {
 		}
 
 		
-		$this->load->view('user/user_header',$data);
-		$this->load->view('user/settings',$data);
+		$this->load->view('front/header');
+		$this->load->view('front/user_profile',$data);
 		$this->load->view('user/user_footer');
 	}
 
@@ -238,30 +199,9 @@ class Welcome extends CI_Controller {
 	  
 		  	$this->common_model->update_array(array('id' => $id), 'users', $data);
 			$this->session->set_flashdata('success', 'Your profile was updated successfully.');
-		  	redirect(base_url() . 'welcome/user_settings');
+		  	redirect(base_url() . 'welcome/update_profile');
 	}
-	  
-	  
-	  
-	  
-
 	
-	// public function update() {
-	// 	$id = $this->input->post('id');
-	// 	$data = array(
-	// 	  'name' => $this->input->post('name'),
-	// 	  'phone_no' => $this->input->post('phone_no'),
-	// 	  'email' => $this->input->post('email'),
-	// 	  'password' => sha1($this->input->post('password')),
-	// 	  'images' => $this->input->post('images'),
-	// 	);
-	// 	$this->common_model->update_array(array('id' => $id), 'users', $data);
-	// 	redirect(base_url() . 'welcome/user_settings');
-	//   }
-	  
-	  
-
-
 	public function user_dashboard() {
 		
 		$this->load->view('user/user_header');

@@ -39,7 +39,7 @@ class Welcome extends CI_Controller {
 			$data['name'] = $row->name;
 			$data['email'] = $row->email;
 			$data['password'] = $row->password;
-			$data['image'] = $row->image;
+			$data['images'] = $row->images;
 			$data['id'] = $row->id;
 		}
 		$this->load->view('admin/admin_header');
@@ -123,7 +123,7 @@ class Welcome extends CI_Controller {
 				'user_logged_in'  =>  TRUE,
 				'usertype' => $row->type,
 				'username' => $row->name,
-				'image' => $row->image
+				'images' => $row->images
 
 			);
 		
@@ -173,12 +173,10 @@ class Welcome extends CI_Controller {
 
 	public function forget_password() {
 
-		// $header_data['title'] = "Product Listing";
-		// $header_data['heading'] = "Our Brands";
-		// Getting all products
 		$this->load->view('admin/login/login_header');
 		$this->load->view('admin/forgetpassword/forget_password');
 		$this->load->view('admin/login/login_footer');
+
 	}
 
 	function send_mail()

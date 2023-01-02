@@ -6,6 +6,14 @@
 </style>
 
 <div class="container">
+    <!-- alert massage start -->
+    <!-- <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <?php echo $this->session->flashdata('success'); ?>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+    </button>
+    </div> -->
+    <!-- alert massage end -->
     <div class="row justify-content-center">
     <form action="<?=base_url('welcome/create_user');?>" method="post" class="w-50 p-3" id="registrationForm">
             <div class="form-group row">

@@ -5,7 +5,7 @@
             <div class="card-header user-header alt bg-dark">
                 <div class="media">
                     <a href="#">
-                    <img class="align-self-center rounded-circle mr-3" style="width:85px; height:85px;" alt="" src="<?php echo base_url(); ?>images/<?php echo $image?>">
+                    <img class="align-self-center rounded-circle mr-3" style="width:85px; height:85px;" alt="" src="<?php echo base_url(); ?>images/<?php echo $images?>">
                     </a>
                     <div class="media-body">
                         <h2 class="text-light display-6">Admin</h2>

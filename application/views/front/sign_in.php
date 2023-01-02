@@ -6,6 +6,16 @@
 </style>
 
 <div class="container">
+    <!-- alert massage start -->
+    <?php if ($this->session->flashdata('msg')) { ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <?php echo $this->session->flashdata('msg'); ?>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    </div>
+    <?php } ?>
+    <!-- alert massage end -->
     <div class="row justify-content-center login-form pt-5 m-5">
         <div class="col-12">
             <a class="btn btn-outline-primary" href="#" role="button" style="text-transform:none">
