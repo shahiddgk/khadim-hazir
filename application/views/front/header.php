@@ -60,9 +60,9 @@
             <img class="user-avatar rounded-circle" src="<?php echo base_url(); ?>images/<?php echo $_SESSION['images']?>" alt="User Avatar" height="50">
           </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-        <a class="dropdown-item" href="<?=site_url('welcome/update_profile')?>"><i class="fa fa-user"></i> Update Profile</a>
+        <a class="dropdown-item" href="<?=site_url('welcome/update_profile')?>"><i class="fa fa-user"></i> <?php echo $this->lang->line('update profile'); ?></a>
         <!-- <a class="dropdown-item" href="<?=site_url('welcome/change_password')?>"><i class="fa fa-lock"></i> Change Password</a> -->
-        <a class="dropdown-item" href="<?=site_url('welcome/user_logout')?>"><i class="bi bi-door-open-fill"></i> Logout</a>
+        <a class="dropdown-item" href="<?=site_url('welcome/user_logout')?>"><i class="bi bi-door-open-fill"></i> <?php echo $this->lang->line('logout'); ?></a>
         </div>
         </div>
         </p> 

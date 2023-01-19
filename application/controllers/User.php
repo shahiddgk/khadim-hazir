@@ -18,33 +18,32 @@ class User extends CI_Controller {
 	 * @see https://codeigniter.com/user_guide/general/urls.html
 	 */
 	public $language;
-	function __construct() {
-		parent:: __construct();
+
+	function __construct()
+	{
+		parent::__construct();
 		$this->load->library('session');
 		// require_once('vendor/autoload.php');
-		
 		// $this->google = new Google_Client();
 		// $this->google->setClientId('411497194457-mholnatie510q2m0mjfo6597evl8vucm.apps.googleusercontent.com'); 
 		// $this->google->setClientSecret('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'); 
 		// $this->google->setRedirectUri('http://localhost/khadim-hazir/user/authenticate');
 		// $this->google->addScope('email');
 		// $this->google->addScope('profile');
-
-		if($this->session->userdata('language')){
+	
+		if ($this->session->userdata('language')) {
 			$this->language = $this->session->userdata('language');
 			$this->lang->load($this->language.'_lang', 'english');
-		}
-		else if($this->language = 'urd'){
+		} else if ($this->language == 'urd') {
 			$this->lang->load('urd_lang', 'english');
 			$this->session->set_userdata('language', 'urd');
-		}
-		else{
+		} else {
 			$this->language = 'arb';
 			$this->lang->load('arb_lang', 'english');
 			$this->session->set_userdata('language', 'arb');
 		}
-		
-	} 
+	}
+	
 
 	// public function google_login(){
 	  

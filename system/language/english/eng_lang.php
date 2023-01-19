@@ -105,4 +105,17 @@ $lang['account_disable'] = 'Account disabled. Please contact Admin';
 $lang['wrong_old_password'] = 'Wrong Old Password';
 $lang['enter_old_password'] = 'Change your password by entering old password';
 $lang['password_strength_msg'] = 'Must contain at least one number and one uppercase and lowercase letter, and at least 6 or more characters';
+$lang['phone'] = 'Phone';
+$lang['new password'] = 'New Password';
+$lang['profile pic'] = 'Profile Pic';
+$lang['change_setting'] = 'Change Setting';
+$lang['update profile'] = 'Update Profile';
+$lang['logout '] = 'Logout';
+$lang['update'] = 'Update';
+$lang['arabic '] = 'عربى';
+$lang['Profile_Setting'] = 'Profile Setting';
+
+
+
+
 

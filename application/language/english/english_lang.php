@@ -1,0 +1,4 @@
+<?php
+
+$lang['phone'] = 'Phone';
+
