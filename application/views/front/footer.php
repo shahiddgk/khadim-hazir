@@ -14,7 +14,7 @@
                 </div> -->
             </div>
             <div class="col-md-6">
-                <p class="footer-text"><?php echo $this->lang->line('all_rights_reserved'); ?> © 2022 Azoozy.com </p>
+                <p class="footer-text"><?php echo $this->lang->line('all_rights_reserved'); ?> © 2022 Khadim Hazir </p>
             </div>
         </div>
 

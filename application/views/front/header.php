@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <style>
-    a#dropdownMenuLink {
+  a#dropdownMenuLink {
     color: white;
-}
-.dropdown-menu.show {
-  margin-left: -40px;
-}
+  }
+  .dropdown-menu.show {
+    margin-left: -40px;
+  }
+  h3.wel {
+    color: white;
+    margin-left: 260px;
+
+  }
 </style>
 <head>
     <!-- rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" -->
@@ -38,6 +43,11 @@
         <button type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler clickable">
           <span class="navbar-toggler-icon"></span>
         </button>
+        <div style="text-align: center;">
+          <?php if ($this->session->userdata('user_logged_in')) { ?>
+            <h3 class="wel"><?= $this->lang->line('welcome'); ?>, <?php echo $this->session->userdata('username'); ?>!</h3>
+          <?php } ?>
+        </div>
         <div id="navbarSupportedContent" class="collapse navbar-collapse d-flex justify-content-end">
         <!-- Example single danger button -->
         <div class="dropdown show">

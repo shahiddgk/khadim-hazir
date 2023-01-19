@@ -96,12 +96,21 @@ class Welcome extends CI_Controller {
 		
 	}
 
+	public function ajax_subcategory(){
+		$sub_id = $this->input->post('category_id');
+		$response = $this->common_model->select_where("*", "sub_categories", array('category_id'=>$sub_id))->result_array(); 
+        echo json_encode($response); exit;
+	}
+
 	public function create_user() {
+
+		$data['user_type']= $this->input->post('user_type');	
+		$data['category_id'] = $this->input->post('category_id'); 
+		$data['sub_id'] = $this->input->post('sub_id'); 
 		$data['name']= $this->input->post('full_name');
 		$data['email']= $this->input->post('email');
 		$data['phone_no']= $this->input->post('phone_no');
 		$data['password']= sha1($this->input->post('password'));
-		$data['user_type']= $this->input->post('user_type');	
 		$result = $this->common_model->insert_array('users', $data);
 		if($result){
 			$this->session->set_flashdata('flash_message', 'User Registered successfully please login.');

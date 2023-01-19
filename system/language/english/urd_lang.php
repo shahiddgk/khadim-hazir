@@ -54,6 +54,7 @@ $lang['update profile'] = 'پروفائل کو اپ ڈیٹ کریں۔';
 $lang['logout '] = 'لاگ آوٹ';
 $lang['update'] = 'اپ ڈیٹ کریں';
 $lang['Profile_Setting'] = 'پروفائل سیٹنگ';
+$lang['welcome'] ='خوش آمدید';
 
 
 
@@ -107,7 +108,6 @@ $lang['password_reset'] = 'إعادة تعيين كلمة المرور AZOOZY';
 $lang['registration_email_title'] = 'تسجيل حساب AZOOZY';
 $lang['cancel_subscription_msg'] = 'هل أنت واثق؟ تريد إلغاء اشتراكك؟';
 $lang['cancel_subscription'] = 'إلغاء الاشتراك';
-$lang['welcome'] = 'أهلا بك';
 $lang['subcription_cancelled_msg'] = 'تم الغاء الاشتراك بنجاح';
 $lang['subscription_successfull'] = 'Azoozy الاشتراك';
 $lang['registration_successfull'] = 'التسجيل بنجاح';
