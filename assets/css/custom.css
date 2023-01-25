@@ -404,7 +404,7 @@ td {
 
 tr:hover {
     /* background-color: #007bff; */
-    background-color: #3f37a2;
+    /* background-color: #3f37a2; */
 }
 
 th,
@@ -414,7 +414,7 @@ td a {
 
 th,
 td a:hover {
-    color: #00ffb9;
+    color: black;
 }
 
 .header-text {

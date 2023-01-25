@@ -37,7 +37,7 @@ class User extends CI_Controller {
 	}
 	public function sign_up(){
 		$data['categories'] = $this->common_model->select_where("*", "categories", array('language'=>'eng'))->result_array();
-		$data['sub_categories'] = $this->common_model->select_where("*", "sub_categories", array('language'=>'arb'))->result_array();
+		$data['sub_categories'] = $this->common_model->select_where("*", "sub_categories", array('language'=>'eng'))->result_array();
 		$this->load->view('front/header');
 		$this->load->view('front/sign_up',$data);
 		$this->load->view('front/footer');
@@ -48,4 +48,21 @@ class User extends CI_Controller {
 		$this->load->view('front/sign_in');
 		$this->load->view('front/footer');
 	}
+
+    public function user_lists($sub_id){
+		if ($this->session->userdata('user_logged_in')) { 
+
+        $data['users'] = $this->common_model->select_where("*", "users", array('sub_id'=>$sub_id))->result_array();
+		$data['sub_categories'] = $this->common_model->select_where("*", "sub_categories", array('sub_id'=>$sub_id,'language'=>'eng' ))->result_array();
+
+		$this->load->view('front/header');
+        $this->load->view('front/user_list',$data);
+        $this->load->view('front/footer');
+    } else {
+		$this->session->set_flashdata('msg', 'Plese First Login.');
+	     redirect(site_url().'user/sign_in');
+    }
+
+}
+
 }

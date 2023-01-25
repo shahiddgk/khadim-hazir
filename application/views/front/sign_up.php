@@ -24,7 +24,7 @@
                     <label for="employee">
                         <input type="radio" id="employee" name="user_type" value="employee">
                         <img src="<?=base_url();?>uploads/general/employee.png" alt="Employee icon" height="80" width="80">
-                        <span class="text-center">Employee</span>
+                        <span class="text-center">Labour</span>
                     </label>
     
                     <label for="employer">
@@ -122,7 +122,9 @@
                     console.log("result".data);
                     $("#sub-category").html("<option value=''>Select a subcategory</option>");
                     $.each(data, function(key, value) {
-                        $("#sub-category").append("<option value='" + value.id + "'>" + value.name + "</option>");
+                        if(value.language === "eng"){
+                        $("#sub-category").append("<option value='" + value.sub_id + "'>" + value.name + "</option>");
+                        }
                     });
 
                     // $("#subcategory-label").show();
