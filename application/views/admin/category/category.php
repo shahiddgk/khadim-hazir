@@ -2,7 +2,7 @@
 <?php //echo "<pre>"; print_r($categories); exit; ?>
 <div class="container">
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-4">
             <div class="card">
                 <strong class="card-header">Add Category</strong>
                     <div class="card-body card-block">
@@ -38,8 +38,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
@@ -79,5 +78,6 @@
             </div>
         </div>
     </div>
+ </div>
 </div>
 
