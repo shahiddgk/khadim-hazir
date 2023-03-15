@@ -63,6 +63,45 @@ class User extends CI_Controller {
 	     redirect(site_url().'user/sign_in');
     }
 
-}
+    }
+
+	public function user_detail($id)
+	{
+		if ($this->session->userdata('user_logged_in')) { 
+
+        $data['users'] = $this->common_model->select_where("*", "users", array('id'=>$id))->result_array();
+
+		$this->load->view('front/header');
+        $this->load->view('user/user_detail',$data);
+        $this->load->view('front/footer');
+		} else {
+			$this->session->set_flashdata('msg', 'Plese First Login.');
+			redirect(site_url().'user/sign_in');
+		}
+    }
+
+	public function send_mail_user($user_id){
+		$query = $this->common_model->select_where("email", "users", array('id'=>$user_id))->row_array();
+		$config = Array(
+			'protocol' => 'smtp',
+			'smtp_host' => 'smtp.gmail.com',
+			'smtp_port' => 465,
+			'smtp_user' => 'info.azoozy@gmail.com', // change it to yours
+			'smtp_pass' => 'Delegate@access2022', // change it to yours
+			'mailtype' => 'html',
+			'charset' => 'utf-8',
+			'wordwrap' => TRUE
+		);
+		$to_mail = $query["email"];
+		$this->load->library('email', $config);
+		$this->email->set_header('MIME-Version', '1.0; charset=utf-8');
+		$this->email->set_header('Content-type', 'text/html');
+		$this->email->set_newline("\r\n");
+		$this->email->from('Azoozy.com'); // change it to yours
+		$this->email->to($to_mail);// change it to yours
+		$this->email->subject((string) $this->lang->line('subscription_successfull'));
+		$this->email->message($this->load->view('front/emails/subscription', '', TRUE));
+		$this->email->send();
+	}
 
 }

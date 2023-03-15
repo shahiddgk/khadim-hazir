@@ -2,6 +2,10 @@
     .text-heading {
     text-align: center;
     }
+    .hover-effect:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+    }
 </style>
 <div class="container">
     <!-- alert massage start -->
@@ -26,7 +30,7 @@
                             <div class="align-items-left pr-3">
                                 <img class="card-img-left" height="60" width="60" src="<?=base_url();?>images/<?=$user['images'];?>" alt="Card image cap">
                             </div>
-                            <div class="align-items-right">
+                            <div onclick="window.location.href='<?php echo base_url('user/user_detail/'.$user['id']) ?>';" class="align-items-right hover-effect">
                                 <div class="listing-title">
                                     <b><?=$user['name']?></b>
                                 </div>
@@ -37,8 +41,6 @@
                                     <h6><?=$user['email']?></h6>
                                 </div>
                                 <div>
-                                    <span class="rating-span"><i class="fas fa-star"></i></span>
-                                    <span class="rating-text">2.1(20.5K)</span>
                                 </div>
                             </div>
                         </li>

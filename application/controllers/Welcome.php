@@ -49,11 +49,11 @@ class Welcome extends CI_Controller {
 			$data['categories'][$row->category_id][$row->language]['image'] = $row->image; 
 		}
 
-		$data['subcategories']  = $this->common_model->select_where_ASC_DESC("table_id, name, image_name, region_id", "brands", array('language'=>$this->language), "priority", "ASC");
-		$data['subname'] = "";
-		if($subcate!=""){
-			$data['subname'] = $this->common_model->select_single_field("name" ,"brands", array('region_id'=>$subcate, 'language'=>$this->language));
-		}
+		// $data['subcategories']  = $this->common_model->select_where_ASC_DESC("table_id, name, image_name, region_id", "brands", array('language'=>$this->language), "priority", "ASC");
+		// $data['subname'] = "";
+		// if($subcate!=""){
+		// 	$data['subname'] = $this->common_model->select_single_field("name" ,"brands", array('region_id'=>$subcate, 'language'=>$this->language));
+		// }
 		
 		$data['subcateid'] = $subcate;
 		$data['popup'] = '';

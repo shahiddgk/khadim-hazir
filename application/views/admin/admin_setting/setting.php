@@ -37,7 +37,7 @@
         <form action="<?=site_url('admin/welcome/update')?>" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <div class="input-group">
-                    <div class="input-group-addon">Name?></div>
+                    <div class="input-group-addon">Name</div>
                     <input type="text" value="<?=$name;?>" id="username3" name="username" class="form-control">
                     <input type="hidden" value="<?=$id;?>" id="username3" name="id" class="form-control">
                 </div>
