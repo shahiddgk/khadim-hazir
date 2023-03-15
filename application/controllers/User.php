@@ -35,6 +35,7 @@ class User extends CI_Controller {
 			$this->session->set_userdata('language', 'arb');
 		}
 	}
+
 	public function sign_up(){
 		$data['categories'] = $this->common_model->select_where("*", "categories", array('language'=>'eng'))->result_array();
 		$data['sub_categories'] = $this->common_model->select_where("*", "sub_categories", array('language'=>'eng'))->result_array();
@@ -43,13 +44,15 @@ class User extends CI_Controller {
 		$this->load->view('front/footer');
 	}
 
-	public function sign_in(){
+	public function sign_in()
+	{
 		$this->load->view('front/header');
 		$this->load->view('front/sign_in');
 		$this->load->view('front/footer');
 	}
 
-    public function user_lists($sub_id){
+    public function user_lists($sub_id)
+	{
 		if ($this->session->userdata('user_logged_in')) { 
 
         $data['users'] = $this->common_model->select_where("*", "users", array('sub_id'=>$sub_id))->result_array();
@@ -58,36 +61,52 @@ class User extends CI_Controller {
 		$this->load->view('front/header');
         $this->load->view('front/user_list',$data);
         $this->load->view('front/footer');
-    } else {
-		$this->session->set_flashdata('msg', 'Plese First Login.');
-	     redirect(site_url().'user/sign_in');
-    }
+		} else {
+			$this->session->set_flashdata('msg', 'Plese First Login.');
+			redirect(site_url().'user/sign_in');
+		}
 
     }
 
 	public function user_detail($id)
 	{
 		if ($this->session->userdata('user_logged_in')) { 
+			$data['users'] = $this->common_model->select_where("*", "users", array('id'=>$id))->result_array();
+			$query = $this->db->query("SELECT SUM(rating) as total_rating FROM user_review WHERE user_id = '$id'");
+			$user_total_rating = $query->row_array()['total_rating'];
+			$query = $this->db->query("SELECT hiring.*, users.name AS employer_name, users.email AS employer_email FROM hiring JOIN users ON hiring.employer_id = users.id WHERE hiring.employee_id = '$id'");
+			$hiring = $query->result_array();
 
-        $data['users'] = $this->common_model->select_where("*", "users", array('id'=>$id))->result_array();
+			$user_rating = $this->common_model->select_where('*', 'user_review', array('user_id' => $id))->row_array();
 
-		$this->load->view('front/header');
-        $this->load->view('user/user_detail',$data);
-        $this->load->view('front/footer');
+			if (empty($user_rating)) {
+				$user_rating['rating'] = 0;
+			}
+
+			$user_rating['total_rating'] = $user_total_rating;
+
+			$data['user_rating'] = $user_rating;
+			$data['hiring'] = $hiring;
+
+			$this->load->view('front/header');
+			$this->load->view('user/user_detail', $data);
+			$this->load->view('front/footer');
 		} else {
-			$this->session->set_flashdata('msg', 'Plese First Login.');
+			$this->session->set_flashdata('msg', 'Please first login.');
 			redirect(site_url().'user/sign_in');
 		}
-    }
+	}
 
-	public function send_mail_user($user_id){
+
+	public function send_mail_user($user_id)
+	{
 		$query = $this->common_model->select_where("email", "users", array('id'=>$user_id))->row_array();
 		$config = Array(
 			'protocol' => 'smtp',
 			'smtp_host' => 'smtp.gmail.com',
 			'smtp_port' => 465,
-			'smtp_user' => 'info.azoozy@gmail.com', // change it to yours
-			'smtp_pass' => 'Delegate@access2022', // change it to yours
+			'smtp_user' => 'haseeb@ratedsolution.com', // change it to yours
+			'smtp_pass' => 'H_*A!n8eUfq(', // change it to yours
 			'mailtype' => 'html',
 			'charset' => 'utf-8',
 			'wordwrap' => TRUE
@@ -97,11 +116,42 @@ class User extends CI_Controller {
 		$this->email->set_header('MIME-Version', '1.0; charset=utf-8');
 		$this->email->set_header('Content-type', 'text/html');
 		$this->email->set_newline("\r\n");
-		$this->email->from('Azoozy.com'); // change it to yours
+		$this->email->from('khadim-hazir.com'); // change it to yours
 		$this->email->to($to_mail);// change it to yours
 		$this->email->subject((string) $this->lang->line('subscription_successfull'));
 		$this->email->message($this->load->view('front/emails/subscription', '', TRUE));
 		$this->email->send();
+
+		$data = array(
+			'employee_id' => $user_id,
+			'employer_id' => $_SESSION['user_id'],
+            'status'      => 'pending'
+		);
+		$this->common_model->insert_array('hiring', $data);
+
 	}
 
+	public function submit_review($user_id, $given_by) 
+	{
+		$rating = $this->input->post('rating');
+		$comment = $this->input->post('comment');
+		$data = array(
+			'user_id' => $user_id,
+			'given_by' => $given_by,
+			'rating' => $rating,
+			'comment' => $comment
+		);
+		$this->common_model->insert_array('user_review', $data);
+		redirect('user/user_detail/'.$user_id);
+	}
+		  
+	public function add_review($user_id)
+	{
+        $data['users'] = $this->common_model->select_where("*", "users", array('id'=>$user_id))->result_array();
+		
+		$this->load->view('front/header');
+		$this->load->view('user/add_review', $data); 
+        $this->load->view('front/footer');
+	}
+	
 }

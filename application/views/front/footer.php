@@ -64,14 +64,6 @@ a.icons {
    </footer>
 
 
-
-   </div>
-
-   </div>
-
-   </body>
-
-
    <script async defer src="<?=base_url()?>assets/js/bootstrap.bundle.min.js"></script>
 
    <script async defer src="<?php echo base_url() . 'assets/toastr/toastr.min.js'; ?>"></script>

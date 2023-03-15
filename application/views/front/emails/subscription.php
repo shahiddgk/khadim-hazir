@@ -1,14 +1,16 @@
-<div class="container">
-     <!-- alert massage start -->
-     <?php if ($this->session->flashdata('msg')) { ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <?php echo $this->session->flashdata('msg'); ?>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <?php } ?>
-        <!-- alert massage end -->
-
-        <h1>HI Testing Khadim Hazir</h1>
-</div>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Subscription Confirmation</title>
+</head>
+<body>
+	<h1>Thank you for your interest!</h1>
+	<p>Your booking request has been received and is currently pending approval from the employer. You will be notified when your request has been approved.</p>
+	<p>Here are the details of your request:</p>
+	<ul>
+		<li>User ID: <?php echo $user_id; ?></li>
+		<li>Employer ID: <?php echo $employer_id; ?></li>
+	</ul>
+</body>
+</html>

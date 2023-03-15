@@ -177,7 +177,7 @@ class Welcome extends CI_Controller {
 		
 		$this->load->view('front/header');
 		$this->load->view('front/user_profile',$data);
-		$this->load->view('user/user_footer');
+		$this->load->view('front/footer');
 	}
 
 
@@ -213,9 +213,9 @@ class Welcome extends CI_Controller {
 	
 	public function user_dashboard() {
 		
-		$this->load->view('user/user_header');
+		$this->load->view('front/header');
 		$this->load->view('user/dashboard');
-		$this->load->view('user/user_footer');
+		$this->load->view('front/footer');
 		
 	}
 
