@@ -18,7 +18,8 @@ class Welcome extends CI_Controller {
 	 * map to /index.php/welcome/<method_name>
 	 * @see https://codeigniter.com/userguide3/general/urls.html
 	 */
-	function __construct() {
+	function __construct() 
+	{
 		parent:: __construct();
 		$this->load->library('session');
 		if($this->session->userdata('language')){
@@ -39,7 +40,8 @@ class Welcome extends CI_Controller {
 	}
 	
 	// Loading home page on front end.
-	public function index($subcate='') {
+	public function index($subcate='') 
+	{
 	    
 		$data['category'] = $this->common_model->select_all("*", "categories");
 
@@ -47,8 +49,11 @@ class Welcome extends CI_Controller {
 			$data['categories'][$row->category_id][$row->language]['name'] = $row->name; 
 			$data['categories'][$row->category_id][$row->language]['category_id'] = $row->category_id; 
 			$data['categories'][$row->category_id][$row->language]['image'] = $row->image; 
+			$data['categories'][$row->category_id][$row->language]['price'] = $row->price; 
+			$data['categories'][$row->category_id][$row->language]['currency'] = $row->currency; 
 		}
-
+        //  echo "<pre>"; print_r($data); exit; 
+        
 		// $data['subcategories']  = $this->common_model->select_where_ASC_DESC("table_id, name, image_name, region_id", "brands", array('language'=>$this->language), "priority", "ASC");
 		// $data['subname'] = "";
 		// if($subcate!=""){
@@ -70,13 +75,15 @@ class Welcome extends CI_Controller {
 		$this->load->view('front/footer');
 	}
 
-	public function set_session($lang=null){
+	public function set_session($lang=null)
+	{
 		if($lang!=""){
 			$this->session->set_userdata('language', $lang);
 		}
 	}
 
-	public function subCategory($id) {
+	public function subCategory($id) 
+	{
 		
 		$response = $this->common_model->select_where("*", "sub_categories", array('category_id'=>$id)); 
 		if($response->num_rows()>0) {
@@ -84,6 +91,8 @@ class Welcome extends CI_Controller {
 				$data['sub_categories'][$row->sub_id][$row->language]['name'] = $row->name; 
 				$data['sub_categories'][$row->sub_id][$row->language]['sub_id'] = $row->sub_id; 
 				$data['sub_categories'][$row->sub_id][$row->language]['image'] = $row->image; 
+				$data['sub_categories'][$row->sub_id][$row->language]['price'] = $row->price; 
+				$data['sub_categories'][$row->sub_id][$row->language]['currency'] = $row->currency; 
 			}
 		}
 		else{
@@ -96,13 +105,15 @@ class Welcome extends CI_Controller {
 		
 	}
 
-	public function ajax_subcategory(){
+	public function ajax_subcategory()
+	{
 		$sub_id = $this->input->post('category_id');
 		$response = $this->common_model->select_where("*", "sub_categories", array('category_id'=>$sub_id))->result_array(); 
         echo json_encode($response); exit;
 	}
 
-	public function create_user() {
+	public function create_user() 
+	{
 
 		$data['user_type']= $this->input->post('user_type');	
 		$data['category_id'] = $this->input->post('category_id'); 
@@ -111,6 +122,7 @@ class Welcome extends CI_Controller {
 		$data['email']= $this->input->post('email');
 		$data['phone_no']= $this->input->post('phone_no');
 		$data['password']= sha1($this->input->post('password'));
+
 		$result = $this->common_model->insert_array('users', $data);
 		if($result){
 			$this->session->set_flashdata('flash_message', 'User Registered successfully please login.');
@@ -118,8 +130,8 @@ class Welcome extends CI_Controller {
 		}
 	}
 	
-
-	public function login_user() {
+	public function login_user() 
+	{
 	
 		$email	=	$this->input->post('email');
 		$password	=	$this->input->post('password');
@@ -156,7 +168,8 @@ class Welcome extends CI_Controller {
         redirect(site_url().'welcome'); 
 	}
 
-	public function update_profile() {
+	public function update_profile() 
+	{
 		$data['setting'] = $this->common_model->select_where("*", "users", array('id'=> $this->session->userdata('user_id')));
 		if($data['setting']->num_rows()>0){	
 			foreach($data['setting']->result() as $row) {
@@ -180,9 +193,8 @@ class Welcome extends CI_Controller {
 		$this->load->view('front/footer');
 	}
 
-
-
-	public function update() {
+	public function update() 
+	{
 	
 		  $id = $this->input->post('id');
 		  $data['name']= $this->input->post('name');
@@ -211,7 +223,8 @@ class Welcome extends CI_Controller {
 		  	redirect(base_url() . 'welcome/update_profile');
 	}
 	
-	public function user_dashboard() {
+	public function user_dashboard() 
+	{
 		
 		$this->load->view('front/header');
 		$this->load->view('user/dashboard');
@@ -219,7 +232,8 @@ class Welcome extends CI_Controller {
 		
 	}
 
-	public function change_password() {
+	public function change_password() 
+	{
 		$old_password = $this->input->post('old_password');
 		$new_password = $this->input->post('new_password');
 		
@@ -241,7 +255,20 @@ class Welcome extends CI_Controller {
 		  echo "incorrect";
 		  exit;
 		}
-	  }
+	}
 	  
+	public function user_type() 
+	{
+
+		$data['user_type']= $this->input->post('user_type');	
+		$data['category_id'] = $this->input->post('category_id'); 
+		$data['sub_id'] = $this->input->post('sub_id'); 
+
+		$result = $this->common_model->insert_array('users', $data);
+		if($result){
+			$this->session->set_flashdata('flash_message', 'User Registered successfully please login.');
+			redirect('user/sign_in', 'refresh');
+		}
+	}
 	
 }

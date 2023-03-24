@@ -18,6 +18,8 @@
                                     <th>Category</th>
                                     <th>Arabic Name</th>
                                     <th>Urdu Name</th>
+                                    <th>Price</th>
+                                    <th>currency</th>
                                     <th>Image</th>
                                     <th>Action</th>
                                 </tr>
@@ -31,6 +33,8 @@
                                     <td><?=$data['eng']['category_name']['name']?></td>
                                     <td><?=$data['arb']['name']?></td>
                                     <td><?=$data['urd']['name']?></td>
+                                    <td><?=$data['eng']['price']?></td>
+                                    <td><?=$data['eng']['currency']?></td>
                                     <?php if(isset($data['eng']['image'])){ ?>
                                     <td><img src="<?=base_url();?>uploads/category/<?=$data['eng']['image'];?>" class="img-responsive" alt="sub-category" height="auto" width="50"></td>
                                     <?php } else{ ?>

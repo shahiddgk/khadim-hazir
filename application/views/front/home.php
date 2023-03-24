@@ -3,7 +3,9 @@
     <div class="row pt-5 no-gutters">
         
         <?php 
-         foreach($categories as $row) { ?>
+         foreach($categories as $row) { 
+        //  echo"<pre>" ;  print_r($row); exit;
+            ?>
             <div class="col-lg-3 col-md-4 col-sm-12">
                 <ul class="list-group">
                     <a class="category-link" href="<?= base_url('welcome/subCategory/'.$row['eng']['category_id'])?>" >
@@ -15,11 +17,11 @@
                                 <div class="listing-title">
                                     <b><?=$row[$this->language]['name']?></b>
                                 </div>
-                                <div>
+                                <!-- <div>
                                     <span class="rating-span"><i class="fas fa-star"></i></span>
                                     <span class="rating-text">4.1(20.5K)</span>
-                                </div>
-                                <div>From <b>$200</b></div>
+                                </div> -->
+                                <div>From <b><?=$row['eng']['price']?></b> <b><?=$row['eng']['currency']?></b></div>
                             </div>
                         </li>
                     </a>

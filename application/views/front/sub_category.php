@@ -14,10 +14,10 @@
                                     <b><?=$row[$this->language]['name']?></b>
                                 </div>
                                 <div>
-                                    <span class="rating-span"><i class="fas fa-star"></i></span>
+                                    <!-- <span class="rating-span"><i class="fas fa-star"></i></span>
                                     <span class="rating-text">4.1(20.5K)</span>
-                                </div>
-                                <div>From <b>$200</b></div>
+                                </div> -->
+                                <div>From <b><?=$row['eng']['price']?></b> <b><?=$row['eng']['currency']?></b></div>
                             </div>
                         </li>
                     </a>

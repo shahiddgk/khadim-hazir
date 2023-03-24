@@ -27,13 +27,15 @@ class Welcome extends CI_Controller {
 		
 	}
 	
-	public function index() {
+	public function index() 
+	{
 		$this->load->view('admin/login/login_header');
 		$this->load->view('admin/login/login_content');
 		$this->load->view('admin/login/login_footer');
 	}
 
-	public function setting() {
+	public function setting() 
+	{
 		$data['setting'] = $this->common_model->select_all("*", "admin");
 		foreach($data['setting']->result() as $row) {
 			$data['name'] = $row->name;
@@ -47,7 +49,8 @@ class Welcome extends CI_Controller {
 		$this->load->view('admin/admin_footer');
 	}
 	
-	public function update() {
+	public function update() 
+	{
 		$id= $this->input->post('id');
 		$data['name']= $this->input->post('username');
 		$data['email']= $this->input->post('email');
@@ -73,7 +76,8 @@ class Welcome extends CI_Controller {
 		redirect(site_url().'admin/welcome/setting');
 	}
 	
-	public function login_action() {
+	public function login_action() 
+	{
 	
 		$username	=	$this->input->post('username');
 		$password	=	$this->input->post('password');
@@ -136,7 +140,8 @@ class Welcome extends CI_Controller {
 		
 	}
 
-	public function dashboard() {
+	public function dashboard() 
+	{
 		
 		$this->load->view('admin/admin_header');
 		$this->load->view('admin/dashboard/dashboard');
@@ -144,7 +149,8 @@ class Welcome extends CI_Controller {
 		
 	}
 	
-	public function userslisting() {
+	public function userslisting() 
+	{
 		$data['users'] =  $this->common_model->select_all("*", "users");
 		$this->load->view('admin/admin_header');
 		$this->load->view('admin/users/listing', $data);
@@ -152,7 +158,8 @@ class Welcome extends CI_Controller {
 		
 	}
 
-	public function change_status(){
+	public function change_status()
+	{
 		$id = $this->input->get('id');
 		$status = $this->input->get('status');
 	
@@ -171,7 +178,8 @@ class Welcome extends CI_Controller {
         redirect(site_url().'admin/welcome'); 
 	}
 
-	public function forget_password() {
+	public function forget_password() 
+	{
 
 		$this->load->view('admin/login/login_header');
 		$this->load->view('admin/forgetpassword/forget_password');
@@ -230,14 +238,16 @@ class Welcome extends CI_Controller {
     
 	}
 
-	public function settings(){
+	public function settings()
+	{
 		$data['settings'] = $this->common_model->select_where("terms, price,arabic_terms", "settings", array('id'=>1))->row();
 		$this->load->view('admin/admin_header');
 		$this->load->view('admin/settings', $data);
 		$this->load->view('admin/admin_footer');
 	}
 
-	public function update_settings(){
+	public function update_settings()
+	{
 		$data['price'] = $this->input->post('package_price');
 		$data['arabic_terms'] = $this->input->post('arabic_terms');
 		$data['terms'] = $this->input->post('terms');

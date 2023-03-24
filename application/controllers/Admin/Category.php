@@ -25,7 +25,8 @@ class Category extends CI_Controller {
 		$this->load->helper('cookie');
 		
 	}
-	public function index() {
+	public function index() 
+	{
 
 		// $header_data['title'] = "Product Listing";
 		// $header_data['heading'] = "Our Brands";
@@ -41,6 +42,8 @@ class Category extends CI_Controller {
 			$data['categories'][$row->category_id][$row->language]['name'] = $row->name; 
 			$data['categories'][$row->category_id][$row->language]['category_id'] = $row->category_id; 
 			$data['categories'][$row->category_id][$row->language]['image'] = $row->image; 
+			$data['categories'][$row->category_id][$row->language]['price'] = $row->price; 
+			$data['categories'][$row->category_id][$row->language]['currency'] = $row->currency; 
 		}
 		$this->load->view('admin/admin_header');
 		$this->load->view('admin/category/category',$data);
@@ -55,16 +58,18 @@ class Category extends CI_Controller {
 		$eng_data['category_id']  = $data['category_id'];
 		$eng_data['language'] = "eng";
 		$eng_data['name'] = $this->input->post('category_name');
+		$eng_data['price'] = $this->input->post('price');
+        $eng_data['currency'] = $this->input->post('currency');
 		if($_FILES['image_file']['name']!=''){
 
 			$img   =   $_FILES['image_file']['name'];
 			$image =   str_replace(" ","-",strtolower(time().'cat_'.$img));
 			$eng_data['image']  =  $image;
 			$temp   =  $_FILES['image_file']['tmp_name'];       
-			if (!file_exists(PATH_DIR.'uploads/category')) {
-				mkdir(PATH_DIR.'uploads/category', 0755, true);
+			if (!file_exists(FCPATH.'uploads/category')) {
+				mkdir(FCPATH.'uploads/category', 0755, true);
 			} 
-			$path= PATH_DIR.'uploads/category/'.$image;
+			$path= FCPATH.'uploads/category/'.$image;
 			move_uploaded_file($temp,$path);
 
 		}
@@ -94,6 +99,8 @@ class Category extends CI_Controller {
 		foreach($data['category']->result() as $row) {
 			$data['categories'][$row->category_id][$row->language]['name'] = $row->name; 
 			$data['categories'][$row->category_id][$row->language]['category_id'] = $row->category_id; 
+			$data['categories'][$row->category_id][$row->language]['price'] = $row->price; 
+			$data['categories'][$row->category_id][$row->language]['currency'] = $row->currency; 
 		}
 		$this->load->view('admin/admin_header');
 		$this->load->view('admin/category/edit_category',$data);
@@ -107,6 +114,8 @@ class Category extends CI_Controller {
 		// echo  "<pre>"; print_r($_FILES);  exit();
 		$id = $this->input->post('category_id');
 		$data['name'] = $this->input->post('category_name');
+		$data['price'] = $this->input->post('price');
+		$data['currency'] = $this->input->post('currency');
 	
 		$this->common_model->update_array(array('category_id'=>$id,'language'=>'eng'), 'categories', $data);
 		
@@ -115,6 +124,8 @@ class Category extends CI_Controller {
 		
 		$data['name'] = $this->input->post('urdu_name');
 		$this->common_model->update_array(array('category_id'=>$id,'language'=>'urd'), 'categories', $data);
+		
+
 
 		if($_FILES['image_file']['name']!=''){
 

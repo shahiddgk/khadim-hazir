@@ -54,7 +54,22 @@
                                 <input type="text" name="urdu_name" class="form-control">
                             </div>
                         </div>
-
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">Price</div>
+                                <input type="number" class="form-control" name="price" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">currency</div>
+                                <select name="currency" class="form-control">
+                                    <option value="PKR">PKR</option>
+                                    <option value="USD">USD</option>
+                                    <option value="EUR">EUR</option>
+                                </select>
+                            </div>
+                        </div>
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon">Image</div>

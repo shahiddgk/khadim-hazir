@@ -22,28 +22,28 @@ class Social_login_modal extends  CI_Model {
         $this->db->update('users', $data);
     }
 
-    function Insert_google_user()
+    public function Insert_google_user()
     {
         if ($this->session->userdata('google_user')) {
-                $data = $this->session->userdata('google_user');
-
-                $user_data['google_id'] = $data['id'];
-                $user_data['name'] = $data['name'];
-                $user_data['email'] =  $data['email'];
-                $user_data['password'] = sha1('test123');
-                $user_data['status'] = 'active';
-                $this->db->insert('users', $user_data);
-
-                $user_id = $this->db->insert_id();  
-
+            $data = $this->session->userdata('google_user');
+    
+            $user_data['google_id'] = $data['id']; // use 'id' instead of 'google_id'
+            $user_data['name'] = $data['name'];
+            $user_data['email'] = $data['email'];
+            $user_data['phone_no'] = ''; // set phone_no to empty since it's not provided by Google
+            $user_data['password'] = ''; // set password to empty since it's not provided by Google
+    
+            $this->db->insert('users', $user_data);
+    
+            $user_id = $this->db->insert_id();  
             if(!empty($user_id)){
                 return 'success';
             }
         } 
-
         else{
             return 'error';
         }   
     }
-}
+    
+}    
 ?>

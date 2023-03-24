@@ -26,7 +26,8 @@ class Service extends CI_Controller {
 		$this->load->helper('cookie');
 		
 	}
-	public function index() {
+	public function index() 
+	{
 		$data['category'] = $this->common_model->select_all("*", "sub_categories");
 
 		foreach($data['category']->result() as $row) {
@@ -35,6 +36,8 @@ class Service extends CI_Controller {
 			$data['sub_categories'][$row->sub_id][$row->language]['sub_id'] = $row->sub_id; 
 			$data['sub_categories'][$row->sub_id][$row->language]['category_name'] = $this->db->select('name')->from('categories')->where(array("category_id"=>$row->category_id,"language"=>'eng'))->get()->row_array();
 			$data['sub_categories'][$row->sub_id][$row->language]['image'] = $row->image; 
+			$data['sub_categories'][$row->sub_id][$row->language]['price'] = $row->price; 
+			$data['sub_categories'][$row->sub_id][$row->language]['currency'] = $row->currency; 
 		}
 
 		$this->load->view('admin/admin_header');
@@ -42,7 +45,8 @@ class Service extends CI_Controller {
 		$this->load->view('admin/admin_footer');
 	}
 
-	public function add_service() {
+	public function add_service() 
+	{
 
 		$data['categories'] = $this->common_model->select_where("*", "categories", array("language"=>'eng') )->result_array();
 		$this->load->view('admin/admin_header');
@@ -59,16 +63,18 @@ class Service extends CI_Controller {
 		$eng_data['sub_id']  = $data['sub_id'];
 		$eng_data['language'] = "eng";
 		$eng_data['name'] = $this->input->post('category_name');
+		$eng_data['price'] = $this->input->post('price');
+        $eng_data['currency'] = $this->input->post('currency');
 		if($_FILES['image_file']['name']!=''){
 
 			$img   =   $_FILES['image_file']['name'];
 			$image =   str_replace(" ","-",strtolower(time().'cat_'.$img));
 			$eng_data['image']  =  $image;
 			$temp   =  $_FILES['image_file']['tmp_name'];       
-			if (!file_exists(PATH_DIR.'uploads/category')) {
-				mkdir(PATH_DIR.'uploads/category', 0755, true);
+			if (!file_exists(FCPATH.'uploads/category')) {
+				mkdir(FCPATH.'uploads/category', 0755, true);
 			} 
-			$path= PATH_DIR.'uploads/category/'.$image;
+			$path= FCPATH.'uploads/category/'.$image;
 			move_uploaded_file($temp,$path);
 
 		}
@@ -85,13 +91,15 @@ class Service extends CI_Controller {
 		redirect(site_url().'admin/service'); 
 	}
 
-	function delete_service($id) {
+	function delete_service($id) 
+	{
 
 		$this->common_model->delete_where(array('sub_id'=>$id), 'sub_categories');
 		redirect(site_url().'admin/service');  
 	}
 
-	function edit_service($id) {
+	function edit_service($id)
+	{
 
 		$data['categories'] = $this->common_model->select_where("*", "categories", array("language"=>'eng') )->result_array();
 		$data['category'] = $this->common_model->select_where("*", "sub_categories", array('sub_id'=>$id));
@@ -100,15 +108,20 @@ class Service extends CI_Controller {
 			$data['sub_category'][$row->sub_id][$row->language]['name'] = $row->name; 
 			$data['sub_category'][$row->sub_id][$row->language]['category_id'] = $row->category_id; 
 			$data['sub_category'][$row->sub_id][$row->language]['sub_id'] = $row->sub_id; 
+			$data['sub_category'][$row->sub_id][$row->language]['price'] = $row->price; 
+			$data['sub_category'][$row->sub_id][$row->language]['currency'] = $row->currency; 
 		}
 		$this->load->view('admin/admin_header');
 		$this->load->view('admin/service/edit_service',$data);
 		$this->load->view('admin/admin_footer');
 	}
 
-	function update_service() {	
+	function update_service() 
+	{	
 		
 		$id = $this->input->post('sub_cat_id');
+		$data['price'] = $this->input->post('price');
+		$data['currency'] = $this->input->post('currency');
 		$data['name'] = $this->input->post('sub_category');
 		$data['category_id'] = $this->input->post('category_id');
 		$this->common_model->update_array(array('sub_id'=>$id,'language'=>'eng'), 'sub_categories', $data);
@@ -125,7 +138,7 @@ class Service extends CI_Controller {
 			$image =   str_replace("category_".time(),$img,$img);
 			$eng_data['image']  =  $image;
 			$temp   =  $_FILES['image_file']['tmp_name'];
-			$path= PATH_DIR.'uploads/category/'.$image;
+			$path= FCPATH.'uploads/category/'.$image;
 			move_uploaded_file($temp,$path);
 			$this->common_model->update_array(array('sub_id'=>$id,'language'=>'eng'), 'sub_categories', $eng_data);
 		}
