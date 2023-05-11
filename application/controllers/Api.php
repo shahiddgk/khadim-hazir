@@ -1,7 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-require APPPATH . 'libraries/REST_Controller.php';
-class Api extends REST_Controller {
+class Api extends CI_Controller {
 
 	/**
 	 * Index Page for this controller.
@@ -24,17 +23,17 @@ class Api extends REST_Controller {
 		$this->load->library('session');
 		if($this->session->userdata('language')){
 			$this->language = $this->session->userdata('language');
-			//$this->lang->load($this->language.'_lang', 'english');
+			$this->lang->load($this->language.'_lang', 'english');
 		}
 		else if($this->language = 'urd')
 		{
 			$this->lang->load('urd_lang', 'english');
-			//$this->session->set_userdata('language', 'urd');
+			$this->session->set_userdata('language', 'urd');
 		}
 		else{
 			$this->language = 'arb';
-			//$this->lang->load('arb_lang', 'english');
-			//$this->session->set_userdata('language', 'arb');
+			$this->lang->load('arb_lang', 'english');
+			$this->session->set_userdata('language', 'arb');
 		}
 		
 	}
@@ -42,17 +41,19 @@ class Api extends REST_Controller {
 	// Loading home page on front end.
 	public function index($subcate='') 
 	{
-	    
-		$data['category'] = $this->common_model->select_all("*", "categories");
+		$data=array();
+		$data['data']['category'] = $this->common_model->select_all("*", "categories")->result();
+		
+		foreach($data['data']['category'] as $row) {
+			//echo "<pre>"; print_r($row); exit;
 
-		foreach($data['category']->result() as $row) {
-			$data['categories'][$row->category_id][$row->language]['name'] = $row->name; 
-			$data['categories'][$row->category_id][$row->language]['category_id'] = $row->category_id; 
-			$data['categories'][$row->category_id][$row->language]['image'] = $row->image; 
-			$data['categories'][$row->category_id][$row->language]['price'] = $row->price; 
-			$data['categories'][$row->category_id][$row->language]['currency'] = $row->currency; 
+			$data['data']['category'][$row->category_id][$row->language]['name'] = $row->name; 
+			$data['data']['category'][$row->category_id][$row->language]['category_id'] = $row->category_id; 
+			$data['data']['category'][$row->category_id][$row->language]['image'] = $row->image; 
+			$data['data']['category'][$row->category_id][$row->language]['price'] = $row->price; 
+			$data['data']['category'][$row->category_id][$row->language]['currency'] = $row->currency; 
 		}
-        //  echo "<pre>"; print_r($data); exit; 
+        
         
 		// $data['subcategories']  = $this->common_model->select_where_ASC_DESC("table_id, name, image_name, region_id", "brands", array('language'=>$this->language), "priority", "ASC");
 		// $data['subname'] = "";
@@ -60,18 +61,21 @@ class Api extends REST_Controller {
 		// 	$data['subname'] = $this->common_model->select_single_field("name" ,"brands", array('region_id'=>$subcate, 'language'=>$this->language));
 		// }
 		
-		$data['subcateid'] = $subcate;
-		$data['popup'] = '';
+		$data['data']['subcateid'] = $subcate;
+		$data['data']['popup'] = '';
 		if($this->session->userdata('user_logged_in') && $subcate!=''){
 			if($this->session->userdata('paymentstatus')=='unpaid'){
-				$data['popup'] = 'subcription';
+				$data['data']['popup'] = 'subcription';
 			}
 		}
 		else if($subcate!=''){
-			$data['popup'] = 'registration';
+			$data['data']['popup'] = 'registration';
 		}
-		$this->set_response($data, REST_Controller::HTTP_OK);
-
+		
+		//$data['data'] = $data;
+		$data['message']['code'] = '500';
+		$data['message']['msg'] = 'Category listing';
+		echo json_encode($data);exit;
 		/*$this->load->view('front/header');
 		$this->load->view('front/home', $data);
 		$this->load->view('front/footer');*/
