@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
-class Welcome extends CI_Controller {
+require APPPATH . 'libraries/REST_Controller.php';
+class Api extends REST_Controller {
 
 	/**
 	 * Index Page for this controller.
@@ -24,17 +24,17 @@ class Welcome extends CI_Controller {
 		$this->load->library('session');
 		if($this->session->userdata('language')){
 			$this->language = $this->session->userdata('language');
-			$this->lang->load($this->language.'_lang', 'english');
+			//$this->lang->load($this->language.'_lang', 'english');
 		}
 		else if($this->language = 'urd')
 		{
 			$this->lang->load('urd_lang', 'english');
-			$this->session->set_userdata('language', 'urd');
+			//$this->session->set_userdata('language', 'urd');
 		}
 		else{
 			$this->language = 'arb';
-			$this->lang->load('arb_lang', 'english');
-			$this->session->set_userdata('language', 'arb');
+			//$this->lang->load('arb_lang', 'english');
+			//$this->session->set_userdata('language', 'arb');
 		}
 		
 	}
@@ -70,9 +70,11 @@ class Welcome extends CI_Controller {
 		else if($subcate!=''){
 			$data['popup'] = 'registration';
 		}
-		$this->load->view('front/header');
+		$this->set_response($data, REST_Controller::HTTP_OK);
+
+		/*$this->load->view('front/header');
 		$this->load->view('front/home', $data);
-		$this->load->view('front/footer');
+		$this->load->view('front/footer');*/
 	}
 
 	public function set_session($lang=null)
