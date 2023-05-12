@@ -88,26 +88,30 @@ class Api extends CI_Controller {
 		}
 	}
 
-	public function subCategory($id) 
+	public function subCategory($id='') 
 	{
-		
+		// echo 1111; exit;
 		$response = $this->common_model->select_where("*", "sub_categories", array('category_id'=>$id)); 
 		if($response->num_rows()>0) {
-			foreach($response->result() as $row) {
-				$data['sub_categories'][$row->sub_id][$row->language]['name'] = $row->name; 
-				$data['sub_categories'][$row->sub_id][$row->language]['sub_id'] = $row->sub_id; 
-				$data['sub_categories'][$row->sub_id][$row->language]['image'] = $row->image; 
-				$data['sub_categories'][$row->sub_id][$row->language]['price'] = $row->price; 
-				$data['sub_categories'][$row->sub_id][$row->language]['currency'] = $row->currency; 
+			foreach($response['data']['sub_categories']->result() as $row) {
+				$data['data']['sub_categories'][$row->sub_id][$row->language]['name'] = $row->name; 
+				$data['data']['sub_categories'][$row->sub_id][$row->language]['sub_id'] = $row->sub_id; 
+				$data['data']['sub_categories'][$row->sub_id][$row->language]['image'] = $row->image; 
+				$data['data']['sub_categories'][$row->sub_id][$row->language]['price'] = $row->price; 
+				$data['data']['sub_categories'][$row->sub_id][$row->language]['currency'] = $row->currency; 
 			}
 		}
 		else{
-			$data = array();
+			$data['data']['sub_categories'] = array();
 		}
-			
-		$this->load->view('front/header');
+		// print_r ($data); exit;
+		$data['message']['code'] = '500';
+		$data['message']['msg'] = 'Category listing';
+		echo json_encode($data);exit;	
+		/*$this->load->view('front/header');
 		$this->load->view('front/sub_category', $data);
-		$this->load->view('front/footer');
+		$this->load->view('front/footer');*/
+
 		
 	}
 
@@ -120,8 +124,10 @@ class Api extends CI_Controller {
 
 	public function create_user() 
 	{
+		// echo 111111; exit;
 
 		$data['user_type']= $this->input->post('user_type');	
+		
 		$data['category_id'] = $this->input->post('category_id'); 
 		$data['sub_id'] = $this->input->post('sub_id'); 
 		$data['name']= $this->input->post('full_name');
@@ -129,11 +135,17 @@ class Api extends CI_Controller {
 		$data['phone_no']= $this->input->post('phone_no');
 		$data['password']= sha1($this->input->post('password'));
 
+		
 		$result = $this->common_model->insert_array('users', $data);
+		
+		$data['message']['code'] = '500';
+		$data['message']['msg'] = 'Category listing';
+		echo json_encode($data);exit;
 		if($result){
 			$this->session->set_flashdata('flash_message', 'User Registered successfully please login.');
 			redirect('user/sign_in', 'refresh');
 		}
+		
 	}
 	
 	public function login_user() 
