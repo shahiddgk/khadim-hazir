@@ -43,7 +43,7 @@ class Api extends CI_Controller {
 	{
 		$data=array();
 		$data['data']['category'] = $this->common_model->select_all("*", "categories")->result();
-		
+		// echo 111; exit; 
 		foreach($data['data']['category'] as $row) {
 			//echo "<pre>"; print_r($row); exit;
 
@@ -135,9 +135,9 @@ class Api extends CI_Controller {
 		$data['phone_no']= $this->input->post('phone_no');
 		$data['password']= sha1($this->input->post('password'));
 
-		
 		$result = $this->common_model->insert_array('users', $data);
-		
+		// echo $data['password']; exit;
+
 		$data['message']['code'] = '500';
 		$data['message']['msg'] = 'Category listing';
 		echo json_encode($data);exit;
@@ -150,14 +150,14 @@ class Api extends CI_Controller {
 	
 	public function login_user() 
 	{
-	
 		$email	=	$this->input->post('email');
 		$password	=	$this->input->post('password');
-			
+		
 		$data['login'] = $this->common_model->select_where("*","users", array('email'=>$email,'password'=>sha1($password)));
 		
 		if($data['login']->num_rows()>0){
-	
+		// echo 1; exit;
+
 		$row = $data['login']->row(); 
 		$data = array(
 			'user_logged_in'  =>  TRUE,
@@ -167,13 +167,15 @@ class Api extends CI_Controller {
 			'email' => $row->email,
 			'images' => $row->images
 		);
-		
+		echo json_encode($data);exit;
+
 		$this->session->set_userdata($data);
 			redirect(site_url().'welcome/update_profile');
 		}else{
 			$this->session->set_flashdata('msg','Your Email or password is wrong');
 			redirect(site_url().'user/sign_in');    
 		} 
+		
 	}
 
 	function user_logout ()
@@ -188,6 +190,7 @@ class Api extends CI_Controller {
 
 	public function update_profile() 
 	{
+		// echo 'update_profile'; exit;
 		$data['setting'] = $this->common_model->select_where("*", "users", array('id'=> $this->session->userdata('user_id')));
 		if($data['setting']->num_rows()>0){	
 			foreach($data['setting']->result() as $row) {
@@ -204,8 +207,6 @@ class Api extends CI_Controller {
 		else{
 			$data['setting'] = '';
 		}
-
-		
 		$this->load->view('front/header');
 		$this->load->view('front/user_profile',$data);
 		$this->load->view('front/footer');
@@ -236,9 +237,13 @@ class Api extends CI_Controller {
 			}
 		  }
 	  
-		  	$this->common_model->update_array(array('id' => $id), 'users', $data);
-			$this->session->set_flashdata('success', 'Your profile was updated successfully.');
-		  	redirect(base_url() . 'welcome/update_profile');
+		$this->common_model->update_array(array('id' => $id), 'users', $data);
+
+		echo json_encode($data);exit;
+			
+		$this->session->set_flashdata('success', 'Your profile was updated successfully.');
+		redirect(base_url() . 'welcome/update_profile');
+			  
 	}
 	
 	public function user_dashboard() 
@@ -252,27 +257,29 @@ class Api extends CI_Controller {
 
 	public function change_password() 
 	{
+		// echo 'change_password'; exit;
 		$old_password = $this->input->post('old_password');
 		$new_password = $this->input->post('new_password');
 		
 		$user = $this->common_model->select_where(
 		  "*",
 		  "users",
-		  array('id' => $this->session->userdata('userid'), 'password' => sha1($old_password))
+		  array('id' => $this->input->post('userid'), 'password' => $this->input->post(sha1($old_password)))
 		);
-	  
+
 		if ($user->num_rows() > 0) {
 		  $result = $this->common_model->update_array(
-			array('id' => $this->session->userdata('userid')),
+			array('id' => $this->input->post('userid')),
 			'users',
-			array('password' => sha1($new_password))
+			array('password' => $this->input->post(sha1($new_password)))
 		  );
-		  echo "ok";
-		  exit;
-		} else {
-		  echo "incorrect";
-		  exit;
+		//   echo "ok";
+		//   exit;
+		// } else {
+		//   echo "incorrect";
+		//   exit;
 		}
+		echo json_encode($result);exit;
 	}
 	  
 	public function user_type() 
