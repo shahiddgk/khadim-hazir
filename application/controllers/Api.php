@@ -105,8 +105,7 @@ class Api extends CI_Controller {
 			$data['data']['sub_categories'] = array();
 		}
 		// print_r ($data); exit;
-		$data['message']['code'] = '500';
-		$data['message']['msg'] = 'Category listing';
+		$data['data']['msg'] = 'Sub Categories listing';
 		echo json_encode($data);exit;	
 		/*$this->load->view('front/header');
 		$this->load->view('front/sub_category', $data);
@@ -138,8 +137,7 @@ class Api extends CI_Controller {
 		$result = $this->common_model->insert_array('users', $data);
 		// echo $data['password']; exit;
 
-		$data['message']['code'] = '500';
-		$data['message']['msg'] = 'Category listing';
+		$data['message']['msg'] = 'Registration successful';
 		echo json_encode($data);exit;
 		if($result){
 			$this->session->set_flashdata('flash_message', 'User Registered successfully please login.');
@@ -167,6 +165,7 @@ class Api extends CI_Controller {
 			'email' => $row->email,
 			'images' => $row->images
 		);
+		$data['message']['msg'] = 'You are now logged in';
 		echo json_encode($data);exit;
 
 		$this->session->set_userdata($data);
@@ -190,7 +189,7 @@ class Api extends CI_Controller {
 
 	public function update_profile() 
 	{
-		// echo 'update_profile'; exit;
+		echo 'update_profile'; exit;
 		$data['setting'] = $this->common_model->select_where("*", "users", array('id'=> $this->session->userdata('user_id')));
 		if($data['setting']->num_rows()>0){	
 			foreach($data['setting']->result() as $row) {
@@ -207,6 +206,7 @@ class Api extends CI_Controller {
 		else{
 			$data['setting'] = '';
 		}
+		echo json_encode($data);exit;
 		$this->load->view('front/header');
 		$this->load->view('front/user_profile',$data);
 		$this->load->view('front/footer');
@@ -238,7 +238,7 @@ class Api extends CI_Controller {
 		  }
 	  
 		$this->common_model->update_array(array('id' => $id), 'users', $data);
-
+		$data['message']['msg'] = 'success, Your profile was updated successfully.';
 		echo json_encode($data);exit;
 			
 		$this->session->set_flashdata('success', 'Your profile was updated successfully.');
@@ -258,33 +258,28 @@ class Api extends CI_Controller {
 	public function change_password() 
 	{
 		// echo 'change_password'; exit;
-		$old_password = $this->input->post('old_password');
-		$new_password = $this->input->post('new_password');
-		
-		$user = $this->common_model->select_where(
-		  "*",
-		  "users",
-		  array('id' => $this->input->post('userid'), 'password' => $this->input->post(sha1($old_password)))
-		);
+		$old_password = sha1($this->input->post('old_password'));
 
-		if ($user->num_rows() > 0) {
-		  $result = $this->common_model->update_array(
-			array('id' => $this->input->post('userid')),
-			'users',
-			array('password' => $this->input->post(sha1($new_password)))
-		  );
-		//   echo "ok";
-		//   exit;
-		// } else {
-		//   echo "incorrect";
-		//   exit;
+		$user = $this->common_model->select_where("*", "users", array('id'=>$this->input->post('user_id'), 'password'=>$old_password)); 
+
+		if ($user->num_rows() > 0){
+			$data=$user->result();
+			$data['message']['code']='Old password is matched, enter new password';
+			$new_password = sha1($this->input->post('new_password'));
+
+			$result = $this->common_model->update_array(
+			array('id' => $this->input->post('user_id')), 'users', array('password' => $new_password));
+			// if($result->num_rows() > 0){
+				$data['message']['code']='Password updated successfully';
+			// }
+		}else{
+			$data['message']['code']='Your passworrd is not matching, try another password';
 		}
-		echo json_encode($result);exit;
+		echo json_encode($data);exit;
 	}
 	  
 	public function user_type() 
 	{
-
 		$data['user_type']= $this->input->post('user_type');	
 		$data['category_id'] = $this->input->post('category_id'); 
 		$data['sub_id'] = $this->input->post('sub_id'); 
