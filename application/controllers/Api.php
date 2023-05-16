@@ -91,21 +91,24 @@ class Api extends CI_Controller {
 	public function subCategory($id='') 
 	{
 		// echo 1111; exit;
-		$response = $this->common_model->select_where("*", "sub_categories", array('category_id'=>$id)); 
-		if($response->num_rows()>0) {
-			foreach($response['data']['sub_categories']->result() as $row) {
-				$data['data']['sub_categories'][$row->sub_id][$row->language]['name'] = $row->name; 
-				$data['data']['sub_categories'][$row->sub_id][$row->language]['sub_id'] = $row->sub_id; 
-				$data['data']['sub_categories'][$row->sub_id][$row->language]['image'] = $row->image; 
-				$data['data']['sub_categories'][$row->sub_id][$row->language]['price'] = $row->price; 
-				$data['data']['sub_categories'][$row->sub_id][$row->language]['currency'] = $row->currency; 
+		$response = $this->common_model->select_where("*", "sub_categories", array('category_id'=>$id)); 		
+		$data['message']['code']=500;
+		if($response->num_rows()>0) {			
+			foreach($response->result() as $row) {
+				$data['data'][$row->sub_id][$row->language]['name'] = $row->name; 
+				$data['data'][$row->sub_id][$row->language]['sub_id'] = $row->sub_id; 
+				$data['data'][$row->sub_id][$row->language]['image'] = $row->image; 
+				$data['data'][$row->sub_id][$row->language]['price'] = $row->price; 
+				$data['data'][$row->sub_id][$row->language]['currency'] = $row->currency; 
 			}
+			$data['message']['text']="Sub Category listing";
+			$data = $response->result();
 		}
 		else{
-			$data['data']['sub_categories'] = array();
+			$data['data'] = array();
+			$data['message']['text']="No Record found";
 		}
 		// print_r ($data); exit;
-		$data['data']['msg'] = 'Sub Categories listing';
 		echo json_encode($data);exit;	
 		/*$this->load->view('front/header');
 		$this->load->view('front/sub_category', $data);
