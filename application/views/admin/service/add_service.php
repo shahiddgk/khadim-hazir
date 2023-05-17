@@ -30,7 +30,7 @@
                             <select name="category_id" data-placeholder="Choose a Category..." class="standardSelect" tabindex="1">
                                 <?php foreach($categories as $data) {?>
                                     <option value=""></option>
-                                    <option value="<?=$data['category_id']?>"><?=$data['name']?></option>                                 
+                                    <option value="<?=$data['id']?>"><?=$data['name']?></option>                                 
                                 <?php } ?>
                             </select>
                         </div>
@@ -38,39 +38,41 @@
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon">Sub Category</div>
-                                <input type="text" name="category_name" class="form-control">
+                                <input type="text" name="name" class="form-control">
                             </div>
                         </div>
 
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon">Arabic Name</div>
-                                <input type="text" name="arabic_name" class="form-control">
+                                <input type="text" name="ar_name" class="form-control">
                             </div>
                         </div>
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon">Urdu Name</div>
-                                <input type="text" name="urdu_name" class="form-control">
+                                <input type="text" name="ur_name" class="form-control">
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="input-group">
-                                <div class="input-group-addon">Price</div>
+                                <div class="input-group-addon">Price in USD</div>
                                 <input type="number" class="form-control" name="price" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="input-group">
-                                <div class="input-group-addon">currency</div>
-                                <select name="currency" class="form-control">
-                                    <option value="PKR">PKR</option>
-                                    <option value="USD">USD</option>
-                                    <option value="EUR">EUR</option>
-                                </select>
+                                <div class="input-group-addon">Price in AED</div>
+                                <input type="number" class="form-control" name="ar_price" required>
                             </div>
                         </div>
-                    <div class="form-group">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">Price in PKR</div>
+                                <input type="number" class="form-control" name="ur_price" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon">Image</div>
                                 <input type="file" name="image_file" class="form-control form-control-file" accept="image/*">

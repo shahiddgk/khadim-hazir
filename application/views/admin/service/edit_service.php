@@ -2,11 +2,11 @@
 <div class="col-lg-6">
     <div class="card">
         <div class="card-header">Edit Subcategory</div>
-        <?php foreach($sub_category as $data) ?>
+        <?php //foreach($sub_category as $data) ?>
         <div class="card-body card-block">
             <form action="<?=site_url('admin/service/update_service')?>" method="post" enctype="multipart/form-data"
                 class="">
-                <?php foreach($sub_category as $data) { ?>
+                <?php //foreach($sub_category as  $key=>$value) { ?>
                 <div class="card">
                     <div class="card-header">
                         <strong class="card-title">Select Category</strong>
@@ -16,8 +16,8 @@
                             tabindex="1">
                             <?php foreach($categories as $category) { ?>
                             <option value=""></option>
-                            <option <?php if($category['category_id'] == $data['eng']['category_id']) echo"selected"; ?>
-                                value="<?=$category['category_id']?>"><?=$category['name']?></option>
+                            <option <?php if($category['id'] == $category['id']) echo"selected"; ?>
+                                value="<?=$category['id']?>"><?=$category['name']?></option>
                             <?php } ?>
                         </select>
                     </div>
@@ -25,37 +25,42 @@
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">Sub Category</div>
-                        <input type="text" value="<?=$data['eng']['name'];?>" name="sub_category" class="form-control">
-                        <input type="hidden" value="<?=$data['eng']['sub_id'];?>" name="sub_cat_id">
+                        <?php //echo $sub_category[0]['name']; exit;?>
+                        <input type="text" value="<?=$sub_category[0]['name'];?>" name="name" class="form-control">
+                        <input type="hidden" value="<?=$sub_category[0]['id'];?>" name="id">
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">Arabic Name</div>
-                        <input type="text" value="<?=$data['arb']['name'];?>" name="arabic_name" class="form-control">
+                        <input type="text" value="<?=$sub_category[0]['ar_name'];?>" name="ar_name" class="form-control">
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">Urdu Name</div>
-                        <input type="text" value="<?=$data['urd']['name'];?>" name="urdu_name" class="form-control">
+                        <input type="text" value="<?=$sub_category[0]['ur_name'];?>" name="ur_name" class="form-control">
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="input-group">
-                        <div class="input-group-addon">Price</div>
-                        <input type="number" value="<?=$data['eng']['price'];?>" class="form-control" name="price"
+                        <div class="input-group-addon">Price in USD</div>
+                        <input type="number" value="<?=$sub_category[0]['price'];?>" class="form-control" name="price"
                             required>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="input-group">
-                        <div class="input-group-addon">currency</div>
-                        <select name="currency" class="form-control">
-                            <option value="PKR" <?=($data['eng']['currency'] == 'PKR')?'selected':''?>>PKR</option>
-                            <option value="USD" <?=($data['eng']['currency'] == 'USD')?'selected':''?>>USD</option>
-                            <option value="SAR" <?=($data['eng']['currency'] == 'SAR')?'selected':''?>>SAR</option>
-                        </select>
+                        <div class="input-group-addon">Price in AED</div>
+                        <input type="number" value="<?=$sub_category[0]['ar_price'];?>" class="form-control" name="ar_price"
+                            required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-addon">Price in PKR</div>
+                        <input type="number" value="<?=$sub_category[0]['ur_price'];?>" class="form-control" name="ur_price"
+                            required>
                     </div>
                 </div>
                 <div class="form-group">
@@ -69,7 +74,7 @@
                         <button type="submit" class="btn btn-primary btn-sm">Update</button>
                     </div>
 
-                    <?php } ?>
+                    <?php //} ?>
             </form>
         </div>
     </div>
