@@ -33,7 +33,7 @@
                         </div>
                         <div class="form-group">
                             <div class="input-group">
-                                <div class="input-group-addon">Price in UAE</div>
+                                <div class="input-group-addon">Price in AED</div>
                                 <input type="number" class="form-control" name="ar_price" required>
                             </div>
                         </div>
