@@ -27,83 +27,53 @@ class Category extends CI_Controller {
 	}
 	public function index() 
 	{
-
-		// $header_data['title'] = "Product Listing";
-		// $header_data['heading'] = "Our Brands";
-		// Getting all products
-
-		// echo base_url().'<br>';
-		// echo APPPATH.'<br>';
-		// echo PATH_DIR.'<br>';
-		// echo site_url(); exit;
-		$data['category'] = $this->common_model->select_all("*", "categories");
-
-		foreach($data['category']->result() as $row) {
-			$data['categories'][$row->category_id][$row->language]['name'] = $row->name; 
-			$data['categories'][$row->category_id][$row->language]['category_id'] = $row->category_id; 
-			$data['categories'][$row->category_id][$row->language]['image'] = $row->image; 
-			$data['categories'][$row->category_id][$row->language]['price'] = $row->price; 
-			$data['categories'][$row->category_id][$row->language]['currency'] = $row->currency; 
-		}
+		$data = $this->common_model->select_all_order_by("*", "categories", "id", "DESC");
+		//echo "<pre>"; print_r($data->result());
+		$result['categories'] = $data->result();
 		$this->load->view('admin/admin_header');
-		$this->load->view('admin/category/category',$data);
+		$this->load->view('admin/category/category',$result);
 		$this->load->view('admin/admin_footer');
 
 	}
 	
 	function insert_category()
 	{	
-		$data['category_id'] = time();
-		
-		$eng_data['category_id']  = $data['category_id'];
-		$eng_data['language'] = "eng";
-		$eng_data['name'] = $this->input->post('category_name');
-		$eng_data['price'] = $this->input->post('price');
-        $eng_data['currency'] = $this->input->post('currency');
+		$data['name'] = $this->input->post('name');
+		$data['ar_name'] = $this->input->post('ar_name');
+		$data['ur_name'] = $this->input->post('ur_name');
+		$data['price'] = $this->input->post('price');
+		$data['ar_price'] = $this->input->post('ar_price');
+		$data['ur_price'] = $this->input->post('ur_price');
 		if($_FILES['image_file']['name']!=''){
-
 			$img   =   $_FILES['image_file']['name'];
 			$image =   str_replace(" ","-",strtolower(time().'cat_'.$img));
-			$eng_data['image']  =  $image;
+			$data['image']  =  $image;
 			$temp   =  $_FILES['image_file']['tmp_name'];       
 			if (!file_exists(FCPATH.'uploads/category')) {
 				mkdir(FCPATH.'uploads/category', 0755, true);
 			} 
 			$path= FCPATH.'uploads/category/'.$image;
 			move_uploaded_file($temp,$path);
-
-		}
-		$this->common_model->insert_array('categories', $eng_data);
-		$data['language'] = "arb";
-		$data['name'] = $this->input->post('arabic_name');
-		$this->common_model->insert_array('categories', $data);
-		$data['language'] = "urd";
-		$data['name'] = $this->input->post('urdu_name');
+		}		
 		$this->common_model->insert_array('categories', $data);
 
-		$this->session->set_userdata('success',$data['name']);
-		
+		$this->session->set_userdata('success',$data['name']);		
 		redirect(site_url().'admin/category'); 
 	}
 
 	function delete_category($id)
 	{
-		$this->common_model->delete_where(array('category_id'=>$id), 'categories');
+		$this->common_model->delete_where(array('id'=>$id), 'categories');
 		// $this->common_model->delete_where(array('category_id'=>$id), 'category_img');
 		redirect(site_url().'admin/category');  
 	}
 
 	function edit_category($id)
 	{
-		$data['category'] = $this->common_model->select_where("*", "categories", array('category_id'=>$id));
-		foreach($data['category']->result() as $row) {
-			$data['categories'][$row->category_id][$row->language]['name'] = $row->name; 
-			$data['categories'][$row->category_id][$row->language]['category_id'] = $row->category_id; 
-			$data['categories'][$row->category_id][$row->language]['price'] = $row->price; 
-			$data['categories'][$row->category_id][$row->language]['currency'] = $row->currency; 
-		}
+		$data= $this->common_model->select_where("*", "categories", array('id'=>$id));
+		$result['categories'] = $data->result();
 		$this->load->view('admin/admin_header');
-		$this->load->view('admin/category/edit_category',$data);
+		$this->load->view('admin/category/edit_category',$result);
 		$this->load->view('admin/admin_footer');
 		 
 	}
@@ -112,32 +82,23 @@ class Category extends CI_Controller {
 	{	
 		// echo  "<pre>"; print_r($_POST); 
 		// echo  "<pre>"; print_r($_FILES);  exit();
-		$id = $this->input->post('category_id');
-		$data['name'] = $this->input->post('category_name');
+		$id = $this->input->post('id');
+		$data['name'] = $this->input->post('name');
+		$data['ar_name'] = $this->input->post('ar_name');
+		$data['ur_name'] = $this->input->post('ur_name');
 		$data['price'] = $this->input->post('price');
-		$data['currency'] = $this->input->post('currency');
-	
-		$this->common_model->update_array(array('category_id'=>$id,'language'=>'eng'), 'categories', $data);
-		
-		$data['name'] = $this->input->post('arabic_name');
-		$this->common_model->update_array(array('category_id'=>$id,'language'=>'arb'), 'categories', $data);
-		
-		$data['name'] = $this->input->post('urdu_name');
-		$this->common_model->update_array(array('category_id'=>$id,'language'=>'urd'), 'categories', $data);
-		
-
-
+		$data['ar_price'] = $this->input->post('ar_price');
+		$data['ur_price'] = $this->input->post('ur_price');		
 		if($_FILES['image_file']['name']!=''){
-
 			$img   =   $_FILES['image_file']['name'];
 			$image =   str_replace("category_".time(),$img,$img);
-			$eng_data['image']  =  $image;
+			$data['image']  =  $image;
 			$temp   =  $_FILES['image_file']['tmp_name'];
 			$path= PATH_DIR.'uploads/category/'.$image;
 			move_uploaded_file($temp,$path);
-			$this->common_model->update_array(array('category_id'=>$id,'language'=>'eng'), 'categories', $eng_data);
-
 		}
+		$this->common_model->update_array(array('id'=>$id), 'categories', $data);
+
 		$this->session->set_userdata('success',$data['name']);
 		
 		redirect(site_url().'admin/category'); 

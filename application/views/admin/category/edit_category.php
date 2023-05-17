@@ -11,44 +11,46 @@
     <div class="card">
         <strong class="card-header">Edit Categories</strong>
         <div class="card-body card-block">
-            <?php foreach($categories as $data) { ?>
+            <?php foreach($categories as $key=>$value) {  ?>
             <form action="<?=site_url('admin/category/update_category')?>" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">Category Name</div>
-                        <input type="text" value="<?=$data['eng']['name'];?>" name="category_name" class="form-control">
-                        <input type="hidden" value="<?=$data['eng']['category_id'];?>" name="category_id">
+                        <input type="text" value="<?=$value->name;?>" name="name" class="form-control">
+                        <input type="hidden" value="<?=$value->id;?>" name="id">
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">Arabic Name</div>
-                        <input type="text" value="<?=$data['arb']['name'];?>" name="arabic_name" class="form-control">
+                        <input type="text" value="<?=$value->ar_name;?>" name="ar_name" class="form-control">
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">Urdu Name</div>
-                        <input type="text" value="<?=$data['urd']['name'];?>" name="urdu_name" class="form-control">
+                        <input type="text" value="<?=$value->ur_name;?>" name="ur_name" class="form-control">
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="input-group">
-                        <div class="input-group-addon">Price</div>
-                        <input type="number" value="<?=$data['eng']['price'];?>" class="form-control" name="price"
+                        <div class="input-group-addon">Price USD</div>
+                        <input type="number" value="<?=$value->price;?>" class="form-control" name="price" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-addon">Price AED</div>
+                        <input type="number" value="<?=$value->ar_price;?>" class="form-control" name="ar_price"
                             required>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="input-group">
-                        <div class="input-group-addon">currency</div>
-                        <select name="currency" class="form-control">
-                            <option value="PKR" <?=($data['eng']['currency'] == 'PKR')?'selected':''?>>PKR</option>
-                            <option value="USD" <?=($data['eng']['currency'] == 'USD')?'selected':''?>>USD</option>
-                            <option value="SAR" <?=($data['eng']['currency'] == 'SAR')?'selected':''?>>SAR</option>
-                        </select>
+                        <div class="input-group-addon">Price PKR</div>
+                        <input type="number" value="<?=$value->ur_price?>" class="form-control" name="ur_price" required>
                     </div>
-                </div>
+                </div>                
 
                 <div class="form-group">
                     <div class="input-group">
