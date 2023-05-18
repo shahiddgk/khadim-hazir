@@ -36,6 +36,7 @@ class Welcome extends CI_Controller {
 
 	public function setting() 
 	{
+		// echo 11111; exit;
 		$data['setting'] = $this->common_model->select_all("*", "admin");
 		foreach($data['setting']->result() as $row) {
 			$data['name'] = $row->name;
@@ -240,7 +241,10 @@ class Welcome extends CI_Controller {
 
 	public function settings()
 	{
-		$data['settings'] = $this->common_model->select_where("terms, price,arabic_terms", "settings", array('id'=>1))->row();
+		// echo 333; exit;
+		$data['settings'] = $this->common_model->select_where("*", "settings", array('id'=>1))->result_array();
+
+		// echo "<pre>"; print_r($data); exit;
 		$this->load->view('admin/admin_header');
 		$this->load->view('admin/settings', $data);
 		$this->load->view('admin/admin_footer');
@@ -248,11 +252,13 @@ class Welcome extends CI_Controller {
 
 	public function update_settings()
 	{
-		$data['price'] = $this->input->post('package_price');
-		$data['arabic_terms'] = $this->input->post('arabic_terms');
+		// echo 1111; exit;
 		$data['terms'] = $this->input->post('terms');
-		$data['arabic_privacy'] = $this->input->post('arabic_privacy');
-		$data['privacy_policy'] = $this->input->post('privacy');
+		$data['ar_terms'] = $this->input->post('ar_terms');
+		$data['ur_terms'] = $this->input->post('ur_terms');
+		$data['privacy_policy'] = $this->input->post('privacy_policy');
+		$data['ar_policy'] = $this->input->post('ar_policy');
+		$data['ur_policy'] = $this->input->post('ur_policy');
 		$this->common_model->update_array(array('id'=>1), 'settings', $data);
 		redirect(site_url().'admin/welcome/settings'); 
 	}

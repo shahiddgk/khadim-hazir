@@ -28,21 +28,11 @@ class Service extends CI_Controller {
 	}
 	public function index() 
 	{
-		// $data['category'] = $this->common_model->select_all("*", "sub_categories");
-
-		$data = $this->common_model->select_all_order_by("*", "sub_categories", "id", "DESC");
+		// $data['category'] = $this->common_model->select_all("*", "categories");
+		$data = $this->common_model->join_two_tab_witout_left("categories.name category_name, sub_categories.*", "sub_categories", "categories", "on (sub_categories.category_id=categories.id)", "categories.name", "ASC");
 		$result['sub_categories'] = $data->result();
 
-		// foreach($data['category']->result() as $row) {
-		// 	$data['sub_categories'][$row->sub_id][$row->language]['name'] = $row->name; 
-		// 	$data['sub_categories'][$row->sub_id][$row->language]['category_id'] = $row->category_id; 
-		// 	$data['sub_categories'][$row->sub_id][$row->language]['sub_id'] = $row->sub_id; 
-		// 	$data['sub_categories'][$row->sub_id][$row->language]['category_name'] = $this->db->select('name')->from('categories')->where(array("category_id"=>$row->category_id,"language"=>'eng'))->get()->row_array();
-		// 	$data['sub_categories'][$row->sub_id][$row->language]['image'] = $row->image; 
-		// 	$data['sub_categories'][$row->sub_id][$row->language]['price'] = $row->price; 
-		// 	$data['sub_categories'][$row->sub_id][$row->language]['currency'] = $row->currency; 
-		// }
-
+		// echo "<pre>"; print_r($result); exit;
 		$this->load->view('admin/admin_header');
 		$this->load->view('admin/service/service_listing',$result);
 		$this->load->view('admin/admin_footer');
@@ -100,7 +90,6 @@ class Service extends CI_Controller {
 
 	function delete_service($id) 
 	{
-
 		$this->common_model->delete_where(array('id'=>$id), 'sub_categories');
 		redirect(site_url().'admin/service');  
 	}
@@ -108,25 +97,15 @@ class Service extends CI_Controller {
 	function edit_service($id, $sub_cat)
 	{
 		//echo 111; exit;
-		$data['categories'] = $this->common_model->select_where("*", "categories", array('id'=>$id) )->result_array();
+		$data['categories'] = $this->common_model->select_all("id,name", "categories")->result_array();
 		$data['sub_category'] = $this->common_model->select_where("*", "sub_categories", array('id'=>$sub_cat))->result_array();
-		// $result['category'] = $data->result();
-		// echo "<pre>"; print_r($data);exit;
-		// foreach($data['category']->result() as $row) {
-		// 	$data['category'][$row->sub_id][$row->language]['name'] = $row->name; 
-		// 	$data['category'][$row->sub_id][$row->language]['category_id'] = $row->category_id; 
-		// 	// $data['category'][$row->sub_id][$row->language]['sub_id'] = $row->sub_id; 
-		// 	$data['category'][$row->sub_id][$row->language]['price'] = $row->price; 
-		// 	// $data['category'][$row->sub_id][$row->language]['currency'] = $row->currency; 
-		// }
 		$this->load->view('admin/admin_header');
 		$this->load->view('admin/service/edit_service',$data);
 		$this->load->view('admin/admin_footer');
 	}
 
 	function update_service() 
-	{	
-		
+	{			
 		$id = $this->input->post('id');
 		$data['name'] = $this->input->post('name');
 		$data['ar_name'] = $this->input->post('ar_name');
@@ -135,15 +114,6 @@ class Service extends CI_Controller {
 		$data['ar_price'] = $this->input->post('ar_price');
 		$data['ur_price'] = $this->input->post('ur_price');
 		$data['category_id'] = $this->input->post('category_id');
-	
-		// $this->common_model->update_array(array('sub_id'=>$id,'language'=>'eng'), 'sub_categories', $data);
-		
-		// $data['name'] = $this->input->post('arabic_name');
-		// $this->common_model->update_array(array('sub_id'=>$id,'language'=>'arb'), 'sub_categories', $data);
-		
-		// $data['name'] = $this->input->post('urdu_name');
-		// $this->common_model->update_array(array('sub_id'=>$id,'language'=>'urd'), 'sub_categories', $data);
-
 		if($_FILES['image_file']['name']!=''){
 
 			$img   =   $_FILES['image_file']['name'];

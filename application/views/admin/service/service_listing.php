@@ -13,17 +13,18 @@
                 <div class="card-body">
                     <table id="bootstrap-data-table-export" class="table table-striped table-bordered">
                         <thead>
-                                <tr>
+                            <tr>
                                 <th scope="col">#</th>
-                                    <th>Sub Category</th>
-                                    <th>Arabic Name</th>
-                                    <th>Urdu Name</th>
-                                    <th>Price USD</th>
-                                    <th>Price AED</th>
-                                    <th>Price PKR</th>
-                                    <th>Image</th>
-                                    <th>Action</th>
-                                </tr>
+                                <th>Category</th>
+                                <th>Sub Category</th>
+                                <th>Arabic Name</th>
+                                <th>Urdu Name</th>
+                                <th>Price USD</th>
+                                <th>Price AED</th>
+                                <th>Price PKR</th>
+                                <th>Image</th>
+                                <th>Action</th>
+                            </tr>
                             </thead>
                             <tbody>
                             <?php if(isset($sub_categories)) {
@@ -32,19 +33,20 @@
                                 foreach($sub_categories as $key=>$value) { ?>
                                 <tr>
                                 <th scope="row"><?=$srn ?></th>
-                                    <td><?=$value->name?></td>
-                                    <td><?=$value->ar_name?></td>
-                                    <td><?=$value->ur_name?></td>
-                                    <td><?=$value->price?></td>                                    
-                                    <td><?=$value->ar_price?></td> 
-                                    <td><?=$value->ur_price?></td>
-                                    <?php if(isset($value->image)){ ?>
-                                    <td><img src="<?=base_url();?>uploads/category/<?=$value->image;?>" class="img-responsive" alt="sub-category" height="auto" width="50"></td>
-                                    <?php } else{ ?>
-                                    <td></td>
-                                    <?php } ?>
-                                    <td><a href="<?=site_url("admin/service/edit_service/").$value->category_id.'/'.$value->id?>"> <button type="button" class="btn btn-outline-primary btn-sm">Edit</button></a> <a href="<?=site_url("admin/service/delete_service/").$value->id?>"> <button type="button" class="btn btn-outline-danger btn-sm">Delete</button></a></td>
-                                </tr>
+                                <td><?=$value->category_name?></td>
+                                <td><?=$value->name?></td>
+                                <td><?=$value->ar_name?></td>
+                                <td><?=$value->ur_name?></td>
+                                <td><?=$value->price?></td>                                    
+                                <td><?=$value->ar_price?></td> 
+                                <td><?=$value->ur_price?></td>
+                                <?php if(isset($value->image)){ ?>
+                                <td><img src="<?=base_url();?>uploads/category/<?=$value->image;?>" class="img-responsive" alt="sub-category" height="auto" width="50"></td>
+                                <?php } else{ ?>
+                                <td></td>
+                                <?php } ?>
+                                <td><a href="<?=site_url("admin/service/edit_service/").$value->category_id.'/'.$value->id?>"> <button type="button" class="btn btn-outline-primary btn-sm">Edit</button></a> <a href="<?=site_url("admin/service/delete_service/").$value->id?>"> <button type="button" class="btn btn-outline-danger btn-sm">Delete</button></a></td>
+                            </tr>
                             <?php $srn++; } } ?>
                                 
                             </tbody>

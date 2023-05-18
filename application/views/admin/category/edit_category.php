@@ -20,6 +20,7 @@
                         <input type="hidden" value="<?=$value->id;?>" name="id">
                     </div>
                 </div>
+                
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">Arabic Name</div>
