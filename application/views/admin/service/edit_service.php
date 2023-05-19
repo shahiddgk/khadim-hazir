@@ -16,7 +16,7 @@
                             tabindex="1">
                             <?php foreach($categories as $category) { ?>
                             <option value=""></option>
-                            <option <?php if($category['id'] == $category['id']) echo"selected"; ?>
+                            <option <?php if($sub_category['0']['category_id'] == $category['id']) echo"selected"; ?>
                                 value="<?=$category['id']?>"><?=$category['name']?></option>
                             <?php } ?>
                         </select>

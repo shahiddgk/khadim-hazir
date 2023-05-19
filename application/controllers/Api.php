@@ -43,9 +43,10 @@ class Api extends CI_Controller {
 	{
 		$data=array();
 		$data['data']['category'] = $this->common_model->select_all("*", "categories")->result();
-		// echo 111; exit; 
+		// echo 111; exit;
+		echo "<pre>"; print_r($data['data']['category']); exit; 
 		foreach($data['data']['category'] as $row) {
-			//echo "<pre>"; print_r($row); exit;
+			echo "<pre>"; print_r($row); exit;
 
 			$data['data']['category'][$row->category_id][$row->language]['name'] = $row->name; 
 			$data['data']['category'][$row->category_id][$row->language]['category_id'] = $row->category_id; 

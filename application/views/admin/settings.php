@@ -26,13 +26,13 @@
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">Terms & Conditions(Arabic)</div>
-                        <textarea name="ar_terms" id="textarea-arabic" class="form-control"><?php echo $settings[0]['ar_terms']; ?></textarea>
+                        <textarea name="ar_terms" type="text" id="textarea-arabic" class="form-control"><?php echo $settings[0]['ar_terms']; ?></textarea>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">Terms & Conditions(Urdu)</div>
-                        <textarea name="ur_terms" id="textarea-urdu" class="form-control"><?php echo $settings[0]['ur_terms']; ?></textarea>
+                        <textarea name="ur_terms" type="text" id="textarea-urdu" class="form-control"><?php echo $settings[0]['ur_terms']; ?></textarea>
                     </div>
                 </div> 
                 <div class="form-group">
