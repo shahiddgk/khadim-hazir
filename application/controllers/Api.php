@@ -39,45 +39,14 @@ class Api extends CI_Controller {
 	}
 	
 	// Loading home page on front end.
-	public function index($subcate='') 
+	public function index() 
 	{
-		$data=array();
-		$data = $this->common_model->select_all("*", "categories")->result();
-		// echo 111; exit;
-		// foreach($data['data']['category'] as $row) {
-		// 	//echo "<pre>"; print_r($row); exit;
-
-		// 	$data['data']['category'][$row->category_id][$row->language]['name'] = $row->name; 
-		// 	$data['data']['category'][$row->category_id][$row->language]['category_id'] = $row->category_id; 
-		// 	$data['data']['category'][$row->category_id][$row->language]['image'] = $row->image; 
-		// 	$data['data']['category'][$row->category_id][$row->language]['price'] = $row->price; 
-		// 	$data['data']['category'][$row->category_id][$row->language]['currency'] = $row->currency; 
-		// }
-        
-        
-		// $data['subcategories']  = $this->common_model->select_where_ASC_DESC("table_id, name, image_name, region_id", "brands", array('language'=>$this->language), "priority", "ASC");
-		// $data['subname'] = "";
-		// if($subcate!=""){
-		// 	$data['subname'] = $this->common_model->select_single_field("name" ,"brands", array('region_id'=>$subcate, 'language'=>$this->language));
-		// }
-		
-		// $data['data']['subcateid'] = $subcate;
-		// echo "<pre>"; print_r($data); exit; 
-
-		// $data['data']['popup'] = '';
-		// if($this->session->userdata('user_logged_in') && $subcate!=''){
-		// 	if($this->session->userdata('paymentstatus')=='unpaid'){
-		// 		$data['data']['popup'] = 'subcription';
-		// 	}
-		// }
-		// else if($subcate!=''){
-		// 	$data['data']['popup'] = 'registration';
-		// }
-		
-		//$data['data'] = $data;
-		$data['message']['code'] = '500';
-		$data['message']['msg'] = 'Category listing';
-		echo json_encode($data,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+		$result=array();
+		$data = $this->common_model->select_all("*", "categories")->result();		
+		$result['data'] = $data;
+		$result['message']['code'] = '500';
+		$result['message']['msg'] = 'Category listing';
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 		// echo json_encode($data);exit;
 		/*$this->load->view('front/header');
 		$this->load->view('front/home', $data);
@@ -90,69 +59,46 @@ class Api extends CI_Controller {
 			$this->session->set_userdata('language', $lang);
 		}
 	}
-
-	public function subCategory() 
+	public function subCategoryByCategory($id='')
 	{
-		// echo 1111; exit;
-		$response = $this->common_model->select_all("*", "sub_categories"); 	
-		if($response->num_rows()>0) {			
-			// foreach($response->result() as $row) {
-			// 	$data['data'][$row->sub_id][$row->language]['name'] = $row->name; 
-			// 	$data['data'][$row->sub_id][$row->language]['sub_id'] = $row->sub_id; 
-			// 	$data['data'][$row->sub_id][$row->language]['image'] = $row->image; 
-			// 	$data['data'][$row->sub_id][$row->language]['price'] = $row->price; 
-			// 	$data['data'][$row->sub_id][$row->language]['currency'] = $row->currency; 
-			// }
-			$data = $response->result();
-			$data['message']['code']='500';
-			$data['message']['text']="Sub Category listing";
-			// echo"<pre>";print_r($data);exit;	
-		}else{
-			$data['data'] = array();
-			$data['message']['text']="No Record found";
-		}
-		echo json_encode($data,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
-		// echo json_encode($data);exit;	
-		/*$this->load->view('front/header');
-		$this->load->view('front/sub_category', $data);
-		$this->load->view('front/footer');*/
-
-		
-	}
-
-	public function ajax_subcategory($id='')
-	{
-		$id = $this->input->post('category_id');
+		$data =array();
 		$response = $this->common_model->select_where("*", "sub_categories", array('category_id'=>$id)); 
+		$result['message']['code']='500';
 		if($response->num_rows()>0){
-			$data = $response->result();
-			$data['message']['code']='500';
-			$data['message']['text']="Sub Category listing on category_id";
+			$data = $response->result();			
+			$result['message']['text']="Sub Category listing on category_id";
+			
 		}else{
-			$data['data'] = array();
-			$data['message']['text']="No Record found";
+			$result['data'] = array();
+			$result['message']['text']="No Record found";
 		}
-		// echo"<pre>";print_r($data);exit;
-        echo json_encode($data); exit;
+		$result['data']=$data;
+		echo json_encode($result); exit;
 	}
 
-	public function subcategory_id($id='')
+	public function subCategory($id='')
 	{
-		$id = $this->input->post('id');
-		$response = $this->common_model->select_where("*", "sub_categories", array('id'=>$id)); 
+		$data=array();
+		if($id==''){
+			$response = $this->common_model->select_all("*", "sub_categories");
+		}else{
+			$response = $this->common_model->select_where("*", "sub_categories", array('id'=>$id)); 
+		}
 		if($response->num_rows()>0){
 			$data = $response->result();
-			$data['message']['code']='500';
-			$data['message']['text']="Sub Category listing on Id";
+			$result['message']['code']='500';
+			$result['message']['text']="Sub Category listing on Id";
+			
 		}else{
-			$data['data'] = array();
-			$data['message']['text']="No Record found";
+			$result['data'] = array();
+			$result['message']['text']="No Record found";
 		}
+		$result['data']=$data;
 		// echo"<pre>";print_r($data);exit;
-        echo json_encode($data); exit;
+        echo json_encode($result); exit;
 	}
 
-	public function create_user() 
+	public function createUser() 
 	{
 		// echo 111111; exit;
 		$data['user_type']= $this->input->post('user_type');	
@@ -162,31 +108,26 @@ class Api extends CI_Controller {
 		$data['password']= sha1($this->input->post('password'));
 		$data['status'] = 'active';
 
-		$result = $this->common_model->select_where("*", "users", array('email'=>$this->input->post('email')));
-
-		if($result->num_rows()>0){
-			$data['message']['code']='500';
-			$data['message']['msg']='Already signed up';
-			echo json_encode($data);exit;
+		$res = $this->common_model->select_where("*", "users", array('email'=>$this->input->post('email')));
+		//echo"<pre>";print_r($result);exit;
+		if($res->num_rows()>0){
+			$result['message']['code']='500';
+			$result['message']['msg']='Already signed up';
 		}else{
 			$result = $this->common_model->insert_array('users', $data);
 			if($result){
-			$data['message']['code']='500';
-			$data['message']['msg']='Registration successful';
+				$result['message']['code']='500';
+				$result['message']['msg']='Registration successful';
 			}else{
-			$data['message']['error']='user registration error';
+				$result['message']['error']='user registration error';
 			}
-		echo json_encode($data);exit;
 		}
-		// echo"<pre>";print_r($result);exit;
-		if($result){
-			$this->session->set_flashdata('flash_message', 'User Registered successfully please login.');
-			redirect('user/sign_in', 'refresh');
-		}
-		
+		unset($data['password']);
+		$result['data'] = [$data];
+		echo json_encode($result);exit;		
 	}
 	
-	public function login_user() 
+	public function loginUser() 
 	{
 		$email	=	$this->input->post('email');
 		$password	=	$this->input->post('password');
@@ -204,9 +145,10 @@ class Api extends CI_Controller {
 			'email' => $row->email,
 			'images' => $row->images
 		);
-		$data['message']['code']='500';
-		$data['message']['msg'] = 'You are now logged in';
-		echo json_encode($data);exit;
+		$result['message']['code']='500';
+		$result['message']['msg'] = 'You are now logged in';
+		$result['data']=[$data];
+		echo json_encode($result);exit;
 
 		$this->session->set_userdata($data);
 			redirect(site_url().'welcome/update_profile');
@@ -220,7 +162,7 @@ class Api extends CI_Controller {
 		
 	}
 
-	function user_logout ()
+	function userLogout ()
 	{
         $this->session->unset_userdata('user_logged_in');
         $this->session->unset_userdata('user_id');
@@ -230,12 +172,12 @@ class Api extends CI_Controller {
         redirect(site_url().'welcome'); 
 	}
 
-	public function profile_data($id='') 
+	public function profileData() 
 	{
 		// echo 'update_profile'; exit;
-		$result = $this->common_model->select_where("*", "users", array('id'=> $this->input->post('id')));
+		$result = $this->common_model->select_where("id, google_id, name, email,phone_no, images,user_type", "users", array('id'=> $this->input->post('id')));
 		if($result->num_rows()>0){	
-			$data=$result->result();
+			$data['data']=$result->result();
 			// echo "<pre>"; print_r($data); exit;
 			$data['message']['code']='500';
 			$data['message']['msg'] = 'you can update your profile from here';
@@ -244,13 +186,14 @@ class Api extends CI_Controller {
 			$data['setting'] = '';
 			$data['message']['msg'] = 'Loading profile unsuccessful';
 		}
+		// unset($data['data']['password']);
 		echo json_encode($data);exit;
 		// $this->load->view('front/header');
 		// $this->load->view('front/user_profile',$data);
 		// $this->load->view('front/footer');
 	}
 
-	public function update() 
+	public function updateProfile() 
 	{
 		$id = $this->input->post('id');
 	  	$data['name']= $this->input->post('name');
@@ -272,61 +215,47 @@ class Api extends CI_Controller {
 			  $data['images'] = $filename;
 			}
 		  }
-		$result = $this->common_model->select_where("*", "users", array('id'=>$id));
-	    if($result->num_rows()>0){
+		$res = $this->common_model->select_where("*", "users", array('id'=>$id));
+	    if($res->num_rows()>0){
 			$this->common_model->update_array(array('id' => $id), 'users', $data);
-			$data['message']['code']='500';
-			$data['message']['msg'] = 'success, Your profile was updated successfully.';
-			echo json_encode($data);exit;
+			$result['message']['code']='500';
+			$result['message']['msg'] = 'Success, Your profile updated successfully.';
 		}else{
-			$data['message']['msg'] = 'Failure, Your profile was not updated.';
-			echo json_encode($data);exit;
+			$result['message']['msg'] = 'Failure, Your profile is not updated as you are not registered user.';
+			
 		}
-		$this->session->set_flashdata('success', 'Your profile was updated successfully.');
-		redirect(base_url() . 'welcome/update_profile');
-			  
+		unset($data['password']);
+		$result['data'] = [$data];
+		echo json_encode($result);exit;			  
 	}
 	
-	public function user_dashboard() 
+	public function userDashboard() 
 	{
 		$this->load->view('front/header');
 		$this->load->view('user/dashboard');
 		$this->load->view('front/footer');
 	}
 
-	public function change_password() 
+	public function changePassword() 
 	{
 		// echo 'change_password'; exit;
 		$old_password = sha1($this->input->post('old_password'));
-		$user = $this->common_model->select_where("*", "users", array('id'=>$this->input->post('id'), 'password'=>$old_password)); 
+		$user = $this->common_model->select_where("id, name, email, phone_no, images, user_type", "users", array('id'=>$this->input->post('id'), 'password'=>$old_password)); 
 
 		if ($user->num_rows() > 0){
-			$data=$user->result();
-			$data['message']['code']='Old password is matched, enter new password';
+			$result['data']=$user->result();
+			$result['message']['code']='Old password is matched, enter new password';
 			$new_password = sha1($this->input->post('new_password'));
-
-			$result = $this->common_model->update_array(
-			array('id' => $this->input->post('id')), 'users', array('password' => $new_password));
-			$data['message']['code']='500';
-			$data['message']['msg']='Password updated successfully';
+			$this->common_model->update_array(array('id' => $this->input->post('id')), 'users', array('password' => $new_password));
+			$result['message']['code']='500';
+			$result['message']['msg']='Password updated successfully';
 			
 		}else{
-			$data['message']['code']='Your passworrd is not matching, try another password';
+			$result['data']= array();
+			$result['message']['code']='Your passworrd is not matching, try another password';
 		}
-		echo json_encode($data);exit;
-	}
-	  
-	public function user_type() 
-	{
-		$data['user_type']= $this->input->post('user_type');	
-		$data['category_id'] = $this->input->post('category_id'); 
-		$data['sub_id'] = $this->input->post('sub_id'); 
-
-		$result = $this->common_model->insert_array('users', $data);
-		if($result){
-			$this->session->set_flashdata('flash_message', 'User Registered successfully please login.');
-			redirect('user/sign_in', 'refresh');
-		}
-	}
+		echo json_encode($result);exit;
+	}	  
+	
 	
 }
