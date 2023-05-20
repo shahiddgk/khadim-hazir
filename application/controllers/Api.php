@@ -42,11 +42,29 @@ class Api extends CI_Controller {
 	public function index() 
 	{
 		$result=array();
-		$data = $this->common_model->select_all("*", "categories")->result();		
-		$result['data'] = $data;
+		$data = $this->common_model->select_all("*", "categories")->result();
+	
+		// echo "<pre>"; print_r($data); exit;
+
+		foreach($data as $row){
+			$en_array[]=$row;
+			$data['name']=$row->name;
+
+			$ur_array[]=$row;
+			$ur_array['name']=$row->ur_name;
+
+			$ar_array[]=$row;
+			$ar_array['name']=$row->ar_name;
+		}
+		$data = array_merge( $result, $en_array);
+		$data = array_merge( $data, $ur_array);
+		$data = array_merge( $data, $ar_array);
+		echo "<pre>"; print_r($data); exit;
+
+		// $result['ar'] = $data;
 		$result['message']['code'] = '500';
 		$result['message']['msg'] = 'Category listing';
-		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+		echo json_encode($data,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 		// echo json_encode($data);exit;
 		/*$this->load->view('front/header');
 		$this->load->view('front/home', $data);
