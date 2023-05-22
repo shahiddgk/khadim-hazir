@@ -172,7 +172,22 @@ class Api extends CI_Controller {
 		$data['phone_no']= $this->input->post('phone_no');
 		$data['category_id']= $this->input->post('category_id');
 		$data['password']= sha1($this->input->post('password'));
+		// $data['image']= $this->input->post('image');
 		$data['status'] = 'active';
+		if (isset($_FILES['image'])) {
+			$file = $_FILES['image'];
+			if ($file['error'] == UPLOAD_ERR_OK) {
+			  $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+	  
+			  $filename = uniqid() . '.' . $ext;
+	  
+			  $destination = "images/$filename";
+	  
+			  move_uploaded_file($file['tmp_name'], $destination);
+	  
+			  $data['image'] = $filename;
+			}
+		}
 
 		$res = $this->common_model->select_where("*", "users", array('email'=>$this->input->post('email')));
 		//echo"<pre>";print_r($result);exit;
@@ -279,13 +294,13 @@ class Api extends CI_Controller {
 	  
 			  $filename = uniqid() . '.' . $ext;
 	  
-			  $destination = "image/$filename";
+			  $destination = "images/$filename";
 	  
 			  move_uploaded_file($file['tmp_name'], $destination);
 	  
 			  $data['image'] = $filename;
 			}
-		  }
+		}
 		$res = $this->common_model->select_where("*", "users", array('id'=>$id));
 	    if($res->num_rows()>0){
 			$this->common_model->update_array(array('id' => $id), 'users', $data);
