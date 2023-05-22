@@ -42,29 +42,32 @@ class Api extends CI_Controller {
 	public function index() 
 	{
 		$result=array();
-		$data = $this->common_model->select_all("*", "categories")->result();
-	
-		// echo "<pre>"; print_r($data); exit;
-
-		foreach($data as $row){
-			$en_array[]=$row;
-			$data['name']=$row->name;
-
-			$ur_array[]=$row;
-			$ur_array['name']=$row->ur_name;
-
-			$ar_array[]=$row;
-			$ar_array['name']=$row->ar_name;
+		$data = $this->common_model->select_all("*", "categories")->result();	
+		//echo "<pre>"; print_r($data); exit;
+		foreach($data as $key=>$value){
+			$en_array[$key]['id']=$value->id;
+			$en_array[$key]['name']=$value->name;
+			$en_array[$key]['image']=$value->image;
+			$en_array[$key]['price']=$value->price;
+			$en_array[$key]['added_date']=$value->added_date;
+			$ur_array[$key]=$en_array[$key];
+			$ur_array[$key]['name']=$value->ur_name;
+			$ur_array[$key]['price']=$value->ur_price;
+			$ar_array[$key]=$en_array[$key];
+			$ar_array[$key]['name']=$value->ar_name;
+			$ar_array[$key]['price']=$value->ar_price;
 		}
-		$data = array_merge( $result, $en_array);
-		$data = array_merge( $data, $ur_array);
-		$data = array_merge( $data, $ar_array);
-		echo "<pre>"; print_r($data); exit;
+		$result['data']['en'] = $en_array;
+		$result['data']['ur'] = $ur_array;
+		$result['data']['ar'] = $ar_array;
+		
+		//echo "<pre>"; print_r($result); exit;
 
 		// $result['ar'] = $data;
 		$result['message']['code'] = '500';
+		$result['message']['success'] = true;
 		$result['message']['msg'] = 'Category listing';
-		echo json_encode($data,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 		// echo json_encode($data);exit;
 		/*$this->load->view('front/header');
 		$this->load->view('front/home', $data);
@@ -83,14 +86,34 @@ class Api extends CI_Controller {
 		$response = $this->common_model->select_where("*", "sub_categories", array('category_id'=>$id)); 
 		$result['message']['code']='500';
 		if($response->num_rows()>0){
-			$data = $response->result();			
-			$result['message']['text']="Sub Category listing on category_id";
+			$data = $response->result();
+
+			foreach($data as $key=>$value){
+				$en_array[$key]['id']=$value->id;
+				$en_array[$key]['category_id']=$value->category_id;				
+				$en_array[$key]['name']=$value->name;
+				$en_array[$key]['image']=$value->image;
+				$en_array[$key]['price']=$value->price;
+				$en_array[$key]['added_date']=$value->added_date;
+
+				$ur_array[$key]=$en_array[$key];
+				$ur_array[$key]['name']=$value->ur_name;
+				$ur_array[$key]['price']=$value->ur_price;
+				$ar_array[$key]=$en_array[$key];
+				$ar_array[$key]['name']=$value->ar_name;
+				$ar_array[$key]['price']=$value->ar_price;
+			}
+			$result['data']['en'] = $en_array;
+			$result['data']['ur'] = $ur_array;
+			$result['data']['ar'] = $ar_array;
+			$result['data']['message']['success'] = true;			
+			$result['data']['message']['text']="Sub Category listing on category_id";
 			
 		}else{
 			$result['data'] = array();
+			$result['message']['success'] = false;
 			$result['message']['text']="No Record found";
 		}
-		$result['data']=$data;
 		echo json_encode($result); exit;
 	}
 
@@ -104,14 +127,38 @@ class Api extends CI_Controller {
 		}
 		if($response->num_rows()>0){
 			$data = $response->result();
-			$result['message']['code']='500';
-			$result['message']['text']="Sub Category listing on Id";
+
+			foreach($data as $key=>$value){
+				$en_array[$key]['id']=$value->id;
+				$en_array[$key]['category_id']=$value->category_id;				
+				$en_array[$key]['name']=$value->name;
+				$en_array[$key]['image']=$value->image;
+				$en_array[$key]['price']=$value->price;
+				$en_array[$key]['added_date']=$value->added_date;
+
+				$ur_array[$key]=$en_array[$key];
+				$ur_array[$key]['name']=$value->ur_name;
+				$ur_array[$key]['price']=$value->ur_price;
+				$ar_array[$key]=$en_array[$key];
+				$ar_array[$key]['name']=$value->ar_name;
+				$ar_array[$key]['price']=$value->ar_price;
+			}
+			$result['data']['en'] = $en_array;
+			$result['data']['ur'] = $ur_array;
+			$result['data']['ar'] = $ar_array;
+			$result['data']['message']['success'] = true;
+
+
+			$result['data']['message']['code']='500';
+		
+			$result['data']['message']['text']="Sub Category listing on Id";
 			
 		}else{
 			$result['data'] = array();
+			$result['message']['success'] = false;
 			$result['message']['text']="No Record found";
 		}
-		$result['data']=$data;
+		//$result['data']=$data;
 		// echo"<pre>";print_r($data);exit;
         echo json_encode($result); exit;
 	}
@@ -123,6 +170,7 @@ class Api extends CI_Controller {
 		$data['name']= $this->input->post('name');
 		$data['email']= $this->input->post('email');
 		$data['phone_no']= $this->input->post('phone_no');
+		$data['category_id']= $this->input->post('category_id');
 		$data['password']= sha1($this->input->post('password'));
 		$data['status'] = 'active';
 
@@ -130,13 +178,17 @@ class Api extends CI_Controller {
 		//echo"<pre>";print_r($result);exit;
 		if($res->num_rows()>0){
 			$result['message']['code']='500';
+			$result['message']['success'] = false;
 			$result['message']['msg']='Already signed up';
 		}else{
-			$result = $this->common_model->insert_array('users', $data);
-			if($result){
+			$res =$this->common_model->insert_array('users', $data);
+			if($res){
 				$result['message']['code']='500';
+				$result['message']['success'] = true;
 				$result['message']['msg']='Registration successful';
 			}else{
+				$result['message']['success'] = false;
+				$result['message']['code']='400';
 				$result['message']['error']='user registration error';
 			}
 		}
@@ -150,33 +202,31 @@ class Api extends CI_Controller {
 		$email	=	$this->input->post('email');
 		$password	=	$this->input->post('password');
 		
-		$data['login'] = $this->common_model->select_where("*","users", array('email'=>$email,'password'=>sha1($password)));
+		$data = $this->common_model->select_where("*","users", array('email'=>$email,'password'=>sha1($password)));
 		
-		if($data['login']->num_rows()>0){
-		// echo 1; exit;
-		$row = $data['login']->row(); 
-		$data = array(
-			'user_logged_in'  =>  TRUE,
-			'user_id' => $row->id,
-			'usertype' => $row->user_type,
-			'username' => $row->name,
-			'email' => $row->email,
-			'images' => $row->images
-		);
-		$result['message']['code']='500';
-		$result['message']['msg'] = 'You are now logged in';
-		$result['data']=[$data];
-		echo json_encode($result);exit;
-
-		$this->session->set_userdata($data);
-			redirect(site_url().'welcome/update_profile');
+		if($data->num_rows()>0){
+			// echo 1; exit;
+			$row = $data->row(); 
+			$data = array(
+				'user_logged_in'  =>  TRUE,
+				'user_id' => $row->id,
+				'usertype' => $row->user_type,
+				'username' => $row->name,
+				'email' => $row->email,
+				'image' => $row->image
+			);
+			$result['message']['code']='500';
+			$result['message']['success'] = true;
+			$result['message']['msg'] = 'You are now logged in';
+			$result['data']=[$data];			
 		}else{
-			$data=array();
-			$data['message']['msg'] = 'Your Email or password is wrong';
-			echo json_encode($data);exit;
-			$this->session->set_flashdata('msg','Your Email or password is wrong');
-			redirect(site_url().'user/sign_in');    
+			$result['data']= array();
+			$result['message']['code']='500';
+			$result['message']['success'] = false;
+			$result['message']['msg'] = 'Your Email or password is wrong';
+						
 		} 
+		echo json_encode($result);exit;
 		
 	}
 
@@ -193,19 +243,21 @@ class Api extends CI_Controller {
 	public function profileData() 
 	{
 		// echo 'update_profile'; exit;
-		$result = $this->common_model->select_where("id, google_id, name, email,phone_no, images,user_type", "users", array('id'=> $this->input->post('id')));
-		if($result->num_rows()>0){	
-			$data['data']=$result->result();
+		$data = $this->common_model->select_where("id, google_id, name, email,phone_no, image,user_type", "users", array('id'=> $this->input->post('id')));
+		if($data->num_rows()>0){	
+			$result['data']=$data->result();
 			// echo "<pre>"; print_r($data); exit;
-			$data['message']['code']='500';
-			$data['message']['msg'] = 'you can update your profile from here';
+			$result['message']['code']='500';
+			$result['message']['success'] = true;
+			$result['message']['msg'] = 'Your Profile data';
 		}
 		else{
-			$data['setting'] = '';
-			$data['message']['msg'] = 'Loading profile unsuccessful';
+			$result['message']['code']='500';
+			$result['message']['success'] = false;
+			$result['message']['msg'] = 'Loading profile unsuccessful';
 		}
 		// unset($data['data']['password']);
-		echo json_encode($data);exit;
+		echo json_encode($result);exit;
 		// $this->load->view('front/header');
 		// $this->load->view('front/user_profile',$data);
 		// $this->load->view('front/footer');
@@ -218,27 +270,30 @@ class Api extends CI_Controller {
 		$data['phone_no']= $this->input->post('phone_no');
 		$data['email']= $this->input->post('email');
 		$data['password']= sha1($this->input->post('password'));
-
-		if (isset($_FILES['images'])) {
-			$file = $_FILES['images'];
+		$data['category_id']= $this->input->post('category_id');
+		if (isset($_FILES['image'])) {
+			$file = $_FILES['image'];
 			if ($file['error'] == UPLOAD_ERR_OK) {
 			  $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
 	  
 			  $filename = uniqid() . '.' . $ext;
 	  
-			  $destination = "images/$filename";
+			  $destination = "image/$filename";
 	  
 			  move_uploaded_file($file['tmp_name'], $destination);
 	  
-			  $data['images'] = $filename;
+			  $data['image'] = $filename;
 			}
 		  }
 		$res = $this->common_model->select_where("*", "users", array('id'=>$id));
 	    if($res->num_rows()>0){
 			$this->common_model->update_array(array('id' => $id), 'users', $data);
 			$result['message']['code']='500';
+			$result['message']['success'] = true;
 			$result['message']['msg'] = 'Success, Your profile updated successfully.';
 		}else{
+			$result['message']['code']='500';
+			$result['message']['success'] = false;
 			$result['message']['msg'] = 'Failure, Your profile is not updated as you are not registered user.';
 			
 		}
@@ -258,7 +313,7 @@ class Api extends CI_Controller {
 	{
 		// echo 'change_password'; exit;
 		$old_password = sha1($this->input->post('old_password'));
-		$user = $this->common_model->select_where("id, name, email, phone_no, images, user_type", "users", array('id'=>$this->input->post('id'), 'password'=>$old_password)); 
+		$user = $this->common_model->select_where("id, name, email, phone_no, image, user_type", "users", array('id'=>$this->input->post('id'), 'password'=>$old_password)); 
 
 		if ($user->num_rows() > 0){
 			$result['data']=$user->result();
@@ -266,11 +321,14 @@ class Api extends CI_Controller {
 			$new_password = sha1($this->input->post('new_password'));
 			$this->common_model->update_array(array('id' => $this->input->post('id')), 'users', array('password' => $new_password));
 			$result['message']['code']='500';
-			$result['message']['msg']='Password updated successfully';
+			$result['message']['success'] = true;
+			$result['message']['msg']='Password updated Successfully';
 			
 		}else{
 			$result['data']= array();
-			$result['message']['code']='Your passworrd is not matching, try another password';
+			$result['message']['success'] = false;
+			$result['message']['code']='500';
+			$result['message']['msg']='Your password is not matching, try another password';
 		}
 		echo json_encode($result);exit;
 	}	  
