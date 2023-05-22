@@ -213,7 +213,8 @@ class Api extends CI_Controller {
 				'usertype' => $row->user_type,
 				'username' => $row->name,
 				'email' => $row->email,
-				'image' => $row->image
+				'image' => $row->image,
+				'phone_no' => $row->phone_no
 			);
 			$result['message']['code']='500';
 			$result['message']['success'] = true;
