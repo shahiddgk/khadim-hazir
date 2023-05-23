@@ -74,6 +74,35 @@ class Api extends CI_Controller {
 		$this->load->view('front/footer');*/
 	}
 
+	public function popularCategories() 
+	{
+		// echo  1111;exit;
+		$result=array();
+		$data = $this->common_model->select_all_join_group_order("*", "users", "categories", "ON (categories.id=users.`category_id`)", "category_id", "(COUNT(category_id))", "DESC LIMIT 5" )->result();	
+		// echo "<pre>"; print_r($data); exit;
+		foreach($data as $key=>$value){
+			$en_array[$key]['id']=$value->id;
+			$en_array[$key]['name']=$value->name;
+			$en_array[$key]['image']=$value->image;
+			$en_array[$key]['price']=$value->price;
+			$en_array[$key]['added_date']=$value->added_date;
+			$ur_array[$key]=$en_array[$key];
+			$ur_array[$key]['name']=$value->ur_name;
+			$ur_array[$key]['price']=$value->ur_price;
+			$ar_array[$key]=$en_array[$key];
+			$ar_array[$key]['name']=$value->ar_name;
+			$ar_array[$key]['price']=$value->ar_price;
+		}
+		$result['data']['en'] = $en_array;
+		$result['data']['ur'] = $ur_array;
+		$result['data']['ar'] = $ar_array;
+		//echo "<pre>"; print_r($result); exit;
+		$result['message']['code'] = '500';
+		$result['message']['success'] = true;
+		$result['message']['msg'] = 'Popular Category listing';
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	}
+
 	public function set_session($lang=null)
 	{
 		if($lang!=""){
@@ -190,7 +219,6 @@ class Api extends CI_Controller {
 		}
 
 		$res = $this->common_model->select_where("*", "users", array('email'=>$this->input->post('email')));
-		$row = $res->row();
 		// echo"<pre>";print_r($row);exit;
 		if($res->num_rows()>0){
 			$result['message']['code']='500';
@@ -198,6 +226,8 @@ class Api extends CI_Controller {
 			$result['message']['msg']='Already signed up';
 		}else{
 			$res1 =$this->common_model->insert_array('users', $data);
+			// $row= $res1->row();
+			echo"<pre>";print_r($res1);exit;
 			if($res1){
 				$result['message']['code']='500';
 				$result['message']['success'] = true;
@@ -209,6 +239,7 @@ class Api extends CI_Controller {
 			}
 		}
 		unset($data['password']);
+		$row = $res->row();
 		$data = array(
 			'user_id' => $row->id,
 			'usertype' => $row->user_type,

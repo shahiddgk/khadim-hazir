@@ -33,13 +33,16 @@ class Common_model extends  CI_Model {
 	}
 
 	
-	// function select_group($select,$table,$where,$group)
-	// {
-	// $this->db->select($select);
-	// $this->db->from($table);
- 	// $this->db->group_by($group);  
- 	// $this->db->get();
-	// }
+	function select_all_join_group_order($select, $table, $jointab, $condition, $group, $orderBy_columName, $ASC_DESC)
+	{
+	$this->db->select($select);
+	$this->db->from($table);
+	$this->db->join($jointab, $condition);
+ 	$this->db->group_by($group);
+	$this->db->order_by($orderBy_columName, $ASC_DESC);  
+	return $this->db->get();
+	}
+
 	function select_groupby($select,$table,$groupby)
 	{
 		$this->db->select( $select );
