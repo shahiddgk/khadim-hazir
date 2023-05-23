@@ -94,7 +94,7 @@ class Category extends CI_Controller {
 			$image =   str_replace("category_".time(),$img,$img);
 			$data['image']  =  $image;
 			$temp   =  $_FILES['image_file']['tmp_name'];
-			$path= PATH_DIR.'uploads/category/'.$image;
+			$path= FCPATH.'uploads/category/'.$image;
 			move_uploaded_file($temp,$path);
 		}
 		$this->common_model->update_array(array('id'=>$id), 'categories', $data);

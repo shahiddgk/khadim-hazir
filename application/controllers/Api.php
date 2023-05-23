@@ -190,14 +190,15 @@ class Api extends CI_Controller {
 		}
 
 		$res = $this->common_model->select_where("*", "users", array('email'=>$this->input->post('email')));
-		//echo"<pre>";print_r($result);exit;
+		$row = $res->row();
+		// echo"<pre>";print_r($row);exit;
 		if($res->num_rows()>0){
 			$result['message']['code']='500';
 			$result['message']['success'] = false;
 			$result['message']['msg']='Already signed up';
 		}else{
-			$res =$this->common_model->insert_array('users', $data);
-			if($res){
+			$res1 =$this->common_model->insert_array('users', $data);
+			if($res1){
 				$result['message']['code']='500';
 				$result['message']['success'] = true;
 				$result['message']['msg']='Registration successful';
@@ -208,6 +209,14 @@ class Api extends CI_Controller {
 			}
 		}
 		unset($data['password']);
+		$data = array(
+			'user_id' => $row->id,
+			'usertype' => $row->user_type,
+			'username' => $row->name,
+			'email' => $row->email,
+			'image' => $row->image,
+			'phone_no' => $row->phone_no
+		);
 		$result['data'] = [$data];
 		echo json_encode($result);exit;		
 	}
@@ -216,12 +225,11 @@ class Api extends CI_Controller {
 	{
 		$email	=	$this->input->post('email');
 		$password	=	$this->input->post('password');
-		
 		$data = $this->common_model->select_where("*","users", array('email'=>$email,'password'=>sha1($password)));
-		
 		if($data->num_rows()>0){
 			// echo 1; exit;
 			$row = $data->row(); 
+			// echo "<pre>"; print_r($row); exit;
 			$data = array(
 				'user_logged_in'  =>  TRUE,
 				'user_id' => $row->id,
@@ -286,7 +294,7 @@ class Api extends CI_Controller {
 		$data['phone_no']= $this->input->post('phone_no');
 		$data['email']= $this->input->post('email');
 		$data['password']= sha1($this->input->post('password'));
-		$data['category_id']= $this->input->post('category_id');
+		// $data['category_id']= $this->input->post('category_id');
 		if (isset($_FILES['image'])) {
 			$file = $_FILES['image'];
 			if ($file['error'] == UPLOAD_ERR_OK) {
@@ -311,7 +319,6 @@ class Api extends CI_Controller {
 			$result['message']['code']='500';
 			$result['message']['success'] = false;
 			$result['message']['msg'] = 'Failure, Your profile is not updated as you are not registered user.';
-			
 		}
 		unset($data['password']);
 		$result['data'] = [$data];
