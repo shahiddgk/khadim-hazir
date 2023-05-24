@@ -103,6 +103,20 @@ class Api extends CI_Controller {
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 	}
 
+	public function categoryNames() 
+	{
+		$result=array();
+		$data = $this->common_model->select_all("id, name, ur_name, ar_name", "categories")->result();	
+		// echo "<pre>"; print_r($data);
+		$result['data']=$data;
+		$result['message']['code'] = '500';
+		$result['message']['success'] = true;
+		$result['message']['msg'] = 'Category listing with names and Ids';
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+		// echo json_encode($data);exit;
+	}
+
+
 	public function set_session($lang=null)
 	{
 		if($lang!=""){
@@ -143,7 +157,7 @@ class Api extends CI_Controller {
 			$result['message']['success'] = false;
 			$result['message']['text']="No Record found";
 		}
-		echo json_encode($result); exit;
+		echo json_encode($result, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES); exit;
 	}
 
 	public function subCategory($id='')
@@ -189,15 +203,17 @@ class Api extends CI_Controller {
 		}
 		//$result['data']=$data;
 		// echo"<pre>";print_r($data);exit;
-        echo json_encode($result); exit;
+        echo json_encode($result, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES); exit;
 	}
 
 	public function createUser() 
 	{
 		// echo 111111; exit;
+		$data=array();
 		$data['user_type']= $this->input->post('user_type');	
-		$data['name']= $this->input->post('name');
+		$data['username']= $this->input->post('name');
 		$data['email']= $this->input->post('email');
+		// $email	=	$this->input->post('email');
 		$data['phone_no']= $this->input->post('phone_no');
 		$data['category_id']= $this->input->post('category_id');
 		$data['password']= sha1($this->input->post('password'));
@@ -217,17 +233,18 @@ class Api extends CI_Controller {
 			  $data['image'] = $filename;
 			}
 		}
-
-		$res = $this->common_model->select_where("*", "users", array('email'=>$this->input->post('email')));
-		// echo"<pre>";print_r($row);exit;
+		$res = $this->common_model->select_where("*", "users", array('email'=>$this->input->post('email')));		
+		$row = $res->row();
+		// echo "<pre>"; print_r($row); exit;
 		if($res->num_rows()>0){
+			$data['user_id']=$row->id;
 			$result['message']['code']='500';
 			$result['message']['success'] = false;
 			$result['message']['msg']='Already signed up';
 		}else{
 			$res1 =$this->common_model->insert_array('users', $data);
-			// $row= $res1->row();
-			echo"<pre>";print_r($res1);exit;
+			// $res2 = $this->common_model->select_all("*", "users");
+			$data['user_id']=$res1;
 			if($res1){
 				$result['message']['code']='500';
 				$result['message']['success'] = true;
@@ -239,15 +256,6 @@ class Api extends CI_Controller {
 			}
 		}
 		unset($data['password']);
-		$row = $res->row();
-		$data = array(
-			'user_id' => $row->id,
-			'usertype' => $row->user_type,
-			'username' => $row->name,
-			'email' => $row->email,
-			'image' => $row->image,
-			'phone_no' => $row->phone_no
-		);
 		$result['data'] = [$data];
 		echo json_encode($result);exit;		
 	}
@@ -265,7 +273,7 @@ class Api extends CI_Controller {
 				'user_logged_in'  =>  TRUE,
 				'user_id' => $row->id,
 				'usertype' => $row->user_type,
-				'username' => $row->name,
+				'username' => $row->username,
 				'email' => $row->email,
 				'image' => $row->image,
 				'phone_no' => $row->phone_no
@@ -298,7 +306,7 @@ class Api extends CI_Controller {
 	public function profileData() 
 	{
 		// echo 'update_profile'; exit;
-		$data = $this->common_model->select_where("id, google_id, name, email,phone_no, image,user_type", "users", array('id'=> $this->input->post('id')));
+		$data = $this->common_model->select_where("id as user_id, google_id, username, email,phone_no, image,user_type", "users", array('id'=> $this->input->post('user_id')));
 		if($data->num_rows()>0){	
 			$result['data']=$data->result();
 			// echo "<pre>"; print_r($data); exit;
@@ -321,7 +329,7 @@ class Api extends CI_Controller {
 	public function updateProfile() 
 	{
 		$id = $this->input->post('id');
-	  	$data['name']= $this->input->post('name');
+	  	$data['username']= $this->input->post('name');
 		$data['phone_no']= $this->input->post('phone_no');
 		$data['email']= $this->input->post('email');
 		$data['password']= sha1($this->input->post('password'));
@@ -367,7 +375,7 @@ class Api extends CI_Controller {
 	{
 		// echo 'change_password'; exit;
 		$old_password = sha1($this->input->post('old_password'));
-		$user = $this->common_model->select_where("id, name, email, phone_no, image, user_type", "users", array('id'=>$this->input->post('id'), 'password'=>$old_password)); 
+		$user = $this->common_model->select_where("id as user_id, username, email, phone_no, image, user_type", "users", array('id'=>$this->input->post('id'), 'password'=>$old_password)); 
 
 		if ($user->num_rows() > 0){
 			$result['data']=$user->result();
@@ -387,5 +395,58 @@ class Api extends CI_Controller {
 		echo json_encode($result);exit;
 	}	  
 	
-	
+	public function employeeList(){
+		$user = $this->common_model->join_two_tab_where_simple("username, users.id AS user_id, name as category_name, category_id, user_type", "categories", "users", "ON (categories.id=users.`category_id`)", "user_type = 'employee'");
+		$data=$user->result();
+		if($user->num_rows()>0){
+			$result['data']=$data;
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='Employer listing';
+		}else{
+			$data=array();
+			$result['data']=$data;
+			$result['message']['success'] = false;
+			$result['message']['msg']='No Employee in the list';
+		}
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	}
+
+	public function employerList(){
+		$user = $this->common_model->join_two_tab_where_simple("username, users.id AS user_id, name as category_name, category_id, user_type", "categories", "users", "ON (categories.id=users.`category_id`)", "user_type = 'employer'");
+		$data=$user->result();
+		// echo "<pre>"; print_r($data); exit;
+		if($user->num_rows()>0){
+			$result['data']=$data;
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='Employer listing';
+		}else{
+			$data=array();
+			$result['data']=$data;
+			$result['message']['success'] = false;
+			$result['message']['msg']='No Employer in the list';
+		}
+		
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	}
+
+	public function favouriteEmployees($id=''){
+
+		$user = $this->common_model->join_two_tab_where_simple(("username, employee_id, employer_id, category_id, user_type"), "users", "favourite_user", "ON (favourite_user.employee_id=users.id)" ,array('employer_id'=>$id, 'favourite'=>"Y") );
+		$data=$user->result();
+		// echo "<pre>"; print_r($data); exit;
+		if($user->num_rows()>0){
+			$result['data']=$data;
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='Favourite Employee listing';
+		}else{
+			$data=array();
+			$result['data']=$data;
+			$result['message']['success'] = false;
+			$result['message']['msg']='No Favourite Employee in the list';
+		}	
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	}
 }

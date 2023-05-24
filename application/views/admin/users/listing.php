@@ -23,7 +23,7 @@
                             <tbody>
                             <?php  foreach($users->result_array() as $data){ ?>
                                 <tr>
-                                    <td><?=$data['name'] ?></td>
+                                    <td><?=$data['username'] ?></td>
                                     <td><?=$data['email']?></td>
                                     <td><?=$data['phone_no']?></td>
                                     <td><?=ucfirst($data['user_type'])?></td>
