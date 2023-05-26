@@ -327,7 +327,7 @@ class Common_model extends  CI_Model {
 		$this->db->join( $jointable2 , $condition2 );
 		$this->db->where( $where );
 		$query	=	$this->db->get();
-		return 		$query->num_rows();
+		return $query;
 	}
 	
 	

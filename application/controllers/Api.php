@@ -210,14 +210,14 @@ class Api extends CI_Controller {
 	{
 		// echo 111111; exit;
 		$data=array();
-		$data['user_type']= $this->input->post('user_type');	
+		$usertype=$data['user_type']= $this->input->post('user_type');	
 		$data['username']= $this->input->post('name');
 		$data['email']= $this->input->post('email');
 		// $email	=	$this->input->post('email');
 		$data['phone_no']= $this->input->post('phone_no');
 		$data['category_id']= $this->input->post('category_id');
 		$data['password']= sha1($this->input->post('password'));
-		// $data['image']= $this->input->post('image');
+		$data['image']='';
 		$data['status'] = 'active';
 		if (isset($_FILES['image'])) {
 			$file = $_FILES['image'];
@@ -235,9 +235,18 @@ class Api extends CI_Controller {
 		}
 		$res = $this->common_model->select_where("*", "users", array('email'=>$this->input->post('email')));		
 		$row = $res->row();
-		// echo "<pre>"; print_r($row); exit;
 		if($res->num_rows()>0){
-			$data['user_id']=$row->id;
+			// $data['user_id']=$row->id;
+			$data = array(
+				'user_created'  =>  TRUE,
+				// 'user_id' => $row->id,
+				'user_id'=>$row->id,
+				'usertype' => $data['user_type'],
+				'username' => $data['username'],
+				'email' => $data['email'],
+				'image' => $data['image'],
+				'phone_no' => $data['phone_no'],
+			);
 			$result['message']['code']='500';
 			$result['message']['success'] = false;
 			$result['message']['msg']='Already signed up';
@@ -245,6 +254,17 @@ class Api extends CI_Controller {
 			$res1 =$this->common_model->insert_array('users', $data);
 			// $res2 = $this->common_model->select_all("*", "users");
 			$data['user_id']=$res1;
+			$data = array(
+				'user_created'  =>  TRUE,
+				// 'user_id' => $row->id,
+				'user_id'=>$res1,
+				'usertype' => $data['user_type'],
+				'username' => $data['username'],
+				'email' => $data['email'],
+				'image' => $data['image'],
+				'phone_no' => $data['phone_no'],
+			);
+			// $data['user_type']=$usertype;
 			if($res1){
 				$result['message']['code']='500';
 				$result['message']['success'] = true;
@@ -255,6 +275,9 @@ class Api extends CI_Controller {
 				$result['message']['error']='user registration error';
 			}
 		}
+		// echo "<pre>"; print_r($row); exit;
+
+		
 		unset($data['password']);
 		$result['data'] = [$data];
 		echo json_encode($result);exit;		
@@ -396,7 +419,7 @@ class Api extends CI_Controller {
 	}	  
 	
 	public function employeeList(){
-		$user = $this->common_model->join_two_tab_where_simple("username, users.id AS user_id, name as category_name, category_id, user_type", "categories", "users", "ON (categories.id=users.`category_id`)", "user_type = 'employee'");
+		$user = $this->common_model->join_two_tab_where_simple("username, users.id AS user_id, name as category_name, category_id, user_type, phone_no, users.image", "categories", "users", "ON (categories.id=users.`category_id`)", "user_type = 'employee'");
 		$data=$user->result();
 		if($user->num_rows()>0){
 			$result['data']=$data;
@@ -413,7 +436,7 @@ class Api extends CI_Controller {
 	}
 
 	public function employerList(){
-		$user = $this->common_model->join_two_tab_where_simple("username, users.id AS user_id, name as category_name, category_id, user_type", "categories", "users", "ON (categories.id=users.`category_id`)", "user_type = 'employer'");
+		$user = $this->common_model->join_two_tab_where_simple("username, users.id AS user_id, name as category_name, category_id, user_type, phone_no, users.image", "categories", "users", "ON (categories.id=users.`category_id`)", "user_type = 'employer'");
 		$data=$user->result();
 		// echo "<pre>"; print_r($data); exit;
 		if($user->num_rows()>0){
@@ -433,7 +456,7 @@ class Api extends CI_Controller {
 
 	public function favouriteEmployees($id=''){
 
-		$user = $this->common_model->join_two_tab_where_simple(("username, employee_id, employer_id, category_id, user_type"), "users", "favourite_user", "ON (favourite_user.employee_id=users.id)" ,array('employer_id'=>$id, 'favourite'=>"Y") );
+		$user = $this->common_model->join_three_tab_where_rows(("favourite_user.id, username, employee_id  AS user_id,categories.name, category_id, user_type, phone_no, users.image"), "users", "favourite_user", "ON (favourite_user.employer_id=users.id)" ,"categories", "ON (categories.id=users.category_id)" ,array('employer_id'=>$id, 'favourite'=>"Y"));
 		$data=$user->result();
 		// echo "<pre>"; print_r($data); exit;
 		if($user->num_rows()>0){
@@ -449,4 +472,12 @@ class Api extends CI_Controller {
 		}	
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 	}
+
+	// public function favouriteEmployee(){
+		
+	// 	if(){
+
+	// 	}
+	// 	$user=
+	// }
 }
