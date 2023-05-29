@@ -252,6 +252,7 @@ class Api extends CI_Controller {
 			$result['message']['success'] = false;
 			$result['message']['msg']='Already signed up';
 		}else{
+			
 			$res1 =$this->common_model->insert_array('users', $data);
 			// $res2 = $this->common_model->select_all("*", "users");
 			$data['user_id']=string($res1);
