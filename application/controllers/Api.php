@@ -473,11 +473,41 @@ class Api extends CI_Controller {
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 	}
 
-	// public function favouriteEmployee(){
-		
-	// 	if(){
+	public function favouriteEmployee(){
+		$data=array();
+		$data['employee_id']=$this->input->post('employee_id');
+		$data['user_id']=$this->input->post('user_id');
+		$data['favourite']=$this->input->post('favourite');
 
-	// 	}
-	// 	$user=
-	// }
+		// $response = $this->common_model->select_where("*", "favourite_user", array('employee_id'=>$data['liked_disliked_id'], 'employer_id'=>$data['user_id']));
+		// if($response->num_rows()!=0){
+			if($data['favourite']=='Y' ){
+				$res['employee_id']=$data['employee_id'];
+				$res['employer_id']=$data['user_id'];
+				$res['favourite']=$data['favourite'];
+				$this->db->insert('favourite_user',$res);
+
+		 		$user=$this->common_model->join_two_tab_where_simple("username, users.id AS user_id, name as category_name, category_id, user_type, phone_no, users.image", "categories", "users", "ON (categories.id=users.`category_id`)", array('users.id'=>$data['employee_id']));
+				$data=$user->result_array();
+				// echo "<pre>";print_r($data);exit;
+				$result['data']=$data;
+				$result['message']['success'] = true;
+				$result['message']['code']='500';
+				$result['message']['msg']='Employee liked';	
+				echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+			}else{
+				$this->common_model->delete_where(array('employee_id'=>$data['employee_id'], 'employer_id'=>$data['user_id']), 'favourite_user');
+				$user=$this->common_model->join_two_tab_where_simple("username, users.id AS user_id, name as category_name, category_id, user_type, phone_no, users.image", "categories", "users", "ON (categories.id=users.`category_id`)", array('users.id'=>$data['employee_id']));
+				$data=$user->result_array();
+
+				$result['data']=$data;
+				$result['message']['success'] = true;
+				$result['message']['code']='500';
+				$result['message']['msg']='Employee disliked';
+				echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+			}
+		// }else{
+			// echo 'user is not in the favourite list';exit;
+		// }
+	}
 }
