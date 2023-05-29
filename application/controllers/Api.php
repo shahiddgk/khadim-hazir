@@ -211,7 +211,7 @@ class Api extends CI_Controller {
 		// echo 111111; exit;
 		$data=array();
 		$usertype=$data['user_type']= $this->input->post('user_type');	
-		$data['username']= $this->input->post('name');
+		$data['username']= $this->input->post('username');
 		$data['email']= $this->input->post('email');
 		// $email	=	$this->input->post('email');
 		$data['phone_no']= $this->input->post('phone_no');
@@ -219,6 +219,7 @@ class Api extends CI_Controller {
 		$data['password']= sha1($this->input->post('password'));
 		$data['image']='';
 		$data['status'] = 'active';
+		//echo "<pre>"; print_r($data);exit;
 		if (isset($_FILES['image'])) {
 			$file = $_FILES['image'];
 			if ($file['error'] == UPLOAD_ERR_OK) {
@@ -253,7 +254,7 @@ class Api extends CI_Controller {
 		}else{
 			$res1 =$this->common_model->insert_array('users', $data);
 			// $res2 = $this->common_model->select_all("*", "users");
-			$data['user_id']=$res1;
+			$data['user_id']=string($res1);
 			$data = array(
 				'user_created'  =>  TRUE,
 				// 'user_id' => $row->id,
@@ -352,7 +353,7 @@ class Api extends CI_Controller {
 	public function updateProfile() 
 	{
 		$id = $this->input->post('id');
-	  	$data['username']= $this->input->post('name');
+	  	$data['username']= $this->input->post('username');
 		$data['phone_no']= $this->input->post('phone_no');
 		$data['email']= $this->input->post('email');
 		$data['password']= sha1($this->input->post('password'));
