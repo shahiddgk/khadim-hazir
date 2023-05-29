@@ -239,11 +239,11 @@ class Api extends CI_Controller {
 		if($res->num_rows()>0){
 			// $data['user_id']=$row->id;
 			$data = array(
-				'user_created'  =>  TRUE,
 				// 'user_id' => $row->id,
 				'user_id'=>$row->id,
 				'usertype' => $data['user_type'],
 				'username' => $data['username'],
+				'category_id'=>$data['category_id'],
 				'email' => $data['email'],
 				'image' => $data['image'],
 				'phone_no' => $data['phone_no'],
@@ -255,13 +255,14 @@ class Api extends CI_Controller {
 			
 			$res1 =$this->common_model->insert_array('users', $data);
 			// $res2 = $this->common_model->select_all("*", "users");
-			$data['user_id']=string($res1);
+			$data['user_id']=strval($res1);
 			$data = array(
 				'user_created'  =>  TRUE,
 				// 'user_id' => $row->id,
-				'user_id'=>$res1,
+				'user_id'=>$data['user_id'],
 				'usertype' => $data['user_type'],
 				'username' => $data['username'],
+				'category_id'=>$data['category_id'],
 				'email' => $data['email'],
 				'image' => $data['image'],
 				'phone_no' => $data['phone_no'],
@@ -295,10 +296,10 @@ class Api extends CI_Controller {
 			$row = $data->row(); 
 			// echo "<pre>"; print_r($row); exit;
 			$data = array(
-				'user_logged_in'  =>  TRUE,
 				'user_id' => $row->id,
 				'usertype' => $row->user_type,
 				'username' => $row->username,
+				'category_id'=>$row->category_id,
 				'email' => $row->email,
 				'image' => $row->image,
 				'phone_no' => $row->phone_no
@@ -331,7 +332,7 @@ class Api extends CI_Controller {
 	public function profileData() 
 	{
 		// echo 'update_profile'; exit;
-		$data = $this->common_model->select_where("id as user_id, google_id, username, email,phone_no, image,user_type", "users", array('id'=> $this->input->post('user_id')));
+		$data = $this->common_model->select_where("id as user_id, google_id, category_id, username, email,phone_no, image,user_type", "users", array('id'=> $this->input->post('user_id')));
 		if($data->num_rows()>0){	
 			$result['data']=$data->result();
 			// echo "<pre>"; print_r($data); exit;
@@ -358,7 +359,8 @@ class Api extends CI_Controller {
 		$data['phone_no']= $this->input->post('phone_no');
 		$data['email']= $this->input->post('email');
 		$data['password']= sha1($this->input->post('password'));
-		// $data['category_id']= $this->input->post('category_id');
+		$data['user_type']= $this->input->post('user_type');
+		$data['category_id']= $this->input->post('category_id');
 		if (isset($_FILES['image'])) {
 			$file = $_FILES['image'];
 			if ($file['error'] == UPLOAD_ERR_OK) {
@@ -376,10 +378,29 @@ class Api extends CI_Controller {
 		$res = $this->common_model->select_where("*", "users", array('id'=>$id));
 	    if($res->num_rows()>0){
 			$this->common_model->update_array(array('id' => $id), 'users', $data);
+			$data = array(
+				// 'user_id' => $row->id,
+				'user_id'=>$id,
+				'usertype' => $data['user_type'],
+				'username' => $data['username'],
+				'category_id'=> $data['category_id'],
+				'email' => $data['email'],
+				'image' => $data['image'],
+				'phone_no' => $data['phone_no'],
+			);
 			$result['message']['code']='500';
 			$result['message']['success'] = true;
 			$result['message']['msg'] = 'Success, Your profile updated successfully.';
 		}else{
+			$data = array(
+				'user_id'=>$id,
+				'usertype' => $data['user_type'],
+				'username' => $data['username'],
+				'category_id'=> $data['category_id'],
+				'email' => $data['email'],
+				'image' => $data['image'],
+				'phone_no' => $data['phone_no'],
+			);
 			$result['message']['code']='500';
 			$result['message']['success'] = false;
 			$result['message']['msg'] = 'Failure, Your profile is not updated as you are not registered user.';
@@ -400,7 +421,7 @@ class Api extends CI_Controller {
 	{
 		// echo 'change_password'; exit;
 		$old_password = sha1($this->input->post('old_password'));
-		$user = $this->common_model->select_where("id as user_id, username, email, phone_no, image, user_type", "users", array('id'=>$this->input->post('id'), 'password'=>$old_password)); 
+		$user = $this->common_model->select_where("id as user_id, username, category_id, email, phone_no, image, user_type", "users", array('id'=>$this->input->post('id'), 'password'=>$old_password)); 
 
 		if ($user->num_rows() > 0){
 			$result['data']=$user->result();
