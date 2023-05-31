@@ -79,9 +79,10 @@ else{
                 </li>
                 <li class="menu-item-has-children dropdown">
                     <a href="<?=site_url('admin/welcome/userslisting')?>"> <i class="menu-icon fa fa-users"></i>Users</a>
-                   
                 </li>
-
+                <li class="menu-item-has-children dropdown">
+                    <a href="<?=site_url('admin/welcome/favouriteusers')?>"> <i class="menu-icon fa fa-users"></i>Favourite Users</a>
+                </li>
                 <li class="menu-item-has-children dropdown">
                     <a href="<?=site_url('admin/welcome/settings')?>"> <i class="menu-icon fa fa-users"></i>Settings</a>
                    

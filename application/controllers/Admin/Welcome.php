@@ -158,6 +158,15 @@ class Welcome extends CI_Controller {
 		$this->load->view('admin/admin_footer');
 		
 	}
+	public function favouriteusers() 
+	{
+		$data['favouriteusers'] =$this->common_model->select_all_join_group_order("*","users", "favourite_user", "ON (employer_id=users.id)", 'employer_id', 'username', 'ASC');
+		// $employer_array=$employer->result();
+
+		$this->load->view('admin/admin_header');
+		$this->load->view('admin/users/favouriteusers', $data);
+		$this->load->view('admin/admin_footer');
+	}
 
 	public function change_status()
 	{

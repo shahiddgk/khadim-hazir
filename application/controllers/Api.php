@@ -257,7 +257,7 @@ class Api extends CI_Controller {
 			// $res2 = $this->common_model->select_all("*", "users");
 			$data['user_id']=strval($res1);
 			$data = array(
-				'user_created'  =>  TRUE,
+				// 'user_created'  =>  TRUE,
 				// 'user_id' => $row->id,
 				'user_id'=>$data['user_id'],
 				'usertype' => $data['user_type'],
@@ -354,38 +354,38 @@ class Api extends CI_Controller {
 
 	public function updateProfile() 
 	{
-		$id = $this->input->post('id');
+		$id = $this->input->post('user_id');
 	  	$data['username']= $this->input->post('username');
 		$data['phone_no']= $this->input->post('phone_no');
-		$data['email']= $this->input->post('email');
-		$data['password']= sha1($this->input->post('password'));
-		$data['user_type']= $this->input->post('user_type');
+		// $data['email']= $this->input->post('email');
+		// $data['password']= sha1($this->input->post('password'));
+		// $data['user_type']= $this->input->post('user_type');
 		$data['category_id']= $this->input->post('category_id');
-		if (isset($_FILES['image'])) {
-			$file = $_FILES['image'];
-			if ($file['error'] == UPLOAD_ERR_OK) {
-			  $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+		// if (isset($_FILES['image'])) {
+		// 	$file = $_FILES['image'];
+		// 	if ($file['error'] == UPLOAD_ERR_OK) {
+		// 	  $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
 	  
-			  $filename = uniqid() . '.' . $ext;
+		// 	  $filename = uniqid() . '.' . $ext;
 	  
-			  $destination = "images/$filename";
+		// 	  $destination = "images/$filename";
 	  
-			  move_uploaded_file($file['tmp_name'], $destination);
+		// 	  move_uploaded_file($file['tmp_name'], $destination);
 	  
-			  $data['image'] = $filename;
-			}
-		}
+		// 	  $data['image'] = $filename;
+		// 	}
+		// }
 		$res = $this->common_model->select_where("*", "users", array('id'=>$id));
 	    if($res->num_rows()>0){
 			$this->common_model->update_array(array('id' => $id), 'users', $data);
 			$data = array(
 				// 'user_id' => $row->id,
 				'user_id'=>$id,
-				'usertype' => $data['user_type'],
+				// 'usertype' => $data['user_type'],
 				'username' => $data['username'],
 				'category_id'=> $data['category_id'],
-				'email' => $data['email'],
-				'image' => $data['image'],
+				// 'email' => $data['email'],
+				// 'image' => $data['image'],
 				'phone_no' => $data['phone_no'],
 			);
 			$result['message']['code']='500';
@@ -394,11 +394,11 @@ class Api extends CI_Controller {
 		}else{
 			$data = array(
 				'user_id'=>$id,
-				'usertype' => $data['user_type'],
+				// 'usertype' => $data['user_type'],
 				'username' => $data['username'],
 				'category_id'=> $data['category_id'],
-				'email' => $data['email'],
-				'image' => $data['image'],
+				// 'email' => $data['email'],
+				// 'image' => $data['image'],
 				'phone_no' => $data['phone_no'],
 			);
 			$result['message']['code']='500';
@@ -501,37 +501,82 @@ class Api extends CI_Controller {
 		$data=array();
 		$data['employee_id']=$this->input->post('employee_id');
 		$data['user_id']=$this->input->post('user_id');
-		$data['favourite']=$this->input->post('favourite');
-
-		// $response = $this->common_model->select_where("*", "favourite_user", array('employee_id'=>$data['liked_disliked_id'], 'employer_id'=>$data['user_id']));
-		// if($response->num_rows()!=0){
-			if($data['favourite']=='Y' ){
-				$res['employee_id']=$data['employee_id'];
-				$res['employer_id']=$data['user_id'];
-				$res['favourite']=$data['favourite'];
-				$this->db->insert('favourite_user',$res);
-
-		 		$user=$this->common_model->join_two_tab_where_simple("username, users.id AS user_id, name as category_name, category_id, user_type, phone_no, users.image", "categories", "users", "ON (categories.id=users.`category_id`)", array('users.id'=>$data['employee_id']));
-				$data=$user->result_array();
-				// echo "<pre>";print_r($data);exit;
-				$result['data']=$data;
-				$result['message']['success'] = true;
-				$result['message']['code']='500';
-				$result['message']['msg']='Employee liked';	
-				echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
-			}else{
-				$this->common_model->delete_where(array('employee_id'=>$data['employee_id'], 'employer_id'=>$data['user_id']), 'favourite_user');
-				$user=$this->common_model->join_two_tab_where_simple("username, users.id AS user_id, name as category_name, category_id, user_type, phone_no, users.image", "categories", "users", "ON (categories.id=users.`category_id`)", array('users.id'=>$data['employee_id']));
-				$data=$user->result_array();
-
-				$result['data']=$data;
-				$result['message']['success'] = true;
-				$result['message']['code']='500';
-				$result['message']['msg']='Employee disliked';
-				echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
-			}
-		// }else{
-			// echo 'user is not in the favourite list';exit;
-		// }
+		// $data['favourite']=$this->input->post('favourite');
+		$fav_user=$this->common_model->select_where("*", "favourite_user", array('employee_id'=>$data['employee_id'], 'employer_id'=>$data['user_id']));
+		if($fav_user->num_rows()==0){
+			$res['employee_id']=$data['employee_id'];
+			$res['employer_id']=$data['user_id'];
+			$res['favourite']="Y";
+			$this->db->insert('favourite_user',$res);
+		
+		 	$user=$this->common_model->join_two_tab_where_simple("username, users.id AS user_id, name as category_name, category_id, user_type, phone_no, email, users.image", "categories", "users", "ON (categories.id=users.`category_id`)", array('users.id'=>$data['employee_id']));
+			$data=$user->result_array();
+			$data = array(
+				'Favourite'=>true,
+				'user_id'=>$data[0]['user_id'],
+				'usertype' => $data[0]['user_type'],
+				'username' => $data[0]['username'],
+				'category_id'=> $data[0]['category_id'],
+				'category_name'=> $data[0]['category_name'],
+				'email' => $data[0]['email'],
+				'image' => $data[0]['image'],
+				'phone_no' => $data[0]['phone_no'],
+			);
+			// echo "<pre>";print_r($data);exit;
+			$result['data']=$data;
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='Employee liked';	
+			echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+		}else{
+			$this->common_model->delete_where(array('employee_id'=>$data['employee_id'], 'employer_id'=>$data['user_id']), 'favourite_user');
+			$user=$this->common_model->join_two_tab_where_simple("username, users.id AS user_id, name as category_name, category_id, user_type, phone_no, email, users.image", "categories", "users", "ON (categories.id=users.`category_id`)", array('users.id'=>$data['employee_id']));
+			$data=$user->result_array();
+			$data = array(
+				'Favourite'=>false,
+				'user_id'=>$data[0]['user_id'],
+				'usertype' => $data[0]['user_type'],
+				'username' => $data[0]['username'],
+				'category_id'=> $data[0]['category_id'],
+				'category_name'=> $data[0]['category_name'],
+				'email' => $data[0]['email'],
+				'image' => $data[0]['image'],
+				'phone_no' => $data[0]['phone_no'],
+			);
+			$result['data']=$data;
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='Employee disliked';
+			echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+		}
 	}
+
+	public function forgotPassword(){
+		$data['email']=$this->input->post('email');
+		$user=$this->common_model->select_where("email", "users", array('email'=>$data['email']));
+		if($user->num_rows()>0){
+			$new_password =rand();
+			$to = $data['email'];
+			$subject = "Khadim-hazir";
+			$txt = "Your new password for Khadim hazir account is : $new_password If you want to change your password login to your account and update your password";
+			$headers = "From:Khadimhazir@gmail.com";
+
+			mail($to,$subject,$txt,$headers);
+
+			$this->common_model->update_array(array('email' => $data['email']), 'users', array('password' => sha1($new_password)));
+			$data=array();
+			$result['data']=$data;
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='We have sent a new password to your email';
+		}else{
+			$data=array();
+			$result['data']=$data;
+			$result['message']['success'] = false;
+			$result['message']['code']='500';
+			$result['message']['msg']='This user is not registered, Kindly register first';
+		}
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	}
+
 }
