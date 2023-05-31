@@ -478,8 +478,9 @@ class Api extends CI_Controller {
 	}
 
 	public function favouriteEmployees($id=''){
-
-		$user = $this->common_model->join_three_tab_where_rows(("favourite_user.id, username, employee_id  AS user_id,categories.name, category_id, user_type, phone_no, users.image"), "users", "favourite_user", "ON (favourite_user.employer_id=users.id)" ,"categories", "ON (categories.id=users.category_id)" ,array('employer_id'=>$id, 'favourite'=>"Y"));
+		$user = $this->common_model->join_three_tab_where_rows(("favourite_user.id, username, employee_id  AS user_id,categories.name, category_id, user_type, phone_no, users.image"), 
+		"users", "favourite_user", "ON (favourite_user.employee_id=users.id)" ,"categories", "ON (categories.id=users.category_id)" ,
+		array('employer_id'=>$id, 'favourite'=>"Y"));
 		$data=$user->result();
 		// echo "<pre>"; print_r($data); exit;
 		if($user->num_rows()>0){
