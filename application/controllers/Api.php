@@ -579,4 +579,43 @@ class Api extends CI_Controller {
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 	}
 
+	public function usersByCategory(){
+		$data['category_id']=$this->input->post('category_id');
+		$data['user_id']=$this->input->post('user_id');
+		$id=$data['user_id'];
+		$category=$data['category_id'];
+		
+		if($id=='' && $category==''){
+			$favourite=false;
+			$user = $this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, '$id' as user_id, name as category_name, category_id, user_type, phone_no, users.image", "categories", "users", "ON (categories.id=users.`category_id`)", "user_type = 'employee'");
+			$message='All employee list';
+		}elseif($id=='' && $category!=''){
+			$favourite=false;
+			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, '$id' as user_id, name as category_name, category_id, user_type, phone_no, users.image", "users", "categories", "ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
+			$message='All employee list in a category';
+		}elseif($id!='' && $category==''){
+			//get all employeess with favourit=true. which are marked facourite by this employer
+			$favourite=true;
+			$user = $this->common_model->join_three_tab_where_rows((" 'true' as favourite, username, '$id' as user_id, category_id, name as category_name, user_type, phone_no, users.image"), 
+			"users", "favourite_user", "ON (favourite_user.employee_id=users.id)" ,"categories", "ON (categories.id=users.category_id)" ,
+			array('employer_id'=>$id));
+			$message='All employee list for a specific user';
+		}elseif($id!='' && $category!=''){
+			//get specific employes againset category with favourit true as well
+			$favourite=true;
+			$user = $this->common_model->join_three_tab_where_rows((" 'true' as favourite, username, '$id' as user_id, category_id, name as category_name, user_type, phone_no, users.image"), 
+			"users", "favourite_user", "ON (favourite_user.employee_id=users.id)" ,"categories", "ON (categories.id=users.category_id)" ,
+			array('employer_id'=>$id,  "category_id"=>$category));
+			$message='All employee list for a specific user and specific category';
+		}
+		$data = $user->result();
+		$result['data']=$data;
+		$result['message']['success'] = true;
+		$result['message']['code']='500';
+		$result['message']['msg']=$message;
+		
+		echo "<pre>"; print_r($result); exit;
+
+	}
+
 }
