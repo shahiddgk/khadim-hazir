@@ -613,8 +613,8 @@ class Api extends CI_Controller {
 		$result['message']['success'] = true;
 		$result['message']['code']='500';
 		$result['message']['msg']=$message;
-		
-		echo "<pre>"; print_r($result); exit;
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+		// echo "<pre>"; print_r($result); exit;
 
 	}
 
