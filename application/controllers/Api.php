@@ -585,20 +585,26 @@ class Api extends CI_Controller {
 		$id=$data['user_id'];
 		$category=$data['category_id'];
 		
-		if($id=='' && $category==''){
-			$favourite=false;
-			$user = $this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, '$id' as user_id, name as category_name, category_id, user_type, phone_no, users.image", "categories", "users", "ON (categories.id=users.`category_id`)", "user_type = 'employee'");
-			$message='All employee list';
-		}elseif($id=='' && $category!=''){
-			$favourite=false;
-			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, '$id' as user_id, name as category_name, category_id, user_type, phone_no, users.image", "users", "categories", "ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
+		if($id=='' && $category!=''){
+			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
+			category_id, user_type, phone_no, users.image", "users", "categories", 
+			"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
+			$data = $user->result();
+
 			$message='All employee list in a category';
 		}elseif($id!='' && $category==''){
-			//get all employeess with favourit=true. which are marked facourite by this employer
-			$favourite=true;
-			$user = $this->common_model->join_three_tab_where_rows((" 'true' as favourite, username, '$id' as user_id, category_id, name as category_name, user_type, phone_no, users.image"), 
-			"users", "favourite_user", "ON (favourite_user.employee_id=users.id)" ,"categories", "ON (categories.id=users.category_id)" ,
-			array('employer_id'=>$id));
+			$user = $this->common_model->join_two_tab_where_simple((" 'false' as favourite, username, users.id as employee_id, category_id, 
+			name as category_name, user_type, phone_no, users.image"), 
+			"users", "categories", "ON (categories.id=users.category_id)" , "user_type = 'employee'");
+			$data = $user->result();
+			foreach($data as $key=>$value){
+				$favourite = $this->common_model->join_two_tab_where_simple((" favourite, username, employee_id"), "users", "favourite_user", 
+						"ON (favourite_user.employer_id=users.id)" , array("favourite_user.employee_id"=>$value->employee_id, "users.id"=>$id));
+					$fav_data_num = $favourite->num_rows();
+					if($fav_data_num>0){
+						$data[$key]->favourite = 'true';				
+					}
+			}
 			$message='All employee list for a specific user';
 		}elseif($id!='' && $category!=''){
 			//get specific employes againset category with favourit true as well
@@ -606,9 +612,33 @@ class Api extends CI_Controller {
 			$user = $this->common_model->join_three_tab_where_rows((" 'true' as favourite, username, '$id' as user_id, category_id, name as category_name, user_type, phone_no, users.image"), 
 			"users", "favourite_user", "ON (favourite_user.employee_id=users.id)" ,"categories", "ON (categories.id=users.category_id)" ,
 			array('employer_id'=>$id,  "category_id"=>$category));
+
+			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
+			category_id, user_type, phone_no, users.image", "users", "categories", 
+			"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
+
+			$data = $user->result();
+			foreach($data as $key=>$value){
+				$favourite = $this->common_model->join_two_tab_where_simple((" favourite, username, employee_id"), "users", "favourite_user", 
+						"ON (favourite_user.employer_id=users.id)" , array("favourite_user.employee_id"=>$value->employee_id, "users.id"=>$id));
+					$fav_data_num = $favourite->num_rows();
+					if($fav_data_num>0){
+						$data[$key]->favourite = 'true';				
+					}
+			}
+
 			$message='All employee list for a specific user and specific category';
 		}
-		$data = $user->result();
+		else{
+			
+			$user = $this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, 
+			name as category_name, category_id, user_type, phone_no, users.image, email", "categories", "users", 
+			 "ON (categories.id=users.`category_id`)", "user_type = 'employee'");
+			 $data = $user->result();
+
+			$message='All employee list';
+		}
+		//$data = $user->result();
 		$result['data']=$data;
 		$result['message']['success'] = true;
 		$result['message']['code']='500';
