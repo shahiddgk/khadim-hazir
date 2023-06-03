@@ -441,22 +441,22 @@ class Api extends CI_Controller {
 		echo json_encode($result);exit;
 	}	  
 	
-	public function employeeList(){
-		$user = $this->common_model->join_two_tab_where_simple("username, users.id AS user_id, name as category_name, category_id, user_type, phone_no, users.image", "categories", "users", "ON (categories.id=users.`category_id`)", "user_type = 'employee'");
-		$data=$user->result();
-		if($user->num_rows()>0){
-			$result['data']=$data;
-			$result['message']['success'] = true;
-			$result['message']['code']='500';
-			$result['message']['msg']='Employer listing';
-		}else{
-			$data=array();
-			$result['data']=$data;
-			$result['message']['success'] = false;
-			$result['message']['msg']='No Employee in the list';
-		}
-		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
-	}
+	// public function employeeList(){
+	// 	$user = $this->common_model->join_two_tab_where_simple("username, users.id AS user_id, name as category_name, category_id, user_type, phone_no, users.image", "categories", "users", "ON (categories.id=users.`category_id`)", "user_type = 'employee'");
+	// 	$data=$user->result();
+	// 	if($user->num_rows()>0){
+	// 		$result['data']=$data;
+	// 		$result['message']['success'] = true;
+	// 		$result['message']['code']='500';
+	// 		$result['message']['msg']='Employer listing';
+	// 	}else{
+	// 		$data=array();
+	// 		$result['data']=$data;
+	// 		$result['message']['success'] = false;
+	// 		$result['message']['msg']='No Employee in the list';
+	// 	}
+	// 	echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	// }
 
 	public function employerList(){
 		$user = $this->common_model->join_two_tab_where_simple("username, users.id AS user_id, name as category_name, category_id, user_type, phone_no, users.image", "categories", "users", "ON (categories.id=users.`category_id`)", "user_type = 'employer'");
@@ -579,7 +579,7 @@ class Api extends CI_Controller {
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 	}
 
-	public function usersByCategory(){
+	public function employeesListing(){
 		$data['category_id']=$this->input->post('category_id');
 		$data['user_id']=$this->input->post('user_id');
 		$id=$data['user_id'];
@@ -608,10 +608,10 @@ class Api extends CI_Controller {
 			$message='All employee list for a specific user';
 		}elseif($id!='' && $category!=''){
 			//get specific employes againset category with favourit true as well
-			$favourite=true;
-			$user = $this->common_model->join_three_tab_where_rows((" 'true' as favourite, username, '$id' as user_id, category_id, name as category_name, user_type, phone_no, users.image"), 
-			"users", "favourite_user", "ON (favourite_user.employee_id=users.id)" ,"categories", "ON (categories.id=users.category_id)" ,
-			array('employer_id'=>$id,  "category_id"=>$category));
+			// $favourite=true;
+			// $user = $this->common_model->join_three_tab_where_rows((" 'true' as favourite, username, '$id' as user_id, category_id, name as category_name, user_type, phone_no, users.image"), 
+			// "users", "favourite_user", "ON (favourite_user.employee_id=users.id)" ,"categories", "ON (categories.id=users.category_id)" ,
+			// array('employer_id'=>$id,  "category_id"=>$category));
 
 			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
 			category_id, user_type, phone_no, users.image", "users", "categories", 

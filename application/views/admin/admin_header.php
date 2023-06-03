@@ -20,7 +20,7 @@ else{
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Azoozy.com Job Portal</title>
+    <title>Khadimhazir.com Job Portal</title>
     <meta name="description" content="Sufee Admin - HTML5 Admin Template">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -72,9 +72,7 @@ else{
                     <a href="<?=site_url('admin/service')?>"> <i class="menu-icon fa fa-bold"></i>Sub Categories</a>
                     <ul class="sub-menu children dropdown-menu">
                          <!-- <li><i class="fa fa-plus"></i><a href="<?=site_url('brand')?>">View Brands</a></li>
-                         <li><i class="fa fa-plus"></i><a href="<?=site_url('brand')?>">Add Brands</a></li> -->
-                            
-                            
+                         <li><i class="fa fa-plus"></i><a href="<?=site_url('brand')?>">Add Brands</a></li> -->  
                     </ul>
                 </li>
                 <li class="menu-item-has-children dropdown">
@@ -83,11 +81,9 @@ else{
                 <li class="menu-item-has-children dropdown">
                     <a href="<?=site_url('admin/welcome/favouriteusers')?>"> <i class="menu-icon fa fa-users"></i>Favourite Users</a>
                 </li>
-                <li class="menu-item-has-children dropdown">
+                <!-- <li class="menu-item-has-children dropdown">
                     <a href="<?=site_url('admin/welcome/settings')?>"> <i class="menu-icon fa fa-users"></i>Settings</a>
-                   
-                </li>
-               
+                </li>  -->
             </ul>
         </div><!-- /.navbar-collapse -->
     </nav>

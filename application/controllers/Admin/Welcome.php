@@ -160,9 +160,21 @@ class Welcome extends CI_Controller {
 	}
 	public function favouriteusers() 
 	{
-		$data['favouriteusers'] =$this->common_model->select_all_join_group_order("*","users", "favourite_user", "ON (employer_id=users.id)", 'employer_id', 'username', 'ASC');
-		// $employer_array=$employer->result();
-
+		$user = $this->common_model->join_two_tab_where_simple(("distinct(username), email, phone_no, users.id as employer_id, category_id, user_type,created_at, phone_no, status, users.image"), "users", "favourite_user", 
+		"ON (favourite_user.employer_id=users.id)" ,"user_type = 'employer'");
+		$data = $user->result();
+		// echo "<pre>"; print_r($result);exit;
+		foreach($data as $key=>$value){
+			$favourite = $this->common_model->join_two_tab_where_simple("*", "users", "favourite_user", 
+			"ON (favourite_user.employee_id=users.id)" , array("employer_id"=>"$value->employer_id"));
+			$fav_data_num = $favourite->num_rows();
+			if($fav_data_num>0){
+				$data[$key]->favourite_employees = $favourite->result_array();
+			}
+		}
+		// echo "<pre>"; print_r($data);exit;
+		$data['favouriteusers']=$data;
+		// echo "<pre>"; print_r($data);exit;
 		$this->load->view('admin/admin_header');
 		$this->load->view('admin/users/favouriteusers', $data);
 		$this->load->view('admin/admin_footer');
