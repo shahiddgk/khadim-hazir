@@ -665,7 +665,7 @@ class Api extends CI_Controller {
 		$result['data']=$data;
 		$result['message']['success'] = true;
 		$result['message']['code']='500';
-		$result['message']['msg']='All active jobs';
+		$result['message']['msg']='New job created';
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 	}
 
@@ -715,18 +715,13 @@ class Api extends CI_Controller {
 	}
 
 	public function jobsListing(){
-		$employe_id = 154;
-		$user=$this->common_model->join_three_tab_where_rows("username, employer_id, categories.name, jobs.category_id, en_job_description,
-		 en_min_price, en_max_price, active", 
-		 "jobs", "users", "on (jobs.employer_id=users.id)", "categories", "on (categories.id=jobs.category_id)", array("jobs.active"=>"Y") );
-
-
-		 $user=$this->common_model->join_three_tab_where_rows("username, employer_id, categories.name, jobs.category_id, en_job_description,
-		 en_min_price, en_max_price, active", 
-		 "jobs", "users", "on (jobs.category_id=users.category_id)", 
-		 "categories", "on (categories.id=jobs.category_id)", 
-		 array("jobs.active"=>"Y",  "users.id"=>$employe_id) );
-
+		$employe_id = $this->input->post('user_id');
+		// echo "last 10 jobs"; exit;
+		$user=$this->common_model->join_three_tab_where_rows("DISTINCT(users.id) as user_id, employer_id, categories.name, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
+		en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", 
+		"jobs", "users", "on (jobs.category_id=users.category_id)", 
+		"categories", "on (categories.id=jobs.category_id)", 
+		array("jobs.active"=>"Y",  "users.id"=>$employe_id));
 		$data=$user->result();
 		if($user->num_rows()>0){
 			$result['data']=$data;
@@ -734,10 +729,17 @@ class Api extends CI_Controller {
 			$result['message']['code']='500';
 			$result['message']['msg']='All active jobs';
 		}else{
+			// echo "last 10 jobs"; exit;
+			$user=$this->common_model->join_two_tab_where_limit_order(" '$employe_id' as user_id, employer_id, categories.name, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
+			en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", 
+			"jobs", "categories", "on (categories.id=jobs.category_id)", 
+			array("jobs.active"=>"Y"), "10", "jobs.id", "DSC");
+			$data=$user->result();
+
 			$result['data']=$data;
 			$result['message']['success'] = true;
 			$result['message']['code']='500';
-			$result['message']['msg']='No active jobs';
+			$result['message']['msg']='Previous 10 jobs listed';
 		}
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 		// echo "<pre>"; print_r($data);exit;

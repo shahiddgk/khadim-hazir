@@ -431,7 +431,18 @@ class Common_model extends  CI_Model {
 		return $result;	
 		
 	}
-			
+		
+	
+	function join_two_tab_where_limit_order( $select, $from, $jointable1, $condition1, $where, $limit, $orderBy_columName, $ASC_DESC ){
+		$this->db->select($select);
+		$this->db->from( $from );
+		$this->db->join( $jointable1 , $condition1 );
+		$this->db->where( $where );
+		$this->db->limit( $limit );
+		$this->db->order_by( $orderBy_columName , $ASC_DESC );	
+		return $this->db->get();
+
+	}
 
 
 
