@@ -648,4 +648,87 @@ class Api extends CI_Controller {
 
 	}
 
+	public function creatNewJob(){
+		$data['employer_id']=$this->input->post('employer_id');
+		$data['category_id']=$this->input->post('category_id');
+		$data['en_job_description']=$this->input->post('en_job_description');
+		$data['ar_job_description']=$this->input->post('ar_job_description');
+		$data['ur_job_description']=$this->input->post('ur_job_description');
+		$data['en_min_price']=$this->input->post('en_min_price');
+		$data['en_max_price']=$this->input->post('en_max_price');
+		$data['ar_min_price']=$this->input->post('ar_min_price');
+		$data['ar_max_price']=$this->input->post('ar_max_price');
+		$data['ur_min_price']=$this->input->post('ur_min_price');
+		$data['ur_max_price']=$this->input->post('ur_max_price');
+		$data['active']=$this->input->post('active');
+		$this->common_model->insert_array('jobs',$data);
+		$result['data']=$data;
+		$result['message']['success'] = true;
+		$result['message']['code']='500';
+		$result['message']['msg']='All active jobs';
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	}
+
+	public function jobUpdate(){
+		$id = $this->input->post('id');
+		$data['en_job_description']=$this->input->post('en_job_description');
+		$data['ar_job_description']=$this->input->post('ar_job_description');
+		$data['ur_job_description']=$this->input->post('ur_job_description');
+		$data['en_min_price']=$this->input->post('en_min_price');
+		$data['en_max_price']=$this->input->post('en_max_price');
+		$data['ar_min_price']=$this->input->post('ar_min_price');
+		$data['ar_max_price']=$this->input->post('ar_max_price');
+		$data['ur_min_price']=$this->input->post('ur_min_price');
+		$data['ur_max_price']=$this->input->post('ur_max_price');
+		$user=$this->common_model->select_where("*", "jobs", array('id'=>$id));
+		$employer=$user->result();
+		if($user->num_rows()>0){
+			$this->common_model->update_array(array('id' => $id), 'jobs', $data);
+			$result['data']=$data;
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='Job updated';
+		}else{
+			$result['message']['success'] = false;
+			$result['message']['code']='500';
+			$result['message']['msg']='This Job is not availible';
+		}
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	}
+
+	public function deleteJob(){
+		$id = $this->input->post('id');
+		$user=$this->common_model->select_where("*", "jobs", array('id'=>$id));
+		$data=$user->result();
+		if($user->num_rows()>0){
+			$this->common_model->delete_where(array('id'=>$id,), 'jobs');
+			$result['data']=$data;
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='Job is deleted';
+		}else{
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='This job is already deleted';
+		}
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	}
+
+	public function jobsListing(){
+		$user=$this->common_model->join_three_tab_where_rows("username, employer_id, categories.name, jobs.category_id, en_job_description, en_min_price, en_max_price, active", "jobs", "users", "on (jobs.employer_id=users.id)", "categories", "on (categories.id=jobs.category_id)", array("jobs.active"=>"Y") );
+		$data=$user->result();
+		if($user->num_rows()>0){
+			$result['data']=$data;
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='All active jobs';
+		}else{
+			$result['data']=$data;
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='No active jobs';
+		}
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+		// echo "<pre>"; print_r($data);exit;
+	}
 }
