@@ -715,7 +715,18 @@ class Api extends CI_Controller {
 	}
 
 	public function jobsListing(){
-		$user=$this->common_model->join_three_tab_where_rows("username, employer_id, categories.name, jobs.category_id, en_job_description, en_min_price, en_max_price, active", "jobs", "users", "on (jobs.employer_id=users.id)", "categories", "on (categories.id=jobs.category_id)", array("jobs.active"=>"Y") );
+		$employe_id = 154;
+		$user=$this->common_model->join_three_tab_where_rows("username, employer_id, categories.name, jobs.category_id, en_job_description,
+		 en_min_price, en_max_price, active", 
+		 "jobs", "users", "on (jobs.employer_id=users.id)", "categories", "on (categories.id=jobs.category_id)", array("jobs.active"=>"Y") );
+
+
+		 $user=$this->common_model->join_three_tab_where_rows("username, employer_id, categories.name, jobs.category_id, en_job_description,
+		 en_min_price, en_max_price, active", 
+		 "jobs", "users", "on (jobs.category_id=users.category_id)", 
+		 "categories", "on (categories.id=jobs.category_id)", 
+		 array("jobs.active"=>"Y",  "users.id"=>$employe_id) );
+
 		$data=$user->result();
 		if($user->num_rows()>0){
 			$result['data']=$data;
