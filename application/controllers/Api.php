@@ -717,7 +717,7 @@ class Api extends CI_Controller {
 	public function jobsListing(){
 		$employe_id = $this->input->post('user_id');
 		// echo "last 10 jobs"; exit;
-		$user=$this->common_model->join_three_tab_where_rows("DISTINCT(users.id) as user_id, employer_id, categories.name, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
+		$user=$this->common_model->join_three_tab_where_rows("jobs.id as job_id , DISTINCT(users.id) as user_id, employer_id, categories.name, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
 		en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", 
 		"jobs", "users", "on (jobs.category_id=users.category_id)", 
 		"categories", "on (categories.id=jobs.category_id)", 
@@ -730,7 +730,7 @@ class Api extends CI_Controller {
 			$result['message']['msg']='All active jobs';
 		}else{
 			// echo "last 10 jobs"; exit;
-			$user=$this->common_model->join_two_tab_where_limit_order(" '$employe_id' as user_id, employer_id, categories.name, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
+			$user=$this->common_model->join_two_tab_where_limit_order("jobs.id as job_id , '$employe_id' as user_id, employer_id, categories.name, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
 			en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", 
 			"jobs", "categories", "on (categories.id=jobs.category_id)", 
 			array("jobs.active"=>"Y"), "10", "jobs.id", "DSC");
@@ -743,5 +743,210 @@ class Api extends CI_Controller {
 		}
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 		// echo "<pre>"; print_r($data);exit;
+	}
+
+	public function employerJobHistory(){
+		$employer_id=$this->input->post('employer_id');
+		$user=$this->common_model->join_three_tab_where_rows("username, employer_id, categories.name, ur_name, ar_name, jobs.category_id, en_job_description,ar_job_description,ur_job_description, en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active",
+		"jobs", "users", "on (jobs.employer_id=users.id)", 
+		"categories", "on (categories.id=jobs.category_id)", 
+		array("jobs.employer_id"=>$employer_id));
+		if($user->num_rows()>0){
+			$data=$user->result();
+			foreach($data as $key=>$value){
+				$en_array[$key]['employer_id']=$value->employer_id;
+				$en_array[$key]['username']=$value->username;
+				$en_array[$key]['name']=$value->name;
+				$en_array[$key]['category_id']=$value->category_id;
+				$en_array[$key]['en_job_description']=$value->en_job_description;
+				$en_array[$key]['en_min_price']=$value->en_min_price;
+				$en_array[$key]['en_max_price']=$value->en_max_price;
+				$en_array[$key]['active']=$value->active;
+	
+				$ur_array[$key]=$en_array[$key];
+				$ur_array[$key]['name']=$value->ur_name;
+				$ur_array[$key]['en_job_description']=$value->ur_job_description;
+				$ur_array[$key]['en_min_price']=$value->ur_min_price;
+				$ur_array[$key]['en_max_price']=$value->ur_max_price;
+	
+				$ar_array[$key]=$en_array[$key];
+				$ar_array[$key]['name']=$value->ar_name;
+				$ar_array[$key]['en_job_description']=$value->ar_job_description;
+				$ar_array[$key]['en_min_price']=$value->ar_min_price;
+				$ar_array[$key]['en_max_price']=$value->ar_max_price;
+			}
+			$result['data']['en'] = $en_array;
+			$result['data']['ur'] = $ur_array;
+			$result['data']['ar'] = $ar_array;
+			
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='Previous jobs listed by this employer';
+		}else{	
+			$data=array();
+
+			$result['data']=$data;
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='No job history';
+		}
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	}
+
+	public function jobsByCategory(){
+		$category_id=$this->input->post('category_id');
+		$user=$this->common_model->select_where("category_id, en_job_description,ar_job_description,ur_job_description, en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", "jobs", array("category_id"=>$category_id));
+		$data=$user->result();
+		
+		if($user->num_rows()>0){
+			foreach($data as $key=>$value){
+				$en_array[$key]['category_id']=$value->category_id;
+				$en_array[$key]['en_job_description']=$value->en_job_description;
+				$en_array[$key]['en_min_price']=$value->en_min_price;
+				$en_array[$key]['en_max_price']=$value->en_max_price;
+				$en_array[$key]['active']=$value->active;
+	
+				$ur_array[$key]=$en_array[$key];
+				$ur_array[$key]['en_job_description']=$value->ur_job_description;
+				$ur_array[$key]['en_min_price']=$value->ur_min_price;
+				$ur_array[$key]['en_max_price']=$value->ur_max_price;
+	
+				$ar_array[$key]=$en_array[$key];
+				$ar_array[$key]['en_job_description']=$value->ar_job_description;
+				$ar_array[$key]['en_min_price']=$value->ar_min_price;
+				$ar_array[$key]['en_max_price']=$value->ar_max_price;
+			}
+			$result['data']['en'] = $en_array;
+			$result['data']['ur'] = $ur_array;
+			$result['data']['ar'] = $ar_array;
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='All jobs listed in this category';
+		}else{
+			$data=array();
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='No job availible in this category';
+		}
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	}
+
+	public function sevenCategories(){
+		$result=array();
+		$data = $this->common_model->select_limit_order("*", "categories", "7", "id", "ASC")->result();	
+		//echo "<pre>"; print_r($data); exit;
+		foreach($data as $key=>$value){
+			$en_array[$key]['id']=$value->id;
+			$en_array[$key]['name']=$value->name;
+			$en_array[$key]['image']=$value->image;
+			$en_array[$key]['price']=$value->price;
+			$en_array[$key]['added_date']=$value->added_date;
+			$ur_array[$key]=$en_array[$key];
+			$ur_array[$key]['name']=$value->ur_name;
+			$ur_array[$key]['price']=$value->ur_price;
+			$ar_array[$key]=$en_array[$key];
+			$ar_array[$key]['name']=$value->ar_name;
+			$ar_array[$key]['price']=$value->ar_price;
+		}
+		$result['data']['en'] = $en_array;
+		$result['data']['ur'] = $ur_array;
+		$result['data']['ar'] = $ar_array;
+		// echo "<pre>"; print_r($result);exit;
+		$result['message']['code'] = '500';
+		$result['message']['success'] = true;
+		$result['message']['msg'] = '7 Categories listing';
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	}
+	
+	public function jobsDetail(){
+		// echo "last 10 jobs"; exit;
+		$id=$this->input->post('id');
+		$user=$this->common_model->join_three_tab_where_rows("username, employer_id user_id, categories.name, ur_name, ar_name, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
+		en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", 
+		"jobs", "users", "on (jobs.employer_id=users.id)", 
+		"categories", "on (categories.id=jobs.category_id)", 
+		array("jobs.active"=>"Y",  "jobs.id"=>$id));
+		$data=$user->result();
+		
+		foreach($data as $key=>$value){
+			$en_array[$key]['user_id']=$value->user_id;
+			$en_array[$key]['username']=$value->username;
+			$en_array[$key]['name']=$value->name;
+			$en_array[$key]['category_id']=$value->category_id;
+			$en_array[$key]['en_job_description']=$value->en_job_description;
+			$en_array[$key]['en_min_price']=$value->en_min_price;
+			$en_array[$key]['en_max_price']=$value->en_max_price;
+			$en_array[$key]['active']=$value->active;
+
+			$ur_array[$key]=$en_array[$key];
+			$ur_array[$key]['name']=$value->ur_name;
+			$ur_array[$key]['en_job_description']=$value->ur_job_description;
+			$ur_array[$key]['en_min_price']=$value->ur_min_price;
+			$ur_array[$key]['en_max_price']=$value->ur_max_price;
+
+			$ar_array[$key]=$en_array[$key];
+			$ar_array[$key]['name']=$value->ar_name;
+			$ar_array[$key]['en_job_description']=$value->ar_job_description;
+			$ar_array[$key]['en_min_price']=$value->ar_min_price;
+			$ar_array[$key]['en_max_price']=$value->ar_max_price;
+		}
+		
+
+		if($user->num_rows()>0){
+			$result['data']['en'] = $en_array;
+			$result['data']['ur'] = $ur_array;
+			$result['data']['ar'] = $ar_array;
+
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='Current job details';
+		}else{
+			$data=$user->result();
+
+			$result['data']=$data;
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='No detail availible for this job';
+		}
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+		// echo "<pre>"; print_r($data);exit;
+	}
+
+	public function applyForAJob(){
+		$user_id=$this->input->post('user_id');
+		$job_id=$this->input->post('job_id');
+		$user=$this->common_model->select_where("*", "jobs", array("id"=>$job_id, "active"=>"Y"));
+		$data=$user->result_array();
+		// echo "<pre>"; print_r($data); exit;
+		if($user->num_rows()>0){
+			$job=$this->common_model->join_two_tab_where_simple("*", "jobs_applied", "users", "on (jobs_applied.employee_id=users.id)", array("job_id"=>$job_id, "user_type"=>"employee", "employee_id"=>$user_id));
+			if($job->num_rows()==0){
+			$data=array(
+				'job_id'=>$data[0]['id'],
+				'employer_id'=>$data[0]['employer_id'],
+				'employee_id'=>$user_id,
+				'job_applied'=>'Y'
+			);
+			$this->common_model->insert_array('jobs_applied', $data);
+
+			$result['data']=$data;
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='You have applied for this job successfully';
+			}else{
+				$data=array();
+				$result['data']=$data;
+				$result['message']['success'] = true;
+				$result['message']['code']='500';
+				$result['message']['msg']='You have already applied for this job';
+			}
+		}else{
+			$data=array();
+			$result['data']=$data;
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='This job is not availible';
+		}
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 	}
 }

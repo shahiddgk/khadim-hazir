@@ -87,11 +87,11 @@ class Common_model extends  CI_Model {
 		}
 	}
 	
-	function select_limit_order($select,$table,$page,$recordperpage,$orderBy_columName,$ASC_DESC)
+	function select_limit_order($select,$table,$limit,$orderBy_columName,$ASC_DESC)
 	{
 		$this->db->select( $select );
 		$this->db->from( $table );
-		$this->db->limit( $recordperpage , $page );
+		$this->db->limit( $limit );
 		$this->db->order_by( $orderBy_columName , $ASC_DESC );
 		$result=$this->db->get();
 		return $result;	
@@ -308,13 +308,13 @@ class Common_model extends  CI_Model {
 	}
 	
 	
-	function join_three_tab_where( $select, $from, $jointable1, $condition1, $jointable2, $condition2,  $where, $recordperpage, $page, $orderBy_columName, $ASC_DESC ){
+	function join_three_tab_where( $select, $from, $jointable1, $condition1, $jointable2, $condition2,  $where, $limit, $orderBy_columName, $ASC_DESC ){
 		$this->db->select($select);
 		$this->db->from( $from );
 		$this->db->join( $jointable1 , $condition1 );
 		$this->db->join( $jointable2 , $condition2 );
 		$this->db->where( $where );
-		$this->db->limit( $recordperpage , $page );
+		$this->db->limit( $limit);
 		$this->db->order_by( $orderBy_columName , $ASC_DESC );	
 		return $this->db->get();
 
