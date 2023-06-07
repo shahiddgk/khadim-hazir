@@ -669,7 +669,7 @@ class Api extends CI_Controller {
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 	}
 
-	public function jobUpdate(){
+    public function jobUpdate(){
 		$id = $this->input->post('id');
 		$data['en_job_description']=$this->input->post('en_job_description');
 		$data['ar_job_description']=$this->input->post('ar_job_description');
@@ -680,15 +680,29 @@ class Api extends CI_Controller {
 		$data['ar_max_price']=$this->input->post('ar_max_price');
 		$data['ur_min_price']=$this->input->post('ur_min_price');
 		$data['ur_max_price']=$this->input->post('ur_max_price');
+		$status=$this->input->post('active');
+
 		$user=$this->common_model->select_where("*", "jobs", array('id'=>$id));
 		$employer=$user->result();
 		if($user->num_rows()>0){
-			$this->common_model->update_array(array('id' => $id), 'jobs', $data);
-			$result['data']=$data;
-			$result['message']['success'] = true;
-			$result['message']['code']='500';
-			$result['message']['msg']='Job updated';
+			$user1=$this->common_model->select_where("*", "jobs", array('id'=>$id, 'active'=>"Y"));
+			if($user1->num_rows()>0){
+				$this->common_model->update_array(array('id' => $id), 'jobs', $data);
+				$data['status']=$status;
+				$result['data']=$data;
+				$result['message']['success'] = true;
+				$result['message']['code']='500';
+				$result['message']['msg']='Job updated';
+			}else{
+				$data=array();
+				$result['data']=$data;
+				$result['message']['success'] = false;
+				$result['message']['code']='500';
+				$result['message']['msg']='Job is not active so it cannot be updated';
+			}
 		}else{
+			$data=array();
+			$result['data']=$data;
 			$result['message']['success'] = false;
 			$result['message']['code']='500';
 			$result['message']['msg']='This Job is not availible';
@@ -716,8 +730,8 @@ class Api extends CI_Controller {
 
 	public function jobsListing(){
 		$employe_id = $this->input->post('employee_id');
-		// echo "last 10 jobs"; exit;
-		$user=$this->common_model->join_three_tab_where_rows("DISTINCT(users.id) as employee_id, jobs.id job_id, employer_id, categories.name, ur_name, ar_name, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
+// 		echo $employe_id; exit;
+		$user=$this->common_model->join_three_tab_where_rows(" $employe_id as employee_id, jobs.id job_id, employer_id, categories.name, ur_name, ar_name, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
 		en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", 
 		"jobs", "users", "on (jobs.category_id=users.category_id)", 
 		"categories", "on (categories.id=jobs.category_id)", 
@@ -726,7 +740,7 @@ class Api extends CI_Controller {
 		if($user->num_rows()>0){
 			$data=$user->result();
 			foreach($data as $key=>$value){
-				$en_array[$key]['employee_id']=$value->user_id;
+				$en_array[$key]['employee_id']=$value->employee_id;
 				$en_array[$key]['job_id']=$value->job_id;
 				$en_array[$key]['employer_id']=$value->employer_id;
 				$en_array[$key]['name']=$value->name;
@@ -757,13 +771,13 @@ class Api extends CI_Controller {
 			$result['message']['msg']='All active jobs';
 		}else{
 			// echo "last 10 jobs"; exit;
-			$user=$this->common_model->join_two_tab_where_limit_order("'$employe_id' as employee_id, jobs.id job_id, employer_id, categories.name, ur_name, ar_name, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
+			$user=$this->common_model->join_two_tab_where_limit_order(" $employe_id as employee_id, jobs.id job_id, employer_id, categories.name, ur_name, ar_name, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
 			en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", 
 			"jobs", "categories", "on (categories.id=jobs.category_id)", 
 			array("jobs.active"=>"Y"), "10", "jobs.id", "DSC");
 			$data=$user->result();
 			foreach($data as $key=>$value){
-				$en_array[$key]['user_id']=$value->user_id;
+				$en_array[$key]['employee_id']=$value->employee_id;
 				$en_array[$key]['job_id']=$value->job_id;
 				$en_array[$key]['employer_id']=$value->employer_id;
 				$en_array[$key]['name']=$value->name;
@@ -835,10 +849,12 @@ class Api extends CI_Controller {
 			$result['message']['code']='500';
 			$result['message']['msg']='Previous jobs listed by this employer';
 		}else{	
-			$data=array();
-
+		    $data=array();
+// 			$result['data']['en'] = array('employer_id'=>$employer_id);
+// 			$result['data']['ur'] = array('employer_id'=>$employer_id);
+// 			$result['data']['ar'] = array('employer_id'=>$employer_id);
 			$result['data']=$data;
-			$result['message']['success'] = true;
+			$result['message']['success'] = false;
 			$result['message']['code']='500';
 			$result['message']['msg']='No job history';
 		}
@@ -875,8 +891,12 @@ class Api extends CI_Controller {
 			$result['message']['code']='500';
 			$result['message']['msg']='All jobs listed in this category';
 		}else{
-			$data=array();
-			$result['message']['success'] = true;
+		    $data=array();
+// 			$result['data']['en'] = array('category_id'=>$category_id);
+// 			$result['data']['ur'] = array('category_id'=>$category_id);
+// 			$result['data']['ar'] = array('category_id'=>$category_id);
+            $result['data']=$data;
+			$result['message']['success'] = false;
 			$result['message']['code']='500';
 			$result['message']['msg']='No job availible in this category';
 		}
@@ -953,8 +973,8 @@ class Api extends CI_Controller {
 			$result['message']['code']='500';
 			$result['message']['msg']='Current job details';
 		}else{
-			$data=$user->result();
-
+			
+            $data=array();
 			$result['data']=$data;
 			$result['message']['success'] = true;
 			$result['message']['code']='500';
