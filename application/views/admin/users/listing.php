@@ -21,14 +21,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            <?php  foreach($users->result_array() as $data){ ?>
+                            <?php  
+                            // echo "<pre>"; print_r($users); exit;
+                            foreach($users as $data){ 
+                                // echo "<pre>"; print_r($data); exit;?>
                                 <tr>
-                                    <td><?=$data['username'] ?></td>
-                                    <td><?=$data['email']?></td>
-                                    <td><?=$data['phone_no']?></td>
-                                    <td><?=ucfirst($data['user_type'])?></td>
-                                    <td><?=$data['created_at']?></td>
-                                    <td><a href="<?php echo base_url()?>/admin/welcome/change_status?id=<?php echo $data['id']; ?>&status=<?php echo ($data['status']=='active')? 'inactive':'active'; ?>"><?php echo ($data['status']=='active')? 'Make InActive':' Make Active' ?></a></td>
+                                    <td><?=$data->username?></td>
+                                    <td><?=$data->email?></td>
+                                    <td><?=$data->phone_no?></td>
+                                    <td><?=ucfirst($data->user_type)?></td>
+                                    <td><?=$data->created_at?></td>
+                                    <td><a href="<?php echo base_url()?>/admin/welcome/change_status?id=<?php echo $data->id; ?>&status=<?php echo ($data->status=='active')? 'inactive':'active'; ?>"><?php echo ($data->status=='active')? 'Make InActive':' Make Active' ?></a></td>
                                 </tr>
                             <?php } ?>
                                 

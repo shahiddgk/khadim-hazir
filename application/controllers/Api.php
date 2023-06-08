@@ -670,7 +670,8 @@ class Api extends CI_Controller {
 	}
 
     public function jobUpdate(){
-		$id = $this->input->post('id');
+		// echo "jobupdate"; exit;
+		$id = $this->input->post('job_id');
 		$data['en_job_description']=$this->input->post('en_job_description');
 		$data['ar_job_description']=$this->input->post('ar_job_description');
 		$data['ur_job_description']=$this->input->post('ur_job_description');
@@ -680,15 +681,18 @@ class Api extends CI_Controller {
 		$data['ar_max_price']=$this->input->post('ar_max_price');
 		$data['ur_min_price']=$this->input->post('ur_min_price');
 		$data['ur_max_price']=$this->input->post('ur_max_price');
-		$status=$this->input->post('active');
 
+		$status=$this->input->post('active');
+		// echo $id;exit;
 		$user=$this->common_model->select_where("*", "jobs", array('id'=>$id));
 		$employer=$user->result();
+		// echo "<pre>"; print_r($employer[0]->employer_id);exit;
 		if($user->num_rows()>0){
 			$user1=$this->common_model->select_where("*", "jobs", array('id'=>$id, 'active'=>"Y"));
 			if($user1->num_rows()>0){
 				$this->common_model->update_array(array('id' => $id), 'jobs', $data);
 				$data['status']=$status;
+				$data['employer_id']=$employer[0]->employer_id;
 				$result['data']=$data;
 				$result['message']['success'] = true;
 				$result['message']['code']='500';
@@ -711,8 +715,9 @@ class Api extends CI_Controller {
 	}
 
 	public function deleteJob(){
-		$id = $this->input->post('id');
-		$user=$this->common_model->select_where("*", "jobs", array('id'=>$id));
+		$id = $this->input->post('job_id');
+		$user=$this->common_model->select_where("jobs.id job_id, employer_id, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
+		en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", "jobs", array('id'=>$id));
 		$data=$user->result();
 		if($user->num_rows()>0){
 			$this->common_model->delete_where(array('id'=>$id,), 'jobs');
@@ -721,6 +726,7 @@ class Api extends CI_Controller {
 			$result['message']['code']='500';
 			$result['message']['msg']='Job is deleted';
 		}else{
+			$data=array();
 			$result['message']['success'] = true;
 			$result['message']['code']='500';
 			$result['message']['msg']='This job is already deleted';
@@ -813,13 +819,14 @@ class Api extends CI_Controller {
 
 	public function employerJobHistory(){
 		$employer_id=$this->input->post('employer_id');
-		$user=$this->common_model->join_three_tab_where_rows("username, employer_id, categories.name, ur_name, ar_name, jobs.category_id, en_job_description,ar_job_description,ur_job_description, en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active",
+		$user=$this->common_model->join_three_tab_where_rows("jobs.id as job_id, username, employer_id, categories.name, ur_name, ar_name, jobs.category_id, en_job_description,ar_job_description,ur_job_description, en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active",
 		"jobs", "users", "on (jobs.employer_id=users.id)", 
 		"categories", "on (categories.id=jobs.category_id)", 
 		array("jobs.employer_id"=>$employer_id));
 		if($user->num_rows()>0){
 			$data=$user->result();
 			foreach($data as $key=>$value){
+				$en_array[$key]['job_id']=$value->job_id;
 				$en_array[$key]['employer_id']=$value->employer_id;
 				$en_array[$key]['username']=$value->username;
 				$en_array[$key]['name']=$value->name;
@@ -850,9 +857,6 @@ class Api extends CI_Controller {
 			$result['message']['msg']='Previous jobs listed by this employer';
 		}else{	
 		    $data=array();
-// 			$result['data']['en'] = array('employer_id'=>$employer_id);
-// 			$result['data']['ur'] = array('employer_id'=>$employer_id);
-// 			$result['data']['ar'] = array('employer_id'=>$employer_id);
 			$result['data']=$data;
 			$result['message']['success'] = false;
 			$result['message']['code']='500';
@@ -862,12 +866,17 @@ class Api extends CI_Controller {
 	}
 
 	public function jobsByCategory(){
+		$employee_id=$this->input->post('employee_id');
 		$category_id=$this->input->post('category_id');
-		$user=$this->common_model->select_where("category_id, en_job_description,ar_job_description,ur_job_description, en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", "jobs", array("category_id"=>$category_id));
+		$user=$this->common_model->join_two_tab_where_simple("jobs.id as job_id, category_id, name, ur_name, ar_name, employer_id, en_job_description,ar_job_description,ur_job_description, en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", "jobs", "categories", "on (jobs.category_id=categories.id)", array("category_id"=>$category_id));
 		$data=$user->result();
 		
 		if($user->num_rows()>0){
 			foreach($data as $key=>$value){
+				$en_array[$key]['employee_id']=$employee_id;
+				$en_array[$key]['job_id']=$value->job_id;
+				$en_array[$key]['employer_id']=$value->employer_id;
+				$en_array[$key]['name']=$value->name;
 				$en_array[$key]['category_id']=$value->category_id;
 				$en_array[$key]['en_job_description']=$value->en_job_description;
 				$en_array[$key]['en_min_price']=$value->en_min_price;
@@ -875,11 +884,13 @@ class Api extends CI_Controller {
 				$en_array[$key]['active']=$value->active;
 	
 				$ur_array[$key]=$en_array[$key];
+				$ur_array[$key]['name']=$value->ur_name;
 				$ur_array[$key]['en_job_description']=$value->ur_job_description;
 				$ur_array[$key]['en_min_price']=$value->ur_min_price;
 				$ur_array[$key]['en_max_price']=$value->ur_max_price;
 	
 				$ar_array[$key]=$en_array[$key];
+				$ar_array[$key]['name']=$value->ar_name;
 				$ar_array[$key]['en_job_description']=$value->ar_job_description;
 				$ar_array[$key]['en_min_price']=$value->ar_min_price;
 				$ar_array[$key]['en_max_price']=$value->ar_max_price;
@@ -892,9 +903,6 @@ class Api extends CI_Controller {
 			$result['message']['msg']='All jobs listed in this category';
 		}else{
 		    $data=array();
-// 			$result['data']['en'] = array('category_id'=>$category_id);
-// 			$result['data']['ur'] = array('category_id'=>$category_id);
-// 			$result['data']['ar'] = array('category_id'=>$category_id);
             $result['data']=$data;
 			$result['message']['success'] = false;
 			$result['message']['code']='500';

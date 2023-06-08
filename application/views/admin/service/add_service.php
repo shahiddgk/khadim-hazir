@@ -1,5 +1,5 @@
 <div class="col-lg-6">
-    <div class="card">
+    <div class="card" style="width: 200%;">
      <?php
      if($this->session->userdata('success')){ ?>
         <!-- <div class="sufee-alert alert with-close alert-success alert-dismissible fade show">
@@ -35,55 +35,78 @@
                             </select>
                         </div>
                     </div>   
-                    <div class="form-group">
-                        <div class="input-group">
-                            <div class="input-group-addon">Sub Category</div>
+                    <div class="row">
+                        <div class="col col-md">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">Sub Category</div>
                                 <input type="text" name="name" class="form-control">
                             </div>
                         </div>
-
-                    <div class="form-group">
-                        <div class="input-group">
-                            <div class="input-group-addon">Arabic Name</div>
-                                <input type="text" name="ar_name" class="form-control">
-                            </div>
                         </div>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <div class="input-group-addon">Urdu Name</div>
-                                <input type="text" name="ur_name" class="form-control">
-                            </div>
-                        </div>
+                        <div class="col col-md">
                         <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-addon">Price in USD</div>
                                 <input type="number" class="form-control" name="price" required>
                             </div>
                         </div>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col col-md">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">Arabic Name</div>
+                                <input type="text" name="ar_name" class="form-control">
+                            </div>
+                        </div>
+                        </div>
+                        <div class="col col-md">
                         <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-addon">Price in AED</div>
                                 <input type="number" class="form-control" name="ar_price" required>
                             </div>
                         </div>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col col-md">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">Urdu Name</div>
+                                <input type="text" name="ur_name" class="form-control">
+                            </div>
+                        </div>
+                        </div>
+                        <div class="col col-md">
                         <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-addon">Price in PKR</div>
                                 <input type="number" class="form-control" name="ur_price" required>
                             </div>
                         </div>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col col-md">
                         <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon">Image</div>
                                 <input type="file" name="image_file" class="form-control form-control-file" accept="image/*">
                             </div>
                         </div>
-
-                        <div class="form-actions form-group">
-                            <button type="submit" class="btn btn-primary btn-sm">Submit</button>
                         </div>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="form-group">
+                        <div style="text-align: center">
+                            <button type="submit" class="btn btn-primary btn-sm" style="width : 100px">Submit</button>
+                        </div>
+                        </div>
+                    </div>
+                        
                     </form>
                 </div>
              </div>
         </div>
     
+      

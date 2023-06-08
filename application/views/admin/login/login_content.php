@@ -5,7 +5,7 @@
         <div class="container">
             <div class="login-content">
                 <div class="login-logo">
-                    <a href="<?=site_url('admin/welcome');?>">
+                    <a href="<?=site_url('admin');?>">
                         <!-- <img src="<?=base_url()?>assets/images/azoozywhite.png" width="300" alt="" class="d-inline-block align-middle mr-2"> -->
                     </a>
                 </div>
@@ -23,7 +23,7 @@
 
 
                 <div class="login-form">
-                    <form action="<?=site_url('admin/welcome/login_action')?>" method='post'>
+                    <form action="<?='admin/welcome/login_action'?>" method='post'>
                         <div class="form-group">
                             <label>UserName</label>
                             <input <?php  if($this->input->cookie('user')!='') { ?>
@@ -43,9 +43,9 @@
                                 <input <?php if($this->input->cookie('check_rem')!='') { ?> checked <?php } ?>
                                     type="checkbox" name="rememberme"> Remember Me
                             </label>
-                            <label class="pull-right">
+                            <!-- <label class="pull-right">
                                 <a href="<?=site_url("/admin/welcome/forget_password") ?>">Forgotten Password?</a>
-                            </label>
+                            </label> -->
 
                         </div>
                         <button type="submit" class="btn btn-success btn-flat m-b-30 m-t-30">Sign in</button>

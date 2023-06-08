@@ -78,6 +78,14 @@ class Category extends CI_Controller {
 		 
 	}
 
+	function add_category()
+	{
+		$this->load->view('admin/admin_header');
+		$this->load->view('admin/category/add_category');
+		$this->load->view('admin/admin_footer');
+		 
+	}
+
 	function update_category()
 	{	
 		// echo  "<pre>"; print_r($_POST); 

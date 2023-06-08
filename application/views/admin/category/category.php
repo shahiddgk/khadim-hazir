@@ -1,72 +1,16 @@
 <?php //echo "<pre>"; print_r($categories); exit; ?>
-<div class="container">
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card">
-                <strong class="card-header">Add Category</strong>
-                <div class="card-body card-block">
-                    <form action="<?=site_url('admin/category/insert_category')?>" method="post"
-                        enctype="multipart/form-data">
-                        <div class="form-group">
-                            <div class="input-group">
-                                <div class="input-group-addon">Category Name</div>
-                                <input type="text" name="name" class="form-control">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <div class="input-group-addon">Arabic Name</div>
-                                <input type="text" name="ar_name" class="form-control">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <div class="input-group-addon">Urdu Name</div>
-                                <input type="text" name="ur_name" class="form-control">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <div class="input-group-addon">Price in USD</div>
-                                <input type="number" class="form-control" name="price" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <div class="input-group-addon">Price in AED</div>
-                                <input type="number" class="form-control" name="ar_price" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <div class="input-group-addon">Price in PKR</div>
-                                <input type="number" class="form-control" name="ur_price" required>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <div class="input-group">
-                                <div class="input-group-addon">Image</div>
-                                <input type="file" name="image_file" class="form-control form-control-file"
-                                    accept="image/*">
-                            </div>
-                        </div>
-                        <div class="form-actions form-group">
-                            <button type="submit" class="btn btn-primary btn-sm">Submit</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+
 <?php //echo "<pre>"; print_r($categories);exit;?>
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header">
                         <strong class="card-title">Category List</strong>
+                        <a href="<?=site_url().'admin/category/add_category'?>" style="float: right;"> 
+                    <button type="button" class="btn btn-outline-success btn-sm">Add a Category</button></a>
                     </div>
                     <div class="card-body">
-                        <table class="table table-striped">
+                        <table  id="bootstrap-data-table-export" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>

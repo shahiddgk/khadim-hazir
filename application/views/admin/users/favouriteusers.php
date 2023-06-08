@@ -1,12 +1,5 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-  <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
+<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-</head>
-<body>
 <div class="content mt-3">
      <div class="animated fadeIn">
         <div class="row">
@@ -25,7 +18,7 @@
                                     <th>User Type</th>
                                     <th>Created At</th>
                                     <th>Action</th>
-                                    <th></th>
+                                    
                                 </tr>
                                 
                             </thead>
@@ -46,12 +39,12 @@
                                 </tr>
                                <?php $sn=0;
                                foreach($data->favourite_employees as $fav){?>
-                                <tr  id=mytable style="background-color:#bab9b6">
+                                <tr style="background-color:#bab9b6">
                                 <td><?=$data->favourite_employees[$sn]['username']?></td>
                                 <td><?=$data->favourite_employees[$sn]['email']?></td>
                                 <td><?=$data->favourite_employees[$sn]['phone_no']?></td>
                                 <td><?=$data->favourite_employees[$sn]['user_type']?></td>
-                                <td><?=$data->favourite_employees[$sn]['created_at']?></td>
+                                <td><?=date("d-m-Y", strtotime($data->favourite_employees[$sn]['created_at']))?></td>
                                 <td><a href="<?php echo base_url()?>/admin/welcome/change_status?id=<?php echo $data->favourite_employees[$sn]['employee_id']; ?>&status=<?php echo ($data->favourite_employees[$sn]['status']=='active')? 'inactive':'active'; ?>"><?php echo ($data->favourite_employees[$sn]['status']=='active')? 'Make InActive':' Make Active' ?></a></td> 
                                  
                             </tr>
@@ -72,16 +65,16 @@
 </div>
 <script>
 
-function showHide(){
-    let element = document.getElementById("mytable");
-    let hidden = $("#hidden").attr() ;//element.getAttribute("hidden");
+// function showHide(){
+//     let element = document.getElementById("mytable");
+//     let hidden = $("#hidden").attr() ;//element.getAttribute("hidden");
 
-    if (hidden) {
-       element.removeAttribute("hidden");
-    } else {
-       element.setAttribute("hidden", "hidden");
-    }
-  }
+//     if (hidden) {
+//        element.removeAttribute("hidden");
+//     } else {
+//        element.setAttribute("hidden", "hidden");
+//     }
+//   }
 
 //   let toggle = button => {
 //     let element = document.getElementById("mytable");
@@ -94,8 +87,6 @@ function showHide(){
 //     }
 //   }
 </script>
-</body>
-</html>
 <script>
 
     $(document).ready(function () {

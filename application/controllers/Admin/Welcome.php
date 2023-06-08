@@ -152,7 +152,14 @@ class Welcome extends CI_Controller {
 	
 	public function userslisting() 
 	{
-		$data['users'] =  $this->common_model->select_all("*", "users");
+		// $data['users'] 
+		$user=  $this->common_model->select_all("*", "users");
+		$data=$user->result();
+		foreach($user->result() as $row=>$value){
+			$data[$row]->created_at=date("d-m-Y", strtotime($value->created_at));
+		}
+		// print_r($convertDate); exit;
+		$data['users'] =$data;
 		$this->load->view('admin/admin_header');
 		$this->load->view('admin/users/listing', $data);
 		$this->load->view('admin/admin_footer');
@@ -171,6 +178,7 @@ class Welcome extends CI_Controller {
 			if($fav_data_num>0){
 				$data[$key]->favourite_employees = $favourite->result_array();
 			}
+			$data[$key]->created_at=date("d-m-Y", strtotime($value->created_at));
 		}
 		// echo "<pre>"; print_r($data);exit;
 		$data['favouriteusers']=$data;
@@ -187,7 +195,9 @@ class Welcome extends CI_Controller {
 	
 		if($id!="" && $status!=""){
 			$data['status'] = $status; 
-			$this->common_model->update_array(array('id'=>$id), 'admin', $data);
+			// echo "<pre>"; print_r($id); exit;
+			// $this->common_model->insert_array('users', $data);
+			$this->common_model->update_array(array('id'=>$id), 'users', $data);
 			redirect(site_url().'admin/welcome/userslisting'); 
 		}
 	}
@@ -197,7 +207,7 @@ class Welcome extends CI_Controller {
         $this->session->unset_userdata('user_logged_in');
         $this->session->unset_userdata('usertype');
         $this->session->unset_userdata('username');
-        redirect(site_url().'admin/welcome'); 
+        redirect(site_url().'admin'); 
 	}
 
 	public function forget_password() 
