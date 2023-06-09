@@ -216,6 +216,7 @@ class Api extends CI_Controller {
 		// $email	=	$this->input->post('email');
 		$data['phone_no']= $this->input->post('phone_no');
 		$data['category_id']= $this->input->post('category_id');
+		// $subcategory= $this->input->post('subcategory_id');
 		$data['password']= sha1($this->input->post('password'));
 		$data['image']='';
 		$data['status'] = 'active';
@@ -266,9 +267,16 @@ class Api extends CI_Controller {
 				'email' => $data['email'],
 				'image' => $data['image'],
 				'phone_no' => $data['phone_no'],
-			);
-			// $data['user_type']=$usertype;
+			);			
 			if($res1){
+				// if($usertype=="employee"){
+				// 	$emp_categ=array(
+				// 		'employee_id'=>$data['user_id'],
+				// 		'subcategory_id'=>$subcategory,
+				// 		'status'=>'active'
+				// 	);
+				// 	$this->common_model->insert_array('user_category', $emp_categ);
+				// }
 				$result['message']['code']='500';
 				$result['message']['success'] = true;
 				$result['message']['msg']='Registration successful';
@@ -279,8 +287,6 @@ class Api extends CI_Controller {
 			}
 		}
 		// echo "<pre>"; print_r($row); exit;
-
-		
 		unset($data['password']);
 		$result['data'] = [$data];
 		echo json_encode($result);exit;		
@@ -361,20 +367,21 @@ class Api extends CI_Controller {
 		// $data['password']= sha1($this->input->post('password'));
 		// $data['user_type']= $this->input->post('user_type');
 		$data['category_id']= $this->input->post('category_id');
-		// if (isset($_FILES['image'])) {
-		// 	$file = $_FILES['image'];
-		// 	if ($file['error'] == UPLOAD_ERR_OK) {
-		// 	  $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+		$data['image']='';
+		if (isset($_FILES['image'])) {
+			$file = $_FILES['image'];
+			if ($file['error'] == UPLOAD_ERR_OK) {
+			  $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
 	  
-		// 	  $filename = uniqid() . '.' . $ext;
+			  $filename = uniqid() . '.' . $ext;
 	  
-		// 	  $destination = "images/$filename";
+			  $destination = "images/$filename";
 	  
-		// 	  move_uploaded_file($file['tmp_name'], $destination);
+			  move_uploaded_file($file['tmp_name'], $destination);
 	  
-		// 	  $data['image'] = $filename;
-		// 	}
-		// }
+			  $data['image'] = $filename;
+			}
+		}
 		$res = $this->common_model->select_where("*", "users", array('id'=>$id));
 	    if($res->num_rows()>0){
 			$this->common_model->update_array(array('id' => $id), 'users', $data);
@@ -385,7 +392,7 @@ class Api extends CI_Controller {
 				'username' => $data['username'],
 				'category_id'=> $data['category_id'],
 				// 'email' => $data['email'],
-				// 'image' => $data['image'],
+				'image' => $data['image'],
 				'phone_no' => $data['phone_no'],
 			);
 			$result['message']['code']='500';
@@ -398,7 +405,7 @@ class Api extends CI_Controller {
 				'username' => $data['username'],
 				'category_id'=> $data['category_id'],
 				// 'email' => $data['email'],
-				// 'image' => $data['image'],
+				'image' => $data['image'],
 				'phone_no' => $data['phone_no'],
 			);
 			$result['message']['code']='500';
@@ -736,7 +743,7 @@ class Api extends CI_Controller {
 
 	public function jobsListing(){
 		$employe_id = $this->input->post('employee_id');
-// 		echo $employe_id; exit;
+		// 		echo $employe_id; exit;
 		$user=$this->common_model->join_three_tab_where_rows(" $employe_id as employee_id, jobs.id job_id, employer_id, categories.name, ur_name, ar_name, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
 		en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", 
 		"jobs", "users", "on (jobs.category_id=users.category_id)", 
@@ -1006,7 +1013,7 @@ class Api extends CI_Controller {
 				'job_id'=>$data[0]['id'],
 				'employer_id'=>$data[0]['employer_id'],
 				'employee_id'=>$user_id,
-				'job_applied'=>'Y'
+				'job_applied'=>True
 			);
 			$this->common_model->insert_array('jobs_applied', $data);
 
@@ -1015,16 +1022,24 @@ class Api extends CI_Controller {
 			$result['message']['code']='500';
 			$result['message']['msg']='You have applied for this job successfully';
 			}else{
-				$data=array();
+				// $this->common_model->delete_where(array('employee_id'=>$user_id, 'job_id'=>$job_id), 'jobs_applied');
+				$data=array(
+					'job_id'=>$job_id,
+					'employer_id'=>$data[0]['employer_id'],
+					'employee_id'=>$user_id,
+					'job_applied'=>false
+				);
+
+				// $data=array();
 				$result['data']=$data;
-				$result['message']['success'] = true;
+				$result['message']['success'] = false;
 				$result['message']['code']='500';
-				$result['message']['msg']='You have already applied for this job';
+				$result['message']['msg']='You have already this job';
 			}
 		}else{
 			$data=array();
 			$result['data']=$data;
-			$result['message']['success'] = true;
+			$result['message']['success'] = false;
 			$result['message']['code']='500';
 			$result['message']['msg']='This job is not availible';
 		}
