@@ -1045,4 +1045,26 @@ class Api extends CI_Controller {
 		}
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 	}
+
+	public function employeeAppliedForJob(){
+		// echo "job"; exit;
+		$job_id=$this->input->post('job_id');
+		$user=$this->common_model->join_two_tab_where_simple("*", "jobs_applied", "users", "on (jobs_applied.employee_id=users.id)", array("job_id"=>$job_id, "user_type"=>"employee"));
+		// echo "<pre>";print_r($user->result());exit;
+		if($user->num_rows()>0){
+			$data=$user->result();
+			// echo "job"; exit;
+			$result['data']=$data;
+			$result['message']['success'] = true;
+			$result['message']['code']='500';
+			$result['message']['msg']='The employee details who have applied for the job';
+		}else{
+			$data=array();
+			$result['data']=$data;
+			$result['message']['success'] = false;
+			$result['message']['code']='500';
+			$result['message']['msg']='No one have applies for this job';
+		}
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	}
 }

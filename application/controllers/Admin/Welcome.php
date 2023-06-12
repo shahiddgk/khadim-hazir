@@ -153,7 +153,7 @@ class Welcome extends CI_Controller {
 	public function userslisting() 
 	{
 		// $data['users'] 
-		$user=  $this->common_model->select_all("*", "users");
+		$user=  $this->common_model->select_where("*", "users", array("user_type"=>"employer"));
 		$data=$user->result();
 		foreach($user->result() as $row=>$value){
 			$data[$row]->created_at=date("d-m-Y", strtotime($value->created_at));
@@ -163,8 +163,21 @@ class Welcome extends CI_Controller {
 		$this->load->view('admin/admin_header');
 		$this->load->view('admin/users/listing', $data);
 		$this->load->view('admin/admin_footer');
-		
 	}
+
+	public function employeesListing(){
+		$user=  $this->common_model->select_where("*", "users", array("user_type"=>"employee"));
+		$data=$user->result();
+		foreach($user->result() as $row=>$value){
+			$data[$row]->created_at=date("d-m-Y", strtotime($value->created_at));
+		}
+		// print_r($convertDate); exit;
+		$data['users'] =$data;
+		$this->load->view('admin/admin_header');
+		$this->load->view('admin/users/listing', $data);
+		$this->load->view('admin/admin_footer');
+	}
+
 	public function favouriteusers() 
 	{
 		$user = $this->common_model->join_two_tab_where_simple(("distinct(username), email, phone_no, users.id as employer_id, category_id, user_type,created_at, phone_no, status, users.image"), "users", "favourite_user", 
@@ -185,6 +198,25 @@ class Welcome extends CI_Controller {
 		// echo "<pre>"; print_r($data);exit;
 		$this->load->view('admin/admin_header');
 		$this->load->view('admin/users/favouriteusers', $data);
+		$this->load->view('admin/admin_footer');
+	}
+
+	public function listedJobs(){
+		$user=$this->common_model->join_three_tab_where_rows("username, users.image, name, en_job_description, en_max_price, jobs.created_at", "jobs", "users", "on (jobs.employer_id=users.id)", "categories" , "ON (categories.id=users.category_id)", array("user_type"=>"employer"));
+		$data=$user->result();
+		// echo "<pre>"; print_r($data);exit;
+		$data['users']=$data;
+		$this->load->view('admin/admin_header');
+		$this->load->view('admin/jobs/jobslisting', $data);
+		$this->load->view('admin/admin_footer');
+	}
+
+	public function employeesAppliedJobs(){
+		$user=$this->common_model->join_four_table_where("username, users.image, name, en_job_description, en_max_price, jobs_applied.added_date", "jobs_applied", "jobs", "on (jobs_applied.job_id=jobs.id)", "users", "on (jobs_applied.employee_id=users.id)", "categories", "on (jobs.category_id=categories.id)", array("user_type"=>"employee"));
+		$data=$user->result();
+		$data['users']=$data;
+		$this->load->view('admin/admin_header');
+		$this->load->view('admin/jobs/employeeappliedjobs', $data);
 		$this->load->view('admin/admin_footer');
 	}
 

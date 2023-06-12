@@ -12,6 +12,7 @@
                     <table id="bootstrap-data-table-export" class="table table-striped table-bordered">
                         <thead>
                                 <tr>
+                                    <th>Image</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone No</th>
@@ -29,6 +30,11 @@
                                 // echo "<pre>"; print_r($data->favourite_employees);exit;
                                 ?>
                                 <tr>
+                                <?php if($data->image != ""){ ?>
+                                    <td><img src="<?=base_url();?>images/<?=$data->image?>" class="img-responsive" height="auto" width="50"></td>
+                                    <?php } else{ ?>
+                                    <td><img src="<?=base_url();?>images/manager.png" class="img-responsive"  height="auto" width="50"></td>
+                                    <?php } ?>
                                     <td><?=$data->username?></td>
                                     <td><?=$data->email?></td>
                                     <td><?=$data->phone_no?></td>
@@ -40,6 +46,11 @@
                                <?php $sn=0;
                                foreach($data->favourite_employees as $fav){?>
                                 <tr style="background-color:#bab9b6">
+                                <?php if($data->favourite_employees[$sn]['image'] != ""){ ?>
+                                    <td><img src="<?=base_url();?>images/<?=$data->favourite_employees[$sn]['image']?>" class="img-responsive" height="auto" width="50"></td>
+                                    <?php } else{ ?>
+                                    <td><img src="<?=base_url();?>images/manager.png" class="img-responsive"  height="auto" width="50"></td>
+                                    <?php } ?>
                                 <td><?=$data->favourite_employees[$sn]['username']?></td>
                                 <td><?=$data->favourite_employees[$sn]['email']?></td>
                                 <td><?=$data->favourite_employees[$sn]['phone_no']?></td>

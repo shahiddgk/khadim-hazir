@@ -12,6 +12,7 @@
                     <table id="bootstrap-data-table-export" class="table table-striped table-bordered">
                         <thead>
                                 <tr>
+                                    <th>Image</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone No</th>
@@ -26,6 +27,11 @@
                             foreach($users as $data){ 
                                 // echo "<pre>"; print_r($data); exit;?>
                                 <tr>
+                                <?php if($data->image != ""){ ?>
+                                    <td><img src="<?=base_url();?>images/<?=$data->image?>" class="img-responsive" height="auto" width="50"></td>
+                                    <?php } else{ ?>
+                                    <td><img src="<?=base_url();?>images/manager.png" class="img-responsive"  height="auto" width="50"></td>
+                                    <?php } ?>
                                     <td><?=$data->username?></td>
                                     <td><?=$data->email?></td>
                                     <td><?=$data->phone_no?></td>

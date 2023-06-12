@@ -20,7 +20,7 @@ else{
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Khadimhazir.com Job Portal</title>
+    <title>Khadim Hazir</title>
     <meta name="description" content="Sufee Admin - HTML5 Admin Template">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -59,31 +59,42 @@ else{
             <ul class="nav navbar-nav">
                 <li class="active">
                     <a href="<?=site_url('admin/welcome/dashboard')?>"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
-                    
                 </li>
                 <h3 class="menu-title"></h3><!-- /.menu-title -->
                 <li class="menu-item-has-children dropdown">
                     <a href="<?=site_url('admin/category')?>"> <i class="menu-icon fa fa-flag"></i>Categories</a>
-                    <!-- <ul class="sub-menu children dropdown-menu">
+                     <!-- <ul class="sub-menu children dropdown-menu">
                         <li><i class="fa fa-plus"></i><a href="<?=site_url('region')?>">View Categories</a></li>
-                    </ul> -->
+                    </ul>  -->
                 </li>
-                <li class="menu-item-has-children dropdown">
+                <!-- <li class="menu-item-has-children dropdown">
                     <a href="<?=site_url('admin/service')?>"> <i class="menu-icon fa fa-bold"></i>Sub Categories</a>
                     <ul class="sub-menu children dropdown-menu">
-                         <!-- <li><i class="fa fa-plus"></i><a href="<?=site_url('brand')?>">View Brands</a></li>
-                         <li><i class="fa fa-plus"></i><a href="<?=site_url('brand')?>">Add Brands</a></li> -->  
+                         <li><i class="fa fa-plus"></i><a href="<?=site_url('brand')?>">View Brands</a></li>
+                         <li><i class="fa fa-plus"></i><a href="<?=site_url('brand')?>">Add Brands</a></li> 
                     </ul>
+                </li> -->
+                <li class="menu-item-has-children ">
+                    <a href="<?=site_url('admin/welcome/userslisting')?>"> 
+                    <i class="menu-icon fa fa-users"></i>Employers</a>
                 </li>
-                <li class="menu-item-has-children dropdown">
-                    <a href="<?=site_url('admin/welcome/userslisting')?>"> <i class="menu-icon fa fa-users"></i>Users</a>
+                <li class="menu-item-has-children ">
+                    <a href="<?=site_url('admin/welcome/employeesListing')?>"> 
+                    <i class="menu-icon fa fa-users"></i>Employees</a>
                 </li>
                 <li class="menu-item-has-children dropdown">
                     <a href="<?=site_url('admin/welcome/favouriteusers')?>"> <i class="menu-icon fa fa-users"></i>Favourite Users</a>
                 </li>
+                <li class="menu-item-has-children dropdown">
+                    <a href="<?=site_url('admin/welcome/listedJobs')?>"><i class="menu-icon fa fa-address-book-o"></i>Availible jobs</a>
+                </li>
+                <li class="menu-item-has-children dropdown">
+                    <a href="<?=site_url('admin/welcome/employeesAppliedJobs')?>"><i class="menu-icon fa fa-address-book-o"></i>Employees applied jobs</a>
+                </li>
                 <!-- <li class="menu-item-has-children dropdown">
                     <a href="<?=site_url('admin/welcome/settings')?>"> <i class="menu-icon fa fa-users"></i>Settings</a>
                 </li>  -->
+
             </ul>
         </div><!-- /.navbar-collapse -->
     </nav>
@@ -218,23 +229,33 @@ else{
         
     </header>
     
-    <div class="breadcrumbs">
-        <div class="col-sm-4">
+    <div class="breadcrumbs" style="text-align: center;">
+    <div class="col-sm-1">
             <div class="page-header float-left">
+                <div class="page-title">
+                    <ol class="breadcrumb text-right">
+                    <input type="button" value="back" onclick="history.back()"> 
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-10">
+            <div class="page-header ">
                 <div class="page-title">
                     <h1>Dashboard</h1>
                 </div>
             </div>
         </div>
-        <div class="col-sm-8">
+        <!-- <div class="col-sm-2">
             <div class="page-header float-right">
                 <div class="page-title">
                     <ol class="breadcrumb text-right">
-                        <li class="active">Dashboard</li>
+                    <input type="button" value="Go next!" onclick="history.next()"> 
                     </ol>
                 </div>
             </div>
-        </div>
+        </div> -->
+       
 </div>
 
     
