@@ -30,13 +30,14 @@ foreach($users as $key=>$value) {?>
            <?=$value->en_job_description;?></p>
       <div class="btn-toolbar pull-right" role="toolbar" aria-label="">
         <div class="btn-group">
-          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-fw fa-list"></i> <span class="caret"></span></button>
+          <!-- <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-fw fa-list"></i> <span class="caret"></span></button>
           <ul class="dropdown-menu">
             <li role="separator" class="divider"></li>
             <li><a href="#">Employee Profile</a></li>
             <li><a href="#">All jobs applied</a></li>
             <li><a href="#">Delete this job</a></li>
-          </ul>
+          </ul> -->
+          <!-- <h6 class="list-group-item-heading"> Maximum Price</Details></h6> -->
         </div>
         <a href="#" class="btn btn-primary">$<?php echo$value->en_max_price?></a>
       </div>

@@ -28,20 +28,30 @@ foreach($users as $key=>$value) {?>
       <h5 class="list-group-item-heading">Job Category: <?=$value->name;?></h5>
        <p><h6 class="list-group-item-heading">Job Details</Details></h6>
            <?=$value->en_job_description;?></p>
-      <div class="btn-toolbar pull-right" role="toolbar" aria-label="">
+     
+    <div class="container">
+     <div class="row">
+    <div class="col-sm-1">
+    <div class="btn-toolbar pull-right" role="toolbar" aria-label="">
         <div class="btn-group">
-          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-fw fa-list"></i> <span class="caret"></span></button>
-          <ul class="dropdown-menu">
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Employer Profile</a></li>
-            <li><a href="#">All jobs Posted by this employ</a></li>
-            <li><a href="#">Delete this job</a></li>
-          </ul>
-        </div>
-        <a href="#" class="btn btn-primary">$<?php echo$value->en_max_price?></a>
+        <a href="#" class="btn btn-primary">$<?php echo$value->en_max_price?></a> 
       </div>
-      <div style="text-align: center;">
+      </div>
+    </div>
+    <div class="col-sm-10">
+    <div style="text-align: center;">
       <h6 class="list-group-item-heading">Job was Posted on: <?php echo date("d-m-Y", strtotime($value->created_at))?></h5>
+    </div>
+    </div>
+    <div class="col-sm-1" >
+    <div class="btn-toolbar pull-right" role="toolbar" aria-label="">
+        <div class="btn-group">
+        <a href="<?=site_url('admin/welcome/appliesPerJob?id='.$value->id.'')?>" class="btn btn-primary">Applies</a>
+        <!-- <input type="button"  class="btn btn-primary" style= "cursor:pointer" value="applies" onclick="admin/welcome::appliesPerJob(5)">   -->
+      </div>
+      </div>
+    </div>
+     </div>
     </div>
     </li>     
   </ul>

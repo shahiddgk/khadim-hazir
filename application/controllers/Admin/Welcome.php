@@ -143,9 +143,12 @@ class Welcome extends CI_Controller {
 
 	public function dashboard() 
 	{
-		
+		$user=$this->common_model->join_two_tab_where_groupby("NAME label, COUNT(users.id) y", "users", "categories", "on (users.category_id=categories.id)", array("user_type"=>"employee"), "categories.id");
+		// echo "<pre>"; print_r($user->result_array()); exit;
+		$data=$user->result();
+		$data['users']=$data;
 		$this->load->view('admin/admin_header');
-		$this->load->view('admin/dashboard/dashboard');
+		$this->load->view('admin/dashboard/dashboard', $data);
 		$this->load->view('admin/admin_footer');
 		
 	}
@@ -202,7 +205,7 @@ class Welcome extends CI_Controller {
 	}
 
 	public function listedJobs(){
-		$user=$this->common_model->join_three_tab_where_rows("username, users.image, name, en_job_description, en_max_price, jobs.created_at", "jobs", "users", "on (jobs.employer_id=users.id)", "categories" , "ON (categories.id=users.category_id)", array("user_type"=>"employer"));
+		$user=$this->common_model->join_three_tab_where_rows("username, users.image, name, en_job_description, en_max_price, jobs.created_at, jobs.id ","jobs", "users", "on (jobs.employer_id=users.id)", "categories" , "ON (categories.id=users.category_id)", array("user_type"=>"employer"));
 		$data=$user->result();
 		// echo "<pre>"; print_r($data);exit;
 		$data['users']=$data;
@@ -218,6 +221,26 @@ class Welcome extends CI_Controller {
 		$this->load->view('admin/admin_header');
 		$this->load->view('admin/jobs/employeeappliedjobs', $data);
 		$this->load->view('admin/admin_footer');
+	}
+
+	public function appliesPerJob($id=''){
+		$id=$_GET['id'];
+		// echo $id;exit;
+		$user=$this->common_model->join_four_table_where_groupby("username, users.image, name, en_job_description, en_max_price, jobs_applied.added_date", "jobs_applied", "jobs", "on (jobs_applied.job_id=jobs.id)", "users", "on (jobs_applied.employee_id=users.id)", "categories", "on (jobs.category_id=categories.id)", array("jobs.id"=>$id), "jobs_applied.job_id");
+		$data=$user->result();
+		// echo "<pre>"; print_r($data); exit;
+		if($user->num_rows()>0){
+		$data['users']=$data;
+		$this->load->view('admin/admin_header');
+		$this->load->view('admin/jobs/appliesperjob', $data);
+		$this->load->view('admin/admin_footer');
+		}else{
+			$data['users']=array();
+			$this->load->view('admin/admin_header');
+		$this->load->view('admin/jobs/appliesperjob', $data);
+		$this->load->view('admin/admin_footer');
+		}
+		
 	}
 
 	public function change_status()

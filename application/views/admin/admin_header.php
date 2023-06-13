@@ -234,7 +234,7 @@ else{
             <div class="page-header float-left">
                 <div class="page-title">
                     <ol class="breadcrumb text-right">
-                    <input type="button" value="back" onclick="history.back()"> 
+                    <input type="button" style= "cursor:pointer" value="back" onclick="history.back()"> 
                     </ol>
                 </div>
             </div>

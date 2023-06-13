@@ -454,6 +454,16 @@ class Common_model extends  CI_Model {
 		return $this->db->get();
 	}
 
+	function join_four_table_where_groupby($select, $from, $jointable1, $condition1, $jointable2, $condition2, $jointable3, $condition3, $where, $group_by){
+		$this->db->select($select);
+		$this->db->from( $from );
+		$this->db->join( $jointable1 , $condition1 );
+		$this->db->join( $jointable2 , $condition2 );
+		$this->db->join( $jointable3 , $condition3 );
+		$this->db->where( $where );
+		$this->db->group_by( $group_by );
+		return $this->db->get();
+	}
 
 }
 ?>
