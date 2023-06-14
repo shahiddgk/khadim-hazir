@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 if($users !=array()){?>
     <style>
     #profile {
@@ -31,4 +31,44 @@ if($users !=array()){?>
      </ul>
    </div>         
    <?php }
-}
+} ?>-->
+
+<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<div class="content mt-3">
+     <div class="animated fadeIn">
+        <div class="row">
+    <div class="col-md-12">
+            <div class="card">
+               
+                <div class="card-body">
+                    <table id="bootstrap-data-table-export" class="table table-striped table-bordered">
+                        <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php  
+                            // echo "<pre>"; print_r($users); exit;
+                            foreach($users as $data){ 
+                                // echo "<pre>"; print_r($data); exit;?>
+                                <tr>
+                                    <td><?=$data->name?></td>
+                                    <td><?=$data->email?></td>
+                                    <td><?=$data->comments?></td>                                
+                                </tr>
+                            
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+         </div>
+    </div><!-- .animated -->
+</div>
+
+

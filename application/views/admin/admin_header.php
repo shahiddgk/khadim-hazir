@@ -94,7 +94,7 @@ else{
                     <a href="<?=site_url('admin/welcome/employeesAppliedJobs')?>"><i class="menu-icon fa fa-address-book-o"></i>Employees applied jobs</a>
                 </li>
                 <li class="menu-item-has-children dropdown">
-                    <a href="<?=site_url('admin/welcome/settings')?>"> <i class="menu-icon fa fa-users"></i>Settings</a>
+                    <a href="<?=site_url('admin/welcome/settings')?>"> <i class="menu-icon fa fa-users"></i>Privacy Policy</a>
                 </li> 
                 <li class="menu-item-has-children dropdown">
                     <a href="<?=site_url('admin/welcome/contactus')?>"> <i class="menu-icon fa fa-users"></i>Contact Us</a>

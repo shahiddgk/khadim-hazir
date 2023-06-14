@@ -205,7 +205,7 @@ class Welcome extends CI_Controller {
 	}
 
 	public function listedJobs(){
-		$user=$this->common_model->join_three_tab_where_rows("username, users.image, name, en_job_description, en_max_price, jobs.created_at, jobs.id ","jobs", "users", "on (jobs.employer_id=users.id)", "categories" , "ON (categories.id=users.category_id)", array("user_type"=>"employer"));
+		$user=$this->common_model->join_three_tab_where_rows("username, users.image, name, en_job_description, en_max_price, jobs.created_at, jobs.id ","jobs", "users", "on (jobs.employer_id=users.id)", "categories" , "ON (categories.id=jobs.category_id)", array("user_type"=>"employer"));
 		$data=$user->result();
 		// echo "<pre>"; print_r($data);exit;
 		$data['users']=$data;
