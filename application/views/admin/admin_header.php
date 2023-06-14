@@ -57,8 +57,10 @@ else{
 
         <div id="main-menu" class="main-menu collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li class="active">
+                <li>
+                   
                     <a href="<?=site_url('admin/welcome/dashboard')?>"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
+                    
                 </li>
                 <h3 class="menu-title"></h3><!-- /.menu-title -->
                 <li class="menu-item-has-children dropdown">
@@ -91,10 +93,12 @@ else{
                 <li class="menu-item-has-children dropdown">
                     <a href="<?=site_url('admin/welcome/employeesAppliedJobs')?>"><i class="menu-icon fa fa-address-book-o"></i>Employees applied jobs</a>
                 </li>
-                <!-- <li class="menu-item-has-children dropdown">
+                <li class="menu-item-has-children dropdown">
                     <a href="<?=site_url('admin/welcome/settings')?>"> <i class="menu-icon fa fa-users"></i>Settings</a>
-                </li>  -->
-
+                </li> 
+                <li class="menu-item-has-children dropdown">
+                    <a href="<?=site_url('admin/welcome/contactus')?>"> <i class="menu-icon fa fa-users"></i>Contact Us</a>
+                </li> 
             </ul>
         </div><!-- /.navbar-collapse -->
     </nav>
@@ -231,19 +235,41 @@ else{
     
     <div class="breadcrumbs" style="text-align: center;">
     <div class="col-sm-1">
-            <div class="page-header float-left">
-                <div class="page-title">
-                    <ol class="breadcrumb text-right">
+        <?php if($this->uri->segment('3')=='appliesPerJob'){?>
+        <div class="page-header float-left">
+            <div class="page-title">
+                <ol class="breadcrumb text-right">
                     <input type="button" style= "cursor:pointer" value="back" onclick="history.back()"> 
-                    </ol>
-                </div>
+                </ol>
             </div>
         </div>
+       <?php } ?> 
+        </div>
         <div class="col-sm-10">
-            <div class="page-header ">
+        <div class="page-header ">
                 <div class="page-title">
+                    <?php if($this->uri->segment('3')=='dashboard'){?>
                     <h1>Dashboard</h1>
-                </div>
+                    <?php }elseif($this->uri->segment('2')=='category'){?>
+                    <h1>All Categories</h1>
+                   <?php }elseif($this->uri->segment('3')=='userslisting'){?>
+                    <h1>All Employers</h1>
+                  <?php }elseif($this->uri->segment('3')=='employeesListing'){?>
+                    <h1>All Employees</h1>
+                  <?php }elseif($this->uri->segment('3')=='favouriteusers'){?>
+                    <h1>All Employers And Their Favourite Employees</h1>
+                  <?php }elseif($this->uri->segment('3')=='listedJobs'){?>
+                    <h1>All availible jobs</h1>
+                  <?php }elseif($this->uri->segment('3')=='employeesAppliedJobs'){?>
+                    <h1>All Applied jobs</h1>
+                  <?php }elseif($this->uri->segment('3')=='appliesPerJob'){?>
+                    <h1>Employees Applied on This jobs</h1>
+                  <?php }elseif($this->uri->segment('3')=='settings'){?>
+                    <h1>Terms & Condtions and Privacy Rules</h1>
+                  <?php }elseif($this->uri->segment('3')=='contactus'){?>
+                    <h1>Questions asked</h1>
+                  <?php } ?>
+               </div>
             </div>
         </div>
         <!-- <div class="col-sm-2">

@@ -225,7 +225,6 @@ class Welcome extends CI_Controller {
 
 	public function appliesPerJob($id=''){
 		$id=$_GET['id'];
-		// echo $id;exit;
 		$user=$this->common_model->join_four_table_where_groupby("username, users.image, name, en_job_description, en_max_price, jobs_applied.added_date", "jobs_applied", "jobs", "on (jobs_applied.job_id=jobs.id)", "users", "on (jobs_applied.employee_id=users.id)", "categories", "on (jobs.category_id=categories.id)", array("jobs.id"=>$id), "jobs_applied.job_id");
 		$data=$user->result();
 		// echo "<pre>"; print_r($data); exit;
@@ -241,6 +240,17 @@ class Welcome extends CI_Controller {
 		$this->load->view('admin/admin_footer');
 		}
 		
+	}
+
+	public function contactus(){
+		// echo "contact"; exit;
+		$user=$this->common_model->select_all("*", "contact_us");
+		$data=$user->result();
+		$data['users']=$data;
+		// echo "<pre>"; print_r($data); exit;
+		$this->load->view('admin/admin_header');
+		$this->load->view('admin/contact/contactus', $data);
+		$this->load->view('admin/admin_footer');
 	}
 
 	public function change_status()
@@ -338,13 +348,14 @@ class Welcome extends CI_Controller {
 
 	public function update_settings()
 	{
-		// echo 1111; exit;
+		$data=array();
 		$data['terms'] = $this->input->post('terms');
 		$data['ar_terms'] = $this->input->post('ar_terms');
 		$data['ur_terms'] = $this->input->post('ur_terms');
 		$data['privacy_policy'] = $this->input->post('privacy_policy');
 		$data['ar_policy'] = $this->input->post('ar_policy');
 		$data['ur_policy'] = $this->input->post('ur_policy');
+		// echo "<pre>"; print_r($data); exit;
 		$this->common_model->update_array(array('id'=>1), 'settings', $data);
 		redirect(site_url().'admin/welcome/settings'); 
 	}

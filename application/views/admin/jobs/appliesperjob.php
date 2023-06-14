@@ -9,7 +9,7 @@ if($users !=array()){?>
    }
    @import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
    @import url(https://fonts.googleapis.com/css?family=Open+Sans:300);
-   h1,h2,h3,h4,h5,h6 {font-family: 'Montserrat', sans-serif; text-transform:uppercase; font-weight:700;}
+   h1,h2,h3,h4,h5,h6 {font-family: 'Montserrat', sans-serif; text-transform:; font-weight:700;}
    html, body {font-family: 'Open Sans', sans-serif; -webkit-font-smoothing: antialiased !important;}
    .active a {color:#c7ddef;}
    </style>

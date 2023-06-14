@@ -4,7 +4,6 @@
          <h1>WELCOME <span class="badge badge-secondary"><?=$this->session->userdata('user_login');?></span></h1>
      </div>
 </div> -->
-<?php if($users != array()){?>
 <?php
 //  echo "<pre>"; print_r($users[0]->employees);exit;
 // $dataPoints = array(
@@ -55,6 +54,3 @@ chart.render();
 <script style= "cursor:pointer" src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 </body>
 </html>  
-<?php } else{ 
-	// echo "No one applied for this job"; exit;
-} ?>
