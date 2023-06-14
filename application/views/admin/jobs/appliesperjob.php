@@ -14,7 +14,7 @@ if($users !=array()){?>
    .active a {color:#c7ddef;}
    </style>
    <?php 
-   // echo "<pre>"; print_r($users); exit;
+  //  echo "<pre>"; print_r($users); exit;
    foreach($users as $key=>$value) {?>
    <div class="container">
      <ul class="list-group">
