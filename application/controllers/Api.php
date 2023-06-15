@@ -668,7 +668,9 @@ class Api extends CI_Controller {
 		$data['ur_min_price']=$this->input->post('ur_min_price');
 		$data['ur_max_price']=$this->input->post('ur_max_price');
 		$data['active']=$this->input->post('active');
-		$this->common_model->insert_array('jobs',$data);
+		$user=$this->common_model->insert_array('jobs',$data);
+		// $user=$this->common_model->select_all("*","jobs");
+		$data['job_id']=$user;
 		$result['data']=$data;
 		$result['message']['success'] = true;
 		$result['message']['code']='500';
@@ -689,17 +691,19 @@ class Api extends CI_Controller {
 		$data['ur_min_price']=$this->input->post('ur_min_price');
 		$data['ur_max_price']=$this->input->post('ur_max_price');
 
-		$status=$this->input->post('active');
+		// $status=$this->input->post('active');
 		// echo $id;exit;
 		$user=$this->common_model->select_where("*", "jobs", array('id'=>$id));
 		$employer=$user->result();
-		// echo "<pre>"; print_r($employer[0]->employer_id);exit;
+		// echo "<pre>"; print_r($employer[0]->category_id);exit;
 		if($user->num_rows()>0){
 			$user1=$this->common_model->select_where("*", "jobs", array('id'=>$id, 'active'=>"Y"));
 			if($user1->num_rows()>0){
 				$this->common_model->update_array(array('id' => $id), 'jobs', $data);
-				$data['status']=$status;
+				// $data['status']=$status;
 				$data['employer_id']=$employer[0]->employer_id;
+				$data['category_id']=$employer[0]->category_id;
+				unset($data['password']);
 				$result['data']=$data;
 				$result['message']['success'] = true;
 				$result['message']['code']='500';
@@ -718,6 +722,7 @@ class Api extends CI_Controller {
 			$result['message']['code']='500';
 			$result['message']['msg']='This Job is not availible';
 		}
+
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 	}
 
@@ -745,7 +750,7 @@ class Api extends CI_Controller {
 		$employe_id = $this->input->post('employee_id');
 		// 		echo $employe_id; exit;
 		$user=$this->common_model->join_three_tab_where_rows(" $employe_id as employee_id, jobs.id job_id, employer_id, categories.name, ur_name, ar_name, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
-		en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", 
+		en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, categories.image, active", 
 		"jobs", "users", "on (jobs.category_id=users.category_id)", 
 		"categories", "on (categories.id=jobs.category_id)", 
 		array("jobs.active"=>"Y",  "users.id"=>$employe_id));
@@ -753,7 +758,6 @@ class Api extends CI_Controller {
 		if($user->num_rows()>0){
 			$data=$user->result();
 			foreach($data as $key=>$value){
-				$en_array[$key]['employee_id']=$value->employee_id;
 				$en_array[$key]['job_id']=$value->job_id;
 				$en_array[$key]['employer_id']=$value->employer_id;
 				$en_array[$key]['name']=$value->name;
@@ -761,6 +765,7 @@ class Api extends CI_Controller {
 				$en_array[$key]['en_job_description']=$value->en_job_description;
 				$en_array[$key]['en_min_price']=$value->en_min_price;
 				$en_array[$key]['en_max_price']=$value->en_max_price;
+				$en_array[$key]['category_image']=$value->image;
 				$en_array[$key]['active']=$value->active;
 	
 				$ur_array[$key]=$en_array[$key];
@@ -785,12 +790,11 @@ class Api extends CI_Controller {
 		}else{
 			// echo "last 10 jobs"; exit;
 			$user=$this->common_model->join_two_tab_where_limit_order(" $employe_id as employee_id, jobs.id job_id, employer_id, categories.name, ur_name, ar_name, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
-			en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", 
+			en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, categories.image, active", 
 			"jobs", "categories", "on (categories.id=jobs.category_id)", 
 			array("jobs.active"=>"Y"), "10", "jobs.id", "DSC");
 			$data=$user->result();
 			foreach($data as $key=>$value){
-				$en_array[$key]['employee_id']=$value->employee_id;
 				$en_array[$key]['job_id']=$value->job_id;
 				$en_array[$key]['employer_id']=$value->employer_id;
 				$en_array[$key]['name']=$value->name;
@@ -798,6 +802,7 @@ class Api extends CI_Controller {
 				$en_array[$key]['en_job_description']=$value->en_job_description;
 				$en_array[$key]['en_min_price']=$value->en_min_price;
 				$en_array[$key]['en_max_price']=$value->en_max_price;
+				$en_array[$key]['category_image']=$value->image;
 				$en_array[$key]['active']=$value->active;
 	
 				$ur_array[$key]=$en_array[$key];
@@ -873,14 +878,13 @@ class Api extends CI_Controller {
 	}
 
 	public function jobsByCategory(){
-		$employee_id=$this->input->post('employee_id');
+		// $employee_id=$this->input->post('employee_id');
 		$category_id=$this->input->post('category_id');
-		$user=$this->common_model->join_two_tab_where_simple("jobs.id as job_id, category_id, name, ur_name, ar_name, employer_id, en_job_description,ar_job_description,ur_job_description, en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", "jobs", "categories", "on (jobs.category_id=categories.id)", array("category_id"=>$category_id));
+		$user=$this->common_model->join_two_tab_where_simple("jobs.id as job_id, category_id, name, ur_name, ar_name, employer_id, categories.image, en_job_description,ar_job_description,ur_job_description, en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", "jobs", "categories", "on (jobs.category_id=categories.id)", array("category_id"=>$category_id));
 		$data=$user->result();
 		
 		if($user->num_rows()>0){
 			foreach($data as $key=>$value){
-				$en_array[$key]['employee_id']=$employee_id;
 				$en_array[$key]['job_id']=$value->job_id;
 				$en_array[$key]['employer_id']=$value->employer_id;
 				$en_array[$key]['name']=$value->name;
@@ -888,6 +892,7 @@ class Api extends CI_Controller {
 				$en_array[$key]['en_job_description']=$value->en_job_description;
 				$en_array[$key]['en_min_price']=$value->en_min_price;
 				$en_array[$key]['en_max_price']=$value->en_max_price;
+				$en_array[$key]['category_image']=$value->image;
 				$en_array[$key]['active']=$value->active;
 	
 				$ur_array[$key]=$en_array[$key];
@@ -1053,7 +1058,12 @@ class Api extends CI_Controller {
 		// echo "<pre>";print_r($user->result());exit;
 		if($user->num_rows()>0){
 			$data=$user->result();
-			// echo "job"; exit;
+			foreach($data as $key=>$value){
+				unset($data[$key]->password);
+				unset($data[$key]->google_id);
+				unset($data[$key]->status);
+			}
+			
 			$result['data']=$data;
 			$result['message']['success'] = true;
 			$result['message']['code']='500';
@@ -1065,6 +1075,62 @@ class Api extends CI_Controller {
 			$result['message']['code']='500';
 			$result['message']['msg']='No one have applies for this job';
 		}
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	}
+
+	public function jobStatusUpdate(){
+		$employer_id=$this->input->post('employer_id');
+		$job_id=$this->input->post('job_id');
+		$user=$this->common_model->select_where("*", "jobs" , array("employer_id"=>$employer_id, "id"=>$job_id, "active"=>"Y"));
+		if($user->num_rows()>0){
+			$data['active']="N";
+			$this->common_model->update_array(array('id' => $job_id), 'jobs', $data);
+			// $data=array();
+			$result['data']=$data;
+			$result['message']['success'] = False;
+			$result['message']['code']='500';
+			$result['message']['msg']='This job is deactivated';	
+		}else{
+			$data['active']="Y";
+			$this->common_model->update_array(array('id' => $job_id), 'jobs', $data);
+			// $data=array();
+			$result['data']=$data;
+			$result['message']['success'] = True;
+			$result['message']['code']='500';
+			$result['message']['msg']='This Job is activated again';	
+		}
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	}
+
+	public function privacyPolicy(){
+		$user=$this->common_model->select_all("*", "settings");
+		// echo "<pre>"; print_r($user->result());exit;
+		$data=$user->result();
+		// echo strip_tags($data[0]->privacy_policy);exit;
+		foreach($data as $key=>$value){
+			$en_array[$key]['id']=$value->id;
+			$en_array[$key]['terms']=strip_tags($value->terms);
+			$en_array[$key]['privacy_policy']=strip_tags($value->privacy_policy);
+			$en_array[$key]['added_date']=strip_tags($value->added_date);
+
+			$ur_array[$key]=$en_array[$key];
+			$ur_array[$key]['terms']=strip_tags($value->ur_terms);
+			$ur_array[$key]['privacy_policy']=strip_tags($value->ur_policy);
+
+			$ar_array[$key]=$en_array[$key];
+			$ar_array[$key]['terms']=strip_tags($value->ar_terms);
+			$ar_array[$key]['privacy_policy']=strip_tags($value->ar_policy);
+		}
+		$result['data']['en'] = $en_array;
+		$result['data']['ur'] = $ur_array;
+		$result['data']['ar'] = $ar_array;
+		
+		//echo "<pre>"; print_r($result); exit;
+
+		// $result['ar'] = $data;
+		$result['message']['code'] = '500';
+		$result['message']['success'] = true;
+		$result['message']['msg'] = 'Terms & conditions and Privacy Policy';
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 	}
 }
