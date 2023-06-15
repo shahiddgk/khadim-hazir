@@ -216,7 +216,7 @@ class Api extends CI_Controller {
 		// $email	=	$this->input->post('email');
 		$data['phone_no']= $this->input->post('phone_no');
 		$data['category_id']= $this->input->post('category_id');
-		// $subcategory= $this->input->post('subcategory_id');
+		$data['address']= $this->input->post('address');
 		$data['password']= sha1($this->input->post('password'));
 		$data['image']='';
 		$data['status'] = 'active';
@@ -248,6 +248,7 @@ class Api extends CI_Controller {
 				'email' => $data['email'],
 				'image' => $data['image'],
 				'phone_no' => $data['phone_no'],
+				'address' => $data['address']
 			);
 			$result['message']['code']='500';
 			$result['message']['success'] = false;
@@ -267,6 +268,7 @@ class Api extends CI_Controller {
 				'email' => $data['email'],
 				'image' => $data['image'],
 				'phone_no' => $data['phone_no'],
+				'address' => $data['address']
 			);			
 			if($res1){
 				// if($usertype=="employee"){
@@ -289,7 +291,7 @@ class Api extends CI_Controller {
 		// echo "<pre>"; print_r($row); exit;
 		unset($data['password']);
 		$result['data'] = [$data];
-		echo json_encode($result);exit;		
+		echo json_encode($result , JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;		
 	}
 	
 	public function loginUser() 
@@ -308,7 +310,8 @@ class Api extends CI_Controller {
 				'category_id'=>$row->category_id,
 				'email' => $row->email,
 				'image' => $row->image,
-				'phone_no' => $row->phone_no
+				'phone_no' => $row->phone_no,
+				'address'=>$row->address
 			);
 			$result['message']['code']='500';
 			$result['message']['success'] = true;
@@ -321,7 +324,7 @@ class Api extends CI_Controller {
 			$result['message']['msg'] = 'Your Email or password is wrong';
 						
 		} 
-		echo json_encode($result);exit;
+		echo json_encode($result , JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;		
 		
 	}
 
@@ -363,7 +366,7 @@ class Api extends CI_Controller {
 		$id = $this->input->post('user_id');
 	  	$data['username']= $this->input->post('username');
 		$data['phone_no']= $this->input->post('phone_no');
-		// $data['email']= $this->input->post('email');
+		$data['address']= $this->input->post('address');
 		// $data['password']= sha1($this->input->post('password'));
 		// $data['user_type']= $this->input->post('user_type');
 		$data['category_id']= $this->input->post('category_id');
@@ -391,7 +394,7 @@ class Api extends CI_Controller {
 				// 'usertype' => $data['user_type'],
 				'username' => $data['username'],
 				'category_id'=> $data['category_id'],
-				// 'email' => $data['email'],
+				'address' => $data['address'],
 				'image' => $data['image'],
 				'phone_no' => $data['phone_no'],
 			);
@@ -404,7 +407,7 @@ class Api extends CI_Controller {
 				// 'usertype' => $data['user_type'],
 				'username' => $data['username'],
 				'category_id'=> $data['category_id'],
-				// 'email' => $data['email'],
+				'address' => $data['address'],
 				'image' => $data['image'],
 				'phone_no' => $data['phone_no'],
 			);
@@ -414,7 +417,7 @@ class Api extends CI_Controller {
 		}
 		unset($data['password']);
 		$result['data'] = [$data];
-		echo json_encode($result);exit;			  
+		echo json_encode($result , JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;				  
 	}
 	
 	public function userDashboard() 
@@ -690,7 +693,7 @@ class Api extends CI_Controller {
 		$data['ar_max_price']=$this->input->post('ar_max_price');
 		$data['ur_min_price']=$this->input->post('ur_min_price');
 		$data['ur_max_price']=$this->input->post('ur_max_price');
-
+		$data['category_id']=$this->input->post('category_id');
 		// $status=$this->input->post('active');
 		// echo $id;exit;
 		$user=$this->common_model->select_where("*", "jobs", array('id'=>$id));
@@ -702,7 +705,7 @@ class Api extends CI_Controller {
 				$this->common_model->update_array(array('id' => $id), 'jobs', $data);
 				// $data['status']=$status;
 				$data['employer_id']=$employer[0]->employer_id;
-				$data['category_id']=$employer[0]->category_id;
+				// $data['category_id']=$employer[0]->category_id;
 				unset($data['password']);
 				$result['data']=$data;
 				$result['message']['success'] = true;
@@ -831,7 +834,7 @@ class Api extends CI_Controller {
 
 	public function employerJobHistory(){
 		$employer_id=$this->input->post('employer_id');
-		$user=$this->common_model->join_three_tab_where_rows("jobs.id as job_id, username, employer_id, categories.name, ur_name, ar_name, jobs.category_id, en_job_description,ar_job_description,ur_job_description, en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active",
+		$user=$this->common_model->join_three_tab_where_rows("jobs.id as job_id, username, employer_id, categories.name, ur_name, ar_name, jobs.category_id, en_job_description,ar_job_description,ur_job_description, en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, categories.image category_image, active",
 		"jobs", "users", "on (jobs.employer_id=users.id)", 
 		"categories", "on (categories.id=jobs.category_id)", 
 		array("jobs.employer_id"=>$employer_id));
@@ -846,6 +849,7 @@ class Api extends CI_Controller {
 				$en_array[$key]['en_job_description']=$value->en_job_description;
 				$en_array[$key]['en_min_price']=$value->en_min_price;
 				$en_array[$key]['en_max_price']=$value->en_max_price;
+				$en_array[$key]['category_image']=$value->category_image;
 				$en_array[$key]['active']=$value->active;
 	
 				$ur_array[$key]=$en_array[$key];
@@ -951,17 +955,25 @@ class Api extends CI_Controller {
 	}
 	
 	public function jobsDetail(){
-		// echo "last 10 jobs"; exit;
-		$id=$this->input->post('id');
-		$user=$this->common_model->join_three_tab_where_rows("username, employer_id user_id, categories.name, ur_name, ar_name, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
+		$employee_id=$this->input->post('employee_id');
+		$id=$this->input->post('job_id');
+		$user=$this->common_model->join_three_tab_where_rows("username, employer_id, categories.name, ur_name, ar_name, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
 		en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", 
 		"jobs", "users", "on (jobs.employer_id=users.id)", 
 		"categories", "on (categories.id=jobs.category_id)", 
 		array("jobs.active"=>"Y",  "jobs.id"=>$id));
+
+		$apply=$this->common_model->select_where("*", "jobs_applied", array("job_id"=>$id, "employee_id"=>$employee_id, "job_applied"=>"Y"));
+
 		$data=$user->result();
 		
 		foreach($data as $key=>$value){
-			$en_array[$key]['user_id']=$value->user_id;
+			if($apply->num_rows()>0){
+				$en_array[$key]['apply']=True;
+			}else{
+				$en_array[$key]['apply']=false;
+			}
+			$en_array[$key]['employer_id']=$value->employer_id;
 			$en_array[$key]['username']=$value->username;
 			$en_array[$key]['name']=$value->name;
 			$en_array[$key]['category_id']=$value->category_id;
