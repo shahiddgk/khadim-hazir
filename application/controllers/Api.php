@@ -956,15 +956,15 @@ class Api extends CI_Controller {
 	
 	public function jobsDetail(){
 		$employee_id=$this->input->post('employee_id');
-		$id=$this->input->post('job_id');
+		$job_id=$this->input->post('job_id');
 		$user=$this->common_model->join_three_tab_where_rows("username, employer_id, categories.name, ur_name, ar_name, jobs.category_id, en_job_description,ar_job_description,ur_job_description,
 		en_min_price, en_max_price,ar_min_price, ar_max_price, ur_min_price, ur_max_price, active", 
 		"jobs", "users", "on (jobs.employer_id=users.id)", 
 		"categories", "on (categories.id=jobs.category_id)", 
-		array("jobs.active"=>"Y",  "jobs.id"=>$id));
-
-		$apply=$this->common_model->select_where("*", "jobs_applied", array("job_id"=>$id, "employee_id"=>$employee_id, "job_applied"=>"Y"));
-
+		array("jobs.id"=>$job_id));
+        // echo $job_id;exit;
+		$apply=$this->common_model->select_where("*", "jobs_applied", array("job_id"=>$job_id, "employee_id"=>$employee_id, "job_applied"=>"Y"));
+        // echo ($applynum_rows());exit;
 		$data=$user->result();
 		
 		foreach($data as $key=>$value){
@@ -1015,7 +1015,6 @@ class Api extends CI_Controller {
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 		// echo "<pre>"; print_r($data);exit;
 	}
-
 	public function applyForAJob(){
 		$user_id=$this->input->post('employe_id');
 		$job_id=$this->input->post('job_id');
