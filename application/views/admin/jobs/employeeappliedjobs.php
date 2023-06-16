@@ -10,6 +10,9 @@
                     <table id="bootstrap-data-table-export" class="table table-striped table-bordered">
                         <thead>
                                 <tr>
+                                    <th>#</th>
+                                    <th>Job Id</th>
+                                    <th>Employee Id</th>
                                     <th>Image</th>
                                     <th>Employee Name</th>
                                     <th>Job Category</th>
@@ -21,9 +24,13 @@
                             <tbody>
                             <?php  
                             // echo "<pre>"; print_r($users); exit;
+                            $srn=1;
                             foreach($users as $key=>$value){ 
                                 // echo "<pre>"; print_r($data); exit;?>
                                 <tr>
+                                <th class="text: center py-2"><?=$srn?></th>
+                                <td class="text: center py-2"><?=$value->job_id?></td>
+                                <td class="text: center py-2"><?=$value->employee_id?></td>
                                   <td class="text: center py-2">
                                 <?php if(($value->image)!=""){ ?>
                                 <img class="img-responsive img-rounded" id=profile src="<?=base_url();?>images/<?=$value->image?>" class="img-responsive" height="auto" width="50"/>
@@ -34,9 +41,9 @@
                                     <td class="text: center py-2"><?=$value->name?></td>
                                     <td class="text: center py-2"><?=$value->en_job_description?></td>
                                     <td class="text: center py-2"><?=$value->en_max_price?></td>
-                                    <td class="text: center py-2"><?=$value->added_date?></td>
+                                    <td class="text: center py-2"><?=date("d-m-Y", strtotime($value->added_date))?></td>
                                 </tr>
-                            <?php } ?>
+                            <?php $srn++;} ?>
                                 
                             </tbody>
                         </table>

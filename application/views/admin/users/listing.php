@@ -10,6 +10,13 @@
                     <table id="bootstrap-data-table-export" class="table table-striped table-bordered">
                         <thead>
                                 <tr>
+                                <th scope="col">#</th>
+                                <?php if($users[0]->user_type=="employer"){?>
+                                    <th scope="col">Employer Id</th>
+                                <?php } else { ?>
+                                    <th scope="col">Employee Id</th>
+                                <?php } ?>
+                                
                                     <th>Image</th>
                                     <th>Name</th>
                                     <th>Email</th>
@@ -22,9 +29,12 @@
                             <tbody>
                             <?php  
                             // echo "<pre>"; print_r($users); exit;
+                            $srn=1;
                             foreach($users as $data){ 
                                 // echo "<pre>"; print_r($data); exit;?>
                                 <tr>
+                                <th><?=$srn ?></th>
+                                <td><?=$data->id ?></td>
                                 <?php if($data->image != ""){ ?>
                                     <td><img src="<?=base_url();?>images/<?=$data->image?>" class="img-responsive" height="auto" width="50"></td>
                                     <?php } else{ ?>
@@ -37,7 +47,7 @@
                                     <td><?=$data->created_at?></td>
                                     <td><a href="<?php echo base_url()?>/admin/welcome/change_status?id=<?php echo $data->id; ?>&status=<?php echo ($data->status=='active')? 'inactive':'active'; ?>"><?php echo ($data->status=='active')? 'Make InActive':' Make Active' ?></a></td>
                                 </tr>
-                            <?php } ?>
+                            <?php $srn++;} ?>
                                 
                             </tbody>
                         </table>

@@ -215,7 +215,7 @@ class Welcome extends CI_Controller {
 	}
 
 	public function employeesAppliedJobs(){
-		$user=$this->common_model->join_four_table_where("username, users.image, name, en_job_description, en_max_price, jobs_applied.added_date", "jobs_applied", "jobs", "on (jobs_applied.job_id=jobs.id)", "users", "on (jobs_applied.employee_id=users.id)", "categories", "on (jobs.category_id=categories.id)", array("user_type"=>"employee"));
+		$user=$this->common_model->join_four_table_where("username, users.image, name, en_job_description, en_max_price, jobs_applied.added_date, job_id, employee_id", "jobs_applied", "jobs", "on (jobs_applied.job_id=jobs.id)", "users", "on (jobs_applied.employee_id=users.id)", "categories", "on (jobs.category_id=categories.id)", array("user_type"=>"employee"));
 		$data=$user->result();
 		$data['users']=$data;
 		$this->load->view('admin/admin_header');
@@ -225,7 +225,7 @@ class Welcome extends CI_Controller {
 
 	public function appliesPerJob($id=''){
 		$id=$_GET['id'];
-		$user=$this->common_model->join_four_table_where_groupby("username, users.image, name, en_job_description, en_max_price, jobs_applied.added_date", "jobs_applied", "jobs", "on (jobs_applied.job_id=jobs.id)", "users", "on (jobs_applied.employee_id=users.id)", "categories", "on (jobs.category_id=categories.id)", array("jobs.id"=>$id), "");
+		$user=$this->common_model->join_four_table_where_groupby("username, users.image, name, en_job_description, en_max_price, jobs_applied.added_date , job_id, employee_id", "jobs_applied", "jobs", "on (jobs_applied.job_id=jobs.id)", "users", "on (jobs_applied.employee_id=users.id)", "categories", "on (jobs.category_id=categories.id)", array("jobs.id"=>$id), "");
 		$data=$user->result();
 		// echo "<pre>"; print_r($data); exit;
 		if($user->num_rows()>0){

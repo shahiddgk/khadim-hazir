@@ -12,6 +12,8 @@
                     <table id="bootstrap-data-table-export" class="table table-striped table-bordered">
                         <thead>
                                 <tr>
+                                    <th>#</th>
+                                    <th>User Id</th>
                                     <th>Image</th>
                                     <th>Name</th>
                                     <th>Email</th>
@@ -24,12 +26,14 @@
                                 
                             </thead>
                             <tbody>
-                            <?php 
+                            <?php $srn=1;
                              foreach($favouriteusers as $data){
                                 // echo "<pre>"; print_r($favouriteusers);exit;
                                 // echo "<pre>"; print_r($data->favourite_employees);exit;
                                 ?>
                                 <tr>
+                                    <th><?=$srn?></th>
+                                    <td><?=$data->employer_id?></td>
                                 <?php if($data->image != ""){ ?>
                                     <td><img src="<?=base_url();?>images/<?=$data->image?>" class="img-responsive" height="auto" width="50"></td>
                                     <?php } else{ ?>
@@ -43,9 +47,13 @@
                                     <td><a href="<?php echo base_url()?>/admin/welcome/change_status?id=<?php echo $data->employer_id; ?>&status=<?php echo ($data->status=='active')? 'inactive':'active'; ?>"><?php echo ($data->status=='active')? 'Make InActive':' Make Active' ?></a></td>
                                     <!-- <td><button type="button" id="formButton" onclick="showHide();">Favourites</button></td> -->
                                 </tr>
-                               <?php $sn=0;
-                               foreach($data->favourite_employees as $fav){?>
+                               <?php $sn=0; 
+                               foreach($data->favourite_employees as $fav){
+                                $srn++;?>
+                               
                                 <tr style="background-color:#bab9b6">
+                                <th><?=$srn?></th>
+                                <td><?=$data->favourite_employees[$sn]['employee_id']?></td>
                                 <?php if($data->favourite_employees[$sn]['image'] != ""){ ?>
                                     <td><img src="<?=base_url();?>images/<?=$data->favourite_employees[$sn]['image']?>" class="img-responsive" height="auto" width="50"></td>
                                     <?php } else{ ?>
@@ -59,8 +67,10 @@
                                 <td><a href="<?php echo base_url()?>/admin/welcome/change_status?id=<?php echo $data->favourite_employees[$sn]['employee_id']; ?>&status=<?php echo ($data->favourite_employees[$sn]['status']=='active')? 'inactive':'active'; ?>"><?php echo ($data->favourite_employees[$sn]['status']=='active')? 'Make InActive':' Make Active' ?></a></td> 
                                  
                             </tr>
-                            <?php $sn++;}
-                        } ?>
+                            <?php
+                             $sn++;
+                            } 
+                            $srn++;}?>
                             </tbody>
                         </table>
                         <!-- <table id="bootstrap-data-table-export" class="table table-striped table-bordered">
