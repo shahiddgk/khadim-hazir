@@ -341,7 +341,7 @@ class Api extends CI_Controller {
 	public function profileData() 
 	{
 		// echo 'update_profile'; exit;
-		$data = $this->common_model->select_where("id as user_id, google_id, category_id, username, email,phone_no, image,user_type", "users", array('id'=> $this->input->post('user_id')));
+		$data = $this->common_model->join_two_tab_where_simple("users.id as user_id, category_id, username, phone_no, users.image,user_type, categories.name as category_name", "users", "categories", "on (users.category_id=categories.id)", array('users.id'=> $this->input->post('user_id')));
 		if($data->num_rows()>0){	
 			$result['data']=$data->result();
 			// echo "<pre>"; print_r($data); exit;
@@ -367,10 +367,9 @@ class Api extends CI_Controller {
 	  	$data['username']= $this->input->post('username');
 		$data['phone_no']= $this->input->post('phone_no');
 		$data['address']= $this->input->post('address');
-		// $data['password']= sha1($this->input->post('password'));
-		// $data['user_type']= $this->input->post('user_type');
+		// $data['image']= $this->input->post('image');
+		// $data['user_ty$data['image']pe']= $this->input->post('user_type');
 		$data['category_id']= $this->input->post('category_id');
-		$data['image']='';
 		if (isset($_FILES['image'])) {
 			$file = $_FILES['image'];
 			if ($file['error'] == UPLOAD_ERR_OK) {
@@ -379,7 +378,12 @@ class Api extends CI_Controller {
 			  $filename = uniqid() . '.' . $ext;
 	  
 			  $destination = "images/$filename";
-	  
+
+			  $user=$this->common_model->select_where("image", "users", array("id"=>$id));
+			  $row=$user->row();
+			//   echo ($row->image); exit;
+			  $oldimage=$row->image;
+			  unlink('khadim-hazir/images/'.$oldimage);
 			  move_uploaded_file($file['tmp_name'], $destination);
 	  
 			  $data['image'] = $filename;
@@ -395,7 +399,7 @@ class Api extends CI_Controller {
 				'username' => $data['username'],
 				'category_id'=> $data['category_id'],
 				'address' => $data['address'],
-				'image' => $data['image'],
+				'image' => @$data['image'],
 				'phone_no' => $data['phone_no'],
 			);
 			$result['message']['code']='500';
@@ -408,7 +412,7 @@ class Api extends CI_Controller {
 				'username' => $data['username'],
 				'category_id'=> $data['category_id'],
 				'address' => $data['address'],
-				'image' => $data['image'],
+				'image' => @$data['image'],
 				'phone_no' => $data['phone_no'],
 			);
 			$result['message']['code']='500';
