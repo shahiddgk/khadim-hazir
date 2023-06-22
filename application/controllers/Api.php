@@ -601,14 +601,14 @@ class Api extends CI_Controller {
 		
 		if($id=='' && $category!=''){
 			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
-			category_id, user_type, phone_no, users.image", "users", "categories", 
+			category_id, user_type, phone_no, users.image, address", "users", "categories", 
 			"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
 			$data = $user->result();
 
 			$message='All employee list in a category';
 		}elseif($id!='' && $category==''){
 			$user = $this->common_model->join_two_tab_where_simple((" 'false' as favourite, username, users.id as employee_id, category_id, 
-			name as category_name, user_type, phone_no, users.image"), 
+			name as category_name, user_type, phone_no, users.image, address"), 
 			"users", "categories", "ON (categories.id=users.category_id)" , "user_type = 'employee'");
 			$data = $user->result();
 			foreach($data as $key=>$value){
@@ -628,7 +628,7 @@ class Api extends CI_Controller {
 			// array('employer_id'=>$id,  "category_id"=>$category));
 
 			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
-			category_id, user_type, phone_no, users.image", "users", "categories", 
+			category_id, user_type, phone_no, users.image, address", "users", "categories", 
 			"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
 
 			$data = $user->result();
@@ -646,7 +646,7 @@ class Api extends CI_Controller {
 		else{
 			
 			$user = $this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, 
-			name as category_name, category_id, user_type, phone_no, users.image, email", "categories", "users", 
+			name as category_name, category_id, user_type, phone_no, users.image, email, address", "categories", "users", 
 			 "ON (categories.id=users.`category_id`)", "user_type = 'employee'");
 			 $data = $user->result();
 
@@ -1147,5 +1147,27 @@ class Api extends CI_Controller {
 		$result['message']['success'] = true;
 		$result['message']['msg'] = 'Terms & conditions and Privacy Policy';
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	}
+
+	public function contactUs(){
+		$data['name']=$this->input->post('name');
+		$data['email']=$this->input->post('email');
+		$data['comments']=$this->input->post('comments');
+
+		$user=$this->db->insert('contact_us',$data);
+		if($user>0){
+			$result['data']=$data;
+			$result['message']['code'] = '500';
+			$result['message']['success'] = true;
+			$result['message']['msg'] = 'Your Questions will be entertained in the mean time';
+		}else{
+			$data=array();
+			$result['data']=$data;
+			$result['message']['code'] = '500';
+			$result['message']['success'] = true;
+			$result['message']['msg'] = 'Your Questions was not posted';
+		}
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+
 	}
 }
