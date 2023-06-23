@@ -54,6 +54,13 @@
                         <textarea name="ur_policy" id="privacy-urdu" class="form-control"><?php echo $settings[0]['ur_policy']; ?></textarea>
                     </div>
                 </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-addon">Vedio Link</div>
+                        <textarea type="text" name="vedio_link" id="vedio-link" class="form-control"><?php echo $settings[0]['vedio_link']; ?></textarea>
+                    </div>
+                </div>
+
 
                 <div class="form-actions form-group">
                     <button type="submit" class="btn btn-primary btn-sm">Submit</button>
@@ -135,6 +142,11 @@ $(document).ready(function () {
           ['table', ['table']],
           ['view', ['fullscreen', 'codeview', 'help']]
     ]});
+
+    $('#vedio-link').summernote({
+        placeholder: 'Please Enter privacy policy in urdu',
+        tabsize: 2,
+        toolbar: []});
     
   });
 </script>

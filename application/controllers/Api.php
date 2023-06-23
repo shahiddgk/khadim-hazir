@@ -1168,6 +1168,25 @@ class Api extends CI_Controller {
 			$result['message']['msg'] = 'Your Questions was not posted';
 		}
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	}
 
+	public function vedio_link(){
+		$user=$this->common_model->select_all("vedio_link", "settings");
+		$data=$user->result();
+		if($user->num_rows()>0){
+		$result['data']=$data;
+		$result['message']['code'] = '500';
+		$result['message']['success'] = true;
+		$result['message']['msg'] = 'This api provides user dashboard vedio link';
+		}
+		else{
+			$data=array();
+			$result['data']=$data;
+			$result['message']['code'] = '500';
+			$result['message']['success'] = false;
+			$result['message']['msg'] = 'There is no vedio availible';
+		}
+		// echo "<pre>"; print_r($data);exit;
+		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 	}
 }

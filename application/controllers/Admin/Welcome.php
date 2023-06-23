@@ -355,6 +355,7 @@ class Welcome extends CI_Controller {
 		$data['privacy_policy'] = $this->input->post('privacy_policy');
 		$data['ar_policy'] = $this->input->post('ar_policy');
 		$data['ur_policy'] = $this->input->post('ur_policy');
+		$data['vedio_link'] = $this->input->post('vedio_link');
 		// echo "<pre>"; print_r($data); exit;
 		$this->common_model->update_array(array('id'=>1), 'settings', $data);
 		redirect(site_url().'admin/welcome/settings'); 
