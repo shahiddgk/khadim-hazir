@@ -13,6 +13,7 @@
         <div class="card-body card-block">
             <?php foreach($categories as $key=>$value) {  ?>
             <form action="<?=site_url('admin/category/update_category')?>" method="post" enctype="multipart/form-data">
+            
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">Category Name</div>
@@ -51,7 +52,14 @@
                         <div class="input-group-addon">Price PKR</div>
                         <input type="number" value="<?=$value->ur_price?>" class="form-control" name="ur_price" required>
                     </div>
-                </div>                
+                </div> 
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-addon">Slug</div>
+                        <input type="text" value="<?=$value->slug?>" class="form-control" name="slug" required>
+                    </div>
+                </div> 
 
                 <div class="form-group">
                     <div class="input-group">

@@ -59,6 +59,14 @@
                         <div class="col col-md">
                         <div class="form-group">
                             <div class="input-group">
+                                <div class="input-group-addon">Slug</div>
+                                <input type="text" class="form-control" name="slug" required>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="col col-md">
+                        <div class="form-group">
+                            <div class="input-group">
                                 <div class="input-group-addon">Image</div>
                                 <input type="file" name="image_file" class="form-control form-control-file"
                                     accept="image/*">
