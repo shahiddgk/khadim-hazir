@@ -44,7 +44,7 @@ class Category extends CI_Controller {
 		$data['price'] = $this->input->post('price');
 		$data['ar_price'] = $this->input->post('ar_price');
 		$data['ur_price'] = $this->input->post('ur_price');
-		$data['slug'] = $this->input->post('slug');
+		$data['slug'] = str_replace(" ", "-", strtolower($this->input->post('slug')));
 		if($_FILES['image_file']['name']!=''){
 			$img   =   $_FILES['image_file']['name'];
 			$image =   str_replace(" ","-",strtolower(time().'cat_'.$img));
@@ -98,7 +98,7 @@ class Category extends CI_Controller {
 		$data['price'] = $this->input->post('price');
 		$data['ar_price'] = $this->input->post('ar_price');
 		$data['ur_price'] = $this->input->post('ur_price');
-		$data['slug'] = $this->input->post('slug');		
+		$data['slug'] =str_replace(" ", "-", strtolower($this->input->post('slug'))); 		
 		if($_FILES['image_file']['name']!=''){
 			$img   =   $_FILES['image_file']['name'];
 			$image =   str_replace("category_".time(),$img,$img);

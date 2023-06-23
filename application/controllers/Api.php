@@ -86,6 +86,7 @@ class Api extends CI_Controller {
 			$en_array[$key]['name']=$value->name;
 			$en_array[$key]['image']=$value->image;
 			$en_array[$key]['price']=$value->price;
+			$en_array[$key]['slug']=$value->slug;
 			$en_array[$key]['added_date']=$value->added_date;
 			$ur_array[$key]=$en_array[$key];
 			$ur_array[$key]['name']=$value->ur_name;
@@ -116,7 +117,6 @@ class Api extends CI_Controller {
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 		// echo json_encode($data);exit;
 	}
-
 
 	public function set_session($lang=null)
 	{
@@ -221,6 +221,7 @@ class Api extends CI_Controller {
 		$data['password']= sha1($this->input->post('password'));
 		$data['image']='';
 		$data['status'] = 'active';
+		$data['slug']=str_replace(" ", "-", strtolower($data['username']));
 		//echo "<pre>"; print_r($data);exit;
 		if (isset($_FILES['image'])) {
 			$file = $_FILES['image'];
@@ -342,7 +343,7 @@ class Api extends CI_Controller {
 	public function profileData() 
 	{
 		// echo 'update_profile'; exit;
-		$data = $this->common_model->join_two_tab_where_simple("users.id as user_id, category_id, username, phone_no, users.image,user_type, categories.name as category_name", "users", "categories", "on (users.category_id=categories.id)", array('users.id'=> $this->input->post('user_id')));
+		$data = $this->common_model->join_two_tab_where_simple("users.id as user_id, category_id, username, phone_no, users.image,user_type, categories.name as category_name, users.slug as user_slug", "users", "categories", "on (users.category_id=categories.id)", array('users.id'=> $this->input->post('user_id')));
 		if($data->num_rows()>0){	
 			$result['data']=$data->result();
 			// echo "<pre>"; print_r($data); exit;
@@ -941,6 +942,7 @@ class Api extends CI_Controller {
 			$en_array[$key]['name']=$value->name;
 			$en_array[$key]['image']=$value->image;
 			$en_array[$key]['price']=$value->price;
+			$en_array[$key]['slug']=$value->slug;
 			$en_array[$key]['added_date']=$value->added_date;
 			$ur_array[$key]=$en_array[$key];
 			$ur_array[$key]['name']=$value->ur_name;
