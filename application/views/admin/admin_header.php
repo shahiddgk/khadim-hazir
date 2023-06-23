@@ -235,7 +235,7 @@ else{
     
     <div class="breadcrumbs" style="text-align: center;">
     <div class="col-sm-1">
-        <?php if($this->uri->segment('3')=='appliesPerJob'){?>
+        <?php if($this->uri->segment('3')=='appliesPerJob'||'edit_category'){?>
         <div class="page-header float-left">
             <div class="page-title">
                 <ol class="breadcrumb text-right">
