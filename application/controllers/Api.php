@@ -601,6 +601,17 @@ class Api extends CI_Controller {
 		$id=$data['user_id'];
 		$category=$data['category_id'];
 		
+		$category_slug = @$this->input->post('category_slug');
+		//echo $category_slug;exit;
+		if($category_slug!=''){
+			$user = $this->common_model->select_where("id", "categories", array('slug'=>$category_slug));
+			if ($user->num_rows() > 0){
+				$result =$user->result();
+				$category = $result[0]->id;
+			}	
+		}
+		
+		
 		if($id=='' && $category!=''){
 			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
 			category_id, user_type, phone_no, users.image, address", "users", "categories", 
