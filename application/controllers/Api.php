@@ -343,7 +343,17 @@ class Api extends CI_Controller {
 	public function profileData() 
 	{
 		// echo 'update_profile'; exit;
-		$data = $this->common_model->join_two_tab_where_simple("users.id as user_id, category_id, username, phone_no, users.image,user_type, categories.name as category_name, users.slug as user_slug", "users", "categories", "on (users.category_id=categories.id)", array('users.id'=> $this->input->post('user_id')));
+		$user_id=$this->input->post('user_id');
+
+		$user_slug=@$this->input->post('user_slug');
+		if($user_slug !=''){
+			$user = $this->common_model->select_where("id", "users", array('slug'=>$user_slug));
+			if ($user->num_rows() > 0){
+				$result =$user->result();
+				$user_id = $result[0]->id;
+			}
+		}
+		$data = $this->common_model->join_two_tab_where_simple("users.id as user_id, category_id, username, phone_no, users.image,user_type, categories.name as category_name, users.slug as user_slug", "users", "categories", "on (users.category_id=categories.id)", array('users.id'=>$user_id));
 		if($data->num_rows()>0){	
 			$result['data']=$data->result();
 			// echo "<pre>"; print_r($data); exit;
@@ -614,14 +624,14 @@ class Api extends CI_Controller {
 		
 		if($id=='' && $category!=''){
 			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
-			category_id, user_type, phone_no, users.image, address", "users", "categories", 
+			category_id, user_type, phone_no, users.image, address, users.slug", "users", "categories", 
 			"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
 			$data = $user->result();
 
 			$message='All employee list in a category';
 		}elseif($id!='' && $category==''){
 			$user = $this->common_model->join_two_tab_where_simple((" 'false' as favourite, username, users.id as employee_id, category_id, 
-			name as category_name, user_type, phone_no, users.image, address"), 
+			name as category_name, user_type, phone_no, users.image, address, users.slug"), 
 			"users", "categories", "ON (categories.id=users.category_id)" , "user_type = 'employee'");
 			$data = $user->result();
 			foreach($data as $key=>$value){
@@ -641,7 +651,7 @@ class Api extends CI_Controller {
 			// array('employer_id'=>$id,  "category_id"=>$category));
 
 			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
-			category_id, user_type, phone_no, users.image, address", "users", "categories", 
+			category_id, user_type, phone_no, users.image, address, users.slug", "users", "categories", 
 			"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
 
 			$data = $user->result();
@@ -659,7 +669,7 @@ class Api extends CI_Controller {
 		else{
 			
 			$user = $this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, 
-			name as category_name, category_id, user_type, phone_no, users.image, email, address", "categories", "users", 
+			name as category_name, category_id, user_type, phone_no, users.image, email, address, users.slug", "categories", "users", 
 			 "ON (categories.id=users.`category_id`)", "user_type = 'employee'");
 			 $data = $user->result();
 
