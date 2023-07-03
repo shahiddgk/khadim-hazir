@@ -353,7 +353,7 @@ class Api extends CI_Controller {
 				$user_id = $result[0]->id;
 			}
 		}
-		$data = $this->common_model->join_two_tab_where_simple("users.id as user_id, category_id, username, phone_no, users.image,user_type, categories.name as category_name, users.slug as user_slug", "users", "categories", "on (users.category_id=categories.id)", array('users.id'=>$user_id));
+		$data = $this->common_model->join_two_tab_where_simple("users.id as user_id, category_id, username, phone_no, users.image,user_type, categories.name as category_name, users.slug as user_slug, address, email", "users", "categories", "on (users.category_id=categories.id)", array('users.id'=>$user_id));
 		if($data->num_rows()>0){	
 			$result['data']=$data->result();
 			// echo "<pre>"; print_r($data); exit;
