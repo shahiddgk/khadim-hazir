@@ -208,7 +208,7 @@ else{
                         <a class="nav-link" href="<?=site_url('welcome')?>"><i class="fa fa-globe"></i> Website</a>
                         <a class="nav-link" href="<?=site_url('admin/welcome/setting')?>"><i class="fa fa-cog"></i> Settings</a>
 
-                        <a class="nav-link" href="<?=site_url('admin/welcome/logout')?>"><i class="fa fa-power-off"></i> Logout</a>
+                        <a class="nav-link" href="<?=site_url('admin')?>"><i class="fa fa-power-off"></i> Logout</a>
                     </div>
                 </div>
 
@@ -235,7 +235,7 @@ else{
     
     <div class="breadcrumbs" style="text-align: center;">
     <div class="col-sm-1">
-        <?php if($this->uri->segment('3')=='appliesPerJob'||'edit_category'){?>
+        <?php if(($this->uri->segment('3') == ('appliesPerJob')) || ( $this->uri->segment('3') == ('edit_category')) || ( $this->uri->segment('3') == ('add_category')) ){?>
         <div class="page-header float-left">
             <div class="page-title">
                 <ol class="breadcrumb text-right">

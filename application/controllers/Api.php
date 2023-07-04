@@ -337,7 +337,11 @@ class Api extends CI_Controller {
         $this->session->unset_userdata('usertype');
         $this->session->unset_userdata('username');
         $this->session->unset_userdata('email');
-        redirect(site_url().'welcome'); 
+		$result['message']['success'] = true;
+		$result['message']['code']='500';
+		$result['message']['error']='You have loged out';
+
+        // redirect(site_url().'welcome'); 
 	}
 
 	public function profileData() 
