@@ -300,6 +300,7 @@ class Api extends CI_Controller {
 	{
 		$email	=	$this->input->post('email');
 		$password	=	$this->input->post('password');
+		// echo $password; exit;
 		$data = $this->common_model->select_where("*","users", array('email'=>$email,'password'=>sha1($password)));
 		if($data->num_rows()>0){
 			// echo 1; exit;
@@ -350,6 +351,7 @@ class Api extends CI_Controller {
 		$user_id=$this->input->post('user_id');
 
 		$user_slug=@$this->input->post('user_slug');
+		$category_slug=@$this->input->post('category_slug');
 		if($user_slug !=''){
 			$user = $this->common_model->select_where("id", "users", array('slug'=>$user_slug));
 			if ($user->num_rows() > 0){
@@ -357,7 +359,10 @@ class Api extends CI_Controller {
 				$user_id = $result[0]->id;
 			}
 		}
+		
 		$data = $this->common_model->join_two_tab_where_simple("users.id as user_id, category_id, username, phone_no, users.image,user_type, categories.name as category_name, users.slug as user_slug, address, email", "users", "categories", "on (users.category_id=categories.id)", array('users.id'=>$user_id));
+		
+		
 		if($data->num_rows()>0){	
 			$result['data']=$data->result();
 			// echo "<pre>"; print_r($data); exit;
@@ -386,6 +391,7 @@ class Api extends CI_Controller {
 		// $data['image']= $this->input->post('image');
 		// $data['user_ty$data['image']pe']= $this->input->post('user_type');
 		$data['category_id']= $this->input->post('category_id');
+		$data['slug']=str_replace(" ", "-", strtolower($data['username']));
 		if (isset($_FILES['image'])) {
 			$file = $_FILES['image'];
 			if ($file['error'] == UPLOAD_ERR_OK) {
