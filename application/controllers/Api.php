@@ -969,9 +969,14 @@ class Api extends CI_Controller {
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 	}
 
-	public function sevenCategories(){
+	public function sevenCategories($count=''){
 		$result=array();
-		$data = $this->common_model->select_limit_order("*", "categories", "7", "id", "ASC")->result();	
+		if($count != ''){
+			$data = $this->common_model->select_limit_order("*", "categories", $count, "id", "ASC")->result();	
+		}else{
+			$data = $this->common_model->select_limit_order("*", "categories", "7", "id", "ASC")->result();	
+		}
+		
 		//echo "<pre>"; print_r($data); exit;
 		foreach($data as $key=>$value){
 			$en_array[$key]['id']=$value->id;
