@@ -410,7 +410,7 @@ class Api extends CI_Controller {
 			  $row=$user->row();
 			//   echo ($row->image); exit;
 			  $oldimage=$row->image;
-			  unlink('khadim-hazir/images/'.$oldimage);
+			//   file::delete('khadim-hazir/images/'.$oldimage);
 			  move_uploaded_file($file['tmp_name'], $destination);
 	  
 			  $data['image'] = $filename;
@@ -519,13 +519,33 @@ class Api extends CI_Controller {
 	}
 
 	public function favouriteEmployees($id=''){
-		$user = $this->common_model->join_three_tab_where_rows(("favourite_user.id, username, employee_id  AS user_id,categories.name, category_id, user_type, phone_no, users.image"), 
+		$user = $this->common_model->join_three_tab_where_rows(("favourite_user.id, username, employee_id  AS user_id,categories.name, ur_name, ar_name, category_id, user_type, phone_no, users.image"), 
 		"users", "favourite_user", "ON (favourite_user.employee_id=users.id)" ,"categories", "ON (categories.id=users.category_id)" ,
 		array('employer_id'=>$id, 'favourite'=>"Y"));
 		$data=$user->result();
 		// echo "<pre>"; print_r($data); exit;
 		if($user->num_rows()>0){
-			$result['data']=$data;
+			foreach($data as $key=>$value){
+				$en_array[$key]['id']=$value->id;
+				$en_array[$key]['username']=$value->username;
+				$en_array[$key]['user_id']=$value->user_id;
+				$en_array[$key]['name']=$value->name;
+				$en_array[$key]['category_id']=$value->category_id;
+				$en_array[$key]['user_type']=$value->user_type;
+				$en_array[$key]['phone_no']=$value->phone_no;
+				$en_array[$key]['image']=$value->image;
+
+				$ur_array[$key]=$en_array[$key];
+				$ur_array[$key]['name']=$value->ur_name;
+
+				$ar_array[$key]=$en_array[$key];
+				$ar_array[$key]['name']=$value->ar_name;
+			}
+			$result['data']['en'] = $en_array;
+			$result['data']['ur'] = $ur_array;
+			$result['data']['ar'] = $ar_array;
+
+			// $result['data']=$data;
 			$result['message']['success'] = true;
 			$result['message']['code']='500';
 			$result['message']['msg']='Favourite Employee listing';
@@ -594,7 +614,7 @@ class Api extends CI_Controller {
 
 	public function forgotPassword(){
 		$data['email']=$this->input->post('email');
-		$user=$this->common_model->select_where("email", "users", array('email'=>$data['email']));
+		$user=$this->common_model->select_where("email", "users", array('email'=>$data['email'], 'id !=' => NULL, 'username !='=> NULL));
 		if($user->num_rows()>0){
 			$new_password =rand();
 			$to = $data['email'];
@@ -1204,7 +1224,7 @@ class Api extends CI_Controller {
 			$result['data']=$data;
 			$result['message']['code'] = '500';
 			$result['message']['success'] = true;
-			$result['message']['msg'] = 'Your Questions will be entertained in the mean time';
+			$result['message']['msg'] = 'Your query will be entertained as soon as possible';
 		}else{
 			$data=array();
 			$result['data']=$data;
