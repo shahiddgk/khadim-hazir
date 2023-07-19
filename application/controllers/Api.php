@@ -39,10 +39,29 @@ class Api extends CI_Controller {
 	}
 	
 	// Loading home page on front end.
-	public function index() 
+	public function index($category='') 
 	{
+		// echo $category; exit;
 		$result=array();
-		$data = $this->common_model->select_all("*", "categories")->result();	
+		if($category != ''){
+			$user = $this->common_model->like_value("slug", "categories", 'name', urldecode($category));	
+			$data=$user->result();
+			if($user->num_rows()>0){
+				$result['data']=$data;
+				$result['message']['code'] = '500';
+				$result['message']['success'] = true;
+				$result['message']['msg'] = 'Category listing';
+				echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+			}else{
+				$result['data']=$data;
+				$result['message']['code'] = '500';
+				$result['message']['success'] = false;
+				$result['message']['msg'] = 'No category found';
+				echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+			}
+		}else{
+			$data = $this->common_model->select_all("*", "categories")->result();	
+		}
 		//echo "<pre>"; print_r($data); exit;
 		foreach($data as $key=>$value){
 			$en_array[$key]['id']=$value->id;
@@ -361,9 +380,9 @@ class Api extends CI_Controller {
 			}
 		}
 		if($category_id == 0){
-			$data = $this->common_model->select_where("users.id as user_id, category_id, username, phone_no, users.image,user_type,  users.slug as user_slug, address, email", "users", array('users.id'=>$user_id));
+			$data = $this->common_model->select_where("users.id as user_id, category_id, username, phone_no, users.image,user_type,  users.slug as user_slug, address, email, password", "users", array('users.id'=>$user_id));
 		}else{
-			$data = $this->common_model->join_two_tab_where_simple("users.id as user_id, category_id, username, phone_no, users.image,user_type, categories.name as category_name, users.slug as user_slug, address, email", "users", "categories", "on (users.category_id=categories.id)", array('users.id'=>$user_id));	
+			$data = $this->common_model->join_two_tab_where_simple("users.id as user_id, category_id, username, phone_no, users.image,user_type, categories.name as category_name, users.slug as user_slug, address, email, password", "users", "categories", "on (users.category_id=categories.id)", array('users.id'=>$user_id));	
 		}
 		
 		
@@ -393,7 +412,6 @@ class Api extends CI_Controller {
 	  	$data['username']= $this->input->post('username');
 		$data['phone_no']= $this->input->post('phone_no');
 		$data['address']= $this->input->post('address');
-		// $data['image']= $this->input->post('image');
 		// $data['user_ty$data['image']pe']= $this->input->post('user_type');
 		$data['category_id']= $this->input->post('category_id');
 		$data['slug']=str_replace(" ", "-", strtolower($data['username']));
@@ -460,24 +478,25 @@ class Api extends CI_Controller {
 
 	public function changePassword() 
 	{
-		// echo 'change_password'; exit;
 		$old_password = sha1($this->input->post('old_password'));
+		// echo $old_password; exit;
+
 		$user = $this->common_model->select_where("id as user_id, username, category_id, email, phone_no, image, user_type", "users", array('id'=>$this->input->post('id'), 'password'=>$old_password)); 
 
 		if ($user->num_rows() > 0){
 			$result['data']=$user->result();
-			$result['message']['code']='Old password is matched, enter new password';
+			// $result['message']['code']='Old password is matched, enter new password';
 			$new_password = sha1($this->input->post('new_password'));
 			$this->common_model->update_array(array('id' => $this->input->post('id')), 'users', array('password' => $new_password));
 			$result['message']['code']='500';
 			$result['message']['success'] = true;
-			$result['message']['msg']='Password updated Successfully';
+			$result['message']['msg']='Your have successfully updated yor password';
 			
 		}else{
 			$result['data']= array();
 			$result['message']['success'] = false;
 			$result['message']['code']='500';
-			$result['message']['msg']='Your password is not matching, try another password';
+			$result['message']['msg']='Current Password is mismatching, try another password';
 		}
 		echo json_encode($result);exit;
 	}	  

@@ -254,6 +254,14 @@ class Common_model extends  CI_Model {
 		return $this->db->get();
 	
 	}
+
+	function like_value($select, $table, $column, $value){
+		$this->db->select($select);
+		$this->db->from($table);
+		$this->db->or_like($column, $value);
+		return $this->db->get();
+
+	}
 	
 	function like_search( $select,$table,$where,$like,$orderBy_columName,$ASC_DESC ){
 		$this->db->select( $select );
