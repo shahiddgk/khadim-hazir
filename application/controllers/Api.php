@@ -44,7 +44,7 @@ class Api extends CI_Controller {
 		// echo $category; exit;
 		$result=array();
 		if($category != ''){
-			$user = $this->common_model->like_value("slug", "categories", 'name', urldecode($category));	
+			$user = $this->common_model->like_value("slug", "categories", 'slug', $category);	
 			$data=$user->result();
 			if($user->num_rows()>0){
 				$result['data']=$data;
@@ -538,7 +538,7 @@ class Api extends CI_Controller {
 	}
 
 	public function favouriteEmployees($id=''){
-		$user = $this->common_model->join_three_tab_where_rows(("favourite_user.id, username, employee_id  AS user_id,categories.name, ur_name, ar_name, category_id, user_type, phone_no, users.image"), 
+		$user = $this->common_model->join_three_tab_where_rows(("favourite_user.id, username, employee_id,categories.name, ur_name, ar_name, category_id, user_type, phone_no, users.image"), 
 		"users", "favourite_user", "ON (favourite_user.employee_id=users.id)" ,"categories", "ON (categories.id=users.category_id)" ,
 		array('employer_id'=>$id, 'favourite'=>"Y"));
 		$data=$user->result();
@@ -547,7 +547,7 @@ class Api extends CI_Controller {
 			foreach($data as $key=>$value){
 				$en_array[$key]['id']=$value->id;
 				$en_array[$key]['username']=$value->username;
-				$en_array[$key]['user_id']=$value->user_id;
+				$en_array[$key]['employee_id']=$value->employee_id;
 				$en_array[$key]['name']=$value->name;
 				$en_array[$key]['category_id']=$value->category_id;
 				$en_array[$key]['user_type']=$value->user_type;
@@ -589,41 +589,80 @@ class Api extends CI_Controller {
 			$res['favourite']="Y";
 			$this->db->insert('favourite_user',$res);
 		
-		 	$user=$this->common_model->join_two_tab_where_simple("username, users.id AS user_id, name as category_name, category_id, user_type, phone_no, email, users.image", "categories", "users", "ON (categories.id=users.`category_id`)", array('users.id'=>$data['employee_id']));
-			$data=$user->result_array();
-			$data = array(
-				'Favourite'=>true,
-				'user_id'=>$data[0]['user_id'],
-				'usertype' => $data[0]['user_type'],
-				'username' => $data[0]['username'],
-				'category_id'=> $data[0]['category_id'],
-				'category_name'=> $data[0]['category_name'],
-				'email' => $data[0]['email'],
-				'image' => $data[0]['image'],
-				'phone_no' => $data[0]['phone_no'],
-			);
-			// echo "<pre>";print_r($data);exit;
-			$result['data']=$data;
+		 	$user=$this->common_model->join_two_tab_where_simple("username, users.id AS employee_id, name as category_name, category_id, user_type, phone_no, email, users.image, ur_name, ar_name", "categories", "users", "ON (categories.id=users.`category_id`)", array('users.id'=>$data['employee_id']));
+			$data=$user->result();
+			foreach($data as $key=>$value){
+				$en_array[$key]['Favourite']=true;
+				$en_array[$key]['employee_id']=$value->employee_id;
+				$en_array[$key]['usertype']=$value->user_type;
+				$en_array[$key]['category_id']=$value->category_id;
+				$en_array[$key]['category_name']=$value->category_name;
+				$en_array[$key]['email']=$value->email;
+				$en_array[$key]['image']=$value->image;
+				$en_array[$key]['phone_no']=$value->phone_no;
+
+				$ur_array[$key]=$en_array[$key];
+				$ur_array[$key]['category_name']=$value->ur_name;
+
+				$ar_array[$key]=$en_array[$key];
+				$ar_array[$key]['category_name']=$value->ar_name;
+			}
+			// $data = array(
+			// 	'Favourite'=>true,
+			// 	'user_id'=>$data[0]['user_id'],
+			// 	'usertype' => $data[0]['user_type'],
+			// 	'username' => $data[0]['username'],
+			// 	'category_id'=> $data[0]['category_id'],
+			// 	'category_name'=> $data[0]['category_name'],
+			// 	'email' => $data[0]['email'],
+			// 	'image' => $data[0]['image'],
+			// 	'phone_no' => $data[0]['phone_no'],
+			// );
+			$result['data']['en'] = $en_array;
+			$result['data']['ur'] = $ur_array;
+			$result['data']['ar'] = $ar_array;
+			// echo "<pre>";print_r($result);exit;
+			// $result['data']=$data;
 			$result['message']['success'] = true;
 			$result['message']['code']='500';
 			$result['message']['msg']='Employee liked';	
 			echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 		}else{
 			$this->common_model->delete_where(array('employee_id'=>$data['employee_id'], 'employer_id'=>$data['user_id']), 'favourite_user');
-			$user=$this->common_model->join_two_tab_where_simple("username, users.id AS user_id, name as category_name, category_id, user_type, phone_no, email, users.image", "categories", "users", "ON (categories.id=users.`category_id`)", array('users.id'=>$data['employee_id']));
-			$data=$user->result_array();
-			$data = array(
-				'Favourite'=>false,
-				'user_id'=>$data[0]['user_id'],
-				'usertype' => $data[0]['user_type'],
-				'username' => $data[0]['username'],
-				'category_id'=> $data[0]['category_id'],
-				'category_name'=> $data[0]['category_name'],
-				'email' => $data[0]['email'],
-				'image' => $data[0]['image'],
-				'phone_no' => $data[0]['phone_no'],
-			);
-			$result['data']=$data;
+			$user=$this->common_model->join_two_tab_where_simple("username, users.id AS employee_id, name as category_name, category_id, user_type, phone_no, email, users.image, ar_name, ur_name", "categories", "users", "ON (categories.id=users.`category_id`)", array('users.id'=>$data['employee_id']));
+			$data=$user->result();
+			foreach($data as $key=>$value){
+				$en_array[$key]['Favourite']=false;
+				$en_array[$key]['employee_id']=$value->employee_id;
+				$en_array[$key]['usertype']=$value->user_type;
+				$en_array[$key]['category_id']=$value->category_id;
+				$en_array[$key]['category_name']=$value->category_name;
+				$en_array[$key]['email']=$value->email;
+				$en_array[$key]['image']=$value->image;
+				$en_array[$key]['phone_no']=$value->phone_no;
+
+				$ur_array[$key]=$en_array[$key];
+				$ur_array[$key]['category_name']=$value->ur_name;
+
+				$ar_array[$key]=$en_array[$key];
+				$ar_array[$key]['category_name']=$value->ar_name;
+			}
+			$result['data']['en'] = $en_array;
+			$result['data']['ur'] = $ur_array;
+			$result['data']['ar'] = $ar_array;
+			// $data=$user->result_array();
+			// $data = array(
+			// 	'Favourite'=>false,
+			// 	'user_id'=>$data[0]['user_id'],
+			// 	'usertype' => $data[0]['user_type'],
+			// 	'username' => $data[0]['username'],
+			// 	'category_id'=> $data[0]['category_id'],
+			// 	'category_name'=> $data[0]['category_name'],
+			// 	'email' => $data[0]['email'],
+			// 	'image' => $data[0]['image'],
+			// 	'phone_no' => $data[0]['phone_no'],
+			// );
+			// $result['data']=$data;
 			$result['message']['success'] = true;
 			$result['message']['code']='500';
 			$result['message']['msg']='Employee disliked';
@@ -678,14 +717,14 @@ class Api extends CI_Controller {
 		
 		if($id=='' && $category!=''){
 			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
-			category_id, user_type, phone_no, users.image, address, users.slug", "users", "categories", 
+			category_id, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name", "users", "categories", 
 			"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
 			$data = $user->result();
 
 			$message='All employee list in a category';
 		}elseif($id!='' && $category==''){
 			$user = $this->common_model->join_two_tab_where_simple((" 'false' as favourite, username, users.id as employee_id, category_id, 
-			name as category_name, user_type, phone_no, users.image, address, users.slug"), 
+			name as category_name, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name"), 
 			"users", "categories", "ON (categories.id=users.category_id)" , "user_type = 'employee'");
 			$data = $user->result();
 			foreach($data as $key=>$value){
@@ -705,7 +744,7 @@ class Api extends CI_Controller {
 			// array('employer_id'=>$id,  "category_id"=>$category));
 
 			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
-			category_id, user_type, phone_no, users.image, address, users.slug", "users", "categories", 
+			category_id, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name", "users", "categories", 
 			"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
 
 			$data = $user->result();
@@ -723,14 +762,38 @@ class Api extends CI_Controller {
 		else{
 			
 			$user = $this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, 
-			name as category_name, category_id, user_type, phone_no, users.image, email, address, users.slug", "categories", "users", 
+			name as category_name, category_id, user_type, phone_no, users.image, email, address, users.slug, ar_name, ur_name", "categories", "users", 
 			 "ON (categories.id=users.`category_id`)", "user_type = 'employee'");
 			 $data = $user->result();
 
 			$message='All employee list';
 		}
+
+		foreach($data as $key=>$value){
+			$en_array[$key]['favourite']=$value->favourite;
+			$en_array[$key]['username']=$value->username;
+			$en_array[$key]['employee_id']=$value->employee_id;
+			$en_array[$key]['category_id']=$value->category_id;
+			$en_array[$key]['category_name']=$value->category_name;
+			$en_array[$key]['user_type']=$value->user_type;
+			$en_array[$key]['phone_no']=$value->phone_no;
+			$en_array[$key]['image']=$value->image;
+			$en_array[$key]['address']=$value->address;
+			$en_array[$key]['slug']=$value->slug;
+
+			$ur_array[$key]=$en_array[$key];
+			$ur_array[$key]['category_name']=$value->ur_name;
+			// $ur_array[$key]['price']=$value->ur_price;
+			$ar_array[$key]=$en_array[$key];
+			$ar_array[$key]['category_name']=$value->ar_name;
+			// $ar_array[$key]['price']=$value->ar_price;
+		}
+		$result['data']['en'] = $en_array;
+		$result['data']['ur'] = $ur_array;
+		$result['data']['ar'] = $ar_array;
+
 		//$data = $user->result();
-		$result['data']=$data;
+		// $result['data']=$data;
 		$result['message']['success'] = true;
 		$result['message']['code']='500';
 		$result['message']['msg']=$message;
