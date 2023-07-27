@@ -338,7 +338,7 @@ class Api extends CI_Controller {
 			);
 			$result['message']['code']='500';
 			$result['message']['success'] = true;
-			$result['message']['msg'] = 'You are now logged in';
+			$result['message']['msg'] = 'You have logged in succesfully';
 			$result['data']=[$data];			
 		}else{
 			$result['data']= array();
@@ -696,7 +696,7 @@ class Api extends CI_Controller {
 			$result['data']=$data;
 			$result['message']['success'] = false;
 			$result['message']['code']='500';
-			$result['message']['msg']='This user is not registered, Kindly register first';
+			$result['message']['msg']='This user is not registered Kindly register first';
 		}
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 	}
