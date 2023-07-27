@@ -234,9 +234,10 @@ class Api extends CI_Controller {
 		$data['username']= $this->input->post('username');
 		$data['email']= $this->input->post('email');
 		// $email	=	$this->input->post('email');
-		$data['phone_no']= $this->input->post('phone_no');
+		$data['phone_no']= (($this->input->post('phone_no')) ? ($this->input->post('phone_no')) : "");
 		$data['category_id']= $this->input->post('category_id');
-		$data['address']= $this->input->post('address');
+		// $data['address']= $this->input->post('address');
+		$data['address']= (($this->input->post('address')) ? ($this->input->post('address')) : "");
 		$data['password']= sha1($this->input->post('password'));
 		$data['image']='';
 		$data['status'] = 'active';
@@ -410,8 +411,10 @@ class Api extends CI_Controller {
 	{
 		$id = $this->input->post('user_id');
 	  	$data['username']= $this->input->post('username');
-		$data['phone_no']= $this->input->post('phone_no');
-		$data['address']= $this->input->post('address');
+		// $data['phone_no']= $this->input->post('phone_no');
+		$data['phone_no']= (($this->input->post('phone_no')) ? ($this->input->post('phone_no')) : "");
+		// $data['address']= $this->input->post('address');
+		$data['address']= (($this->input->post('address')) ? ($this->input->post('address')) : "");
 		// $data['user_ty$data['image']pe']= $this->input->post('user_type');
 		$data['category_id']= $this->input->post('category_id');
 		$data['slug']=str_replace(" ", "-", strtolower($data['username']));
@@ -698,7 +701,7 @@ class Api extends CI_Controller {
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 	}
 
-	public function employeesListing(){
+	public function employeesListing($multiLang=''){
 		$data['category_id']=$this->input->post('category_id');
 		$data['user_id']=$this->input->post('user_id');
 		$id=$data['user_id'];
@@ -769,28 +772,33 @@ class Api extends CI_Controller {
 			$message='All employee list';
 		}
 
-		foreach($data as $key=>$value){
-			$en_array[$key]['favourite']=$value->favourite;
-			$en_array[$key]['username']=$value->username;
-			$en_array[$key]['employee_id']=$value->employee_id;
-			$en_array[$key]['category_id']=$value->category_id;
-			$en_array[$key]['category_name']=$value->category_name;
-			$en_array[$key]['user_type']=$value->user_type;
-			$en_array[$key]['phone_no']=$value->phone_no;
-			$en_array[$key]['image']=$value->image;
-			$en_array[$key]['address']=$value->address;
-			$en_array[$key]['slug']=$value->slug;
-
-			$ur_array[$key]=$en_array[$key];
-			$ur_array[$key]['category_name']=$value->ur_name;
-			// $ur_array[$key]['price']=$value->ur_price;
-			$ar_array[$key]=$en_array[$key];
-			$ar_array[$key]['category_name']=$value->ar_name;
-			// $ar_array[$key]['price']=$value->ar_price;
+		if($multiLang != ''){
+			foreach($data as $key=>$value){
+				$en_array[$key]['favourite']=$value->favourite;
+				$en_array[$key]['username']=$value->username;
+				$en_array[$key]['employee_id']=$value->employee_id;
+				$en_array[$key]['category_id']=$value->category_id;
+				$en_array[$key]['category_name']=$value->category_name;
+				$en_array[$key]['user_type']=$value->user_type;
+				$en_array[$key]['phone_no']=$value->phone_no;
+				$en_array[$key]['image']=$value->image;
+				$en_array[$key]['address']=$value->address;
+				$en_array[$key]['slug']=$value->slug;
+	
+				$ur_array[$key]=$en_array[$key];
+				$ur_array[$key]['category_name']=$value->ur_name;
+				// $ur_array[$key]['price']=$value->ur_price;
+				$ar_array[$key]=$en_array[$key];
+				$ar_array[$key]['category_name']=$value->ar_name;
+				// $ar_array[$key]['price']=$value->ar_price;
+			}
+			$result['data']['en'] = $en_array;
+			$result['data']['ur'] = $ur_array;
+			$result['data']['ar'] = $ar_array;
+		}else{
+		$result['data']=$data;	
 		}
-		$result['data']['en'] = $en_array;
-		$result['data']['ur'] = $ur_array;
-		$result['data']['ar'] = $ar_array;
+		
 
 		//$data = $user->result();
 		// $result['data']=$data;
