@@ -39,12 +39,14 @@ class Api extends CI_Controller {
 	}
 	
 	// Loading home page on front end.
-	public function index($category='') 
+	public function index($column_to_search='') 
 	{
-		// echo $category; exit;
+		$cat_slug=@$this->input->post('category_slug');
+		// echo $cat_slug; exit;		
 		$result=array();
-		if($category != ''){
-			$user = $this->common_model->like_value("slug", "categories", 'slug', $category);	
+		if($cat_slug != ''){
+			$cat_slug=str_replace("-", " ", ($cat_slug));
+			$user = $this->common_model->like_value("slug", "categories", $column_to_search, $cat_slug);	
 			$data=$user->result();
 			if($user->num_rows()>0){
 				$result['data']=$data;
@@ -242,6 +244,10 @@ class Api extends CI_Controller {
 		$data['image']='';
 		$data['status'] = 'active';
 		$data['slug']=str_replace(" ", "-", strtolower($data['username']));
+
+		$data['latitude']= @$this->input->post('latitude');
+		$data['longitude']= @$this->input->post('longitude');
+		$data['country']= @$this->input->post('country');
 		//echo "<pre>"; print_r($data);exit;
 		if (isset($_FILES['image'])) {
 			$file = $_FILES['image'];
@@ -418,6 +424,8 @@ class Api extends CI_Controller {
 		// $data['user_ty$data['image']pe']= $this->input->post('user_type');
 		$data['category_id']= $this->input->post('category_id');
 		$data['slug']=str_replace(" ", "-", strtolower($data['username']));
+		$data['latitude']= $this->input->post('latitude');
+		$data['category_id']= $this->input->post('category_id');
 		if (isset($_FILES['image'])) {
 			$file = $_FILES['image'];
 			if ($file['error'] == UPLOAD_ERR_OK) {
@@ -708,7 +716,9 @@ class Api extends CI_Controller {
 		$category=$data['category_id'];
 		
 		$category_slug = @$this->input->post('category_slug');
-		//echo $category_slug;exit;
+		$employer_lat=@$this->input->post('employer_latitude');
+		$employer_long=@$this->input->post('employer_longitude');
+
 		if($category_slug!=''){
 			$user = $this->common_model->select_where("id", "categories", array('slug'=>$category_slug));
 			if ($user->num_rows() > 0){
@@ -716,18 +726,25 @@ class Api extends CI_Controller {
 				$category = $result[0]->id;
 			}	
 		}
-		
-		
+		// echo $employer_lat;exit;
 		if($id=='' && $category!=''){
-			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
-			category_id, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name", "users", "categories", 
-			"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
-			$data = $user->result();
-
-			$message='All employee list in a category';
+			$no_labours=$this->common_model->select_where("*", "users", array("category_id"=>$category));
+			if($no_labours->num_rows() > 0){
+				$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
+				category_id, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name, ur_name, latitude, longitude, country", "users", "categories", 
+				"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
+				$data = $user->result();
+				$message='All employee list in a category';
+			}else{
+				$user = $this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, 
+			name as category_name, category_id, user_type, phone_no, users.image, email, address, users.slug, ar_name, ur_name, ur_name, latitude, longitude, country", "categories", "users", 
+			 "ON (categories.id=users.`category_id`)", "user_type = 'employee'");
+			 $data = $user->result();
+				$message='No employee availible in this category, So we are showing employees in all other categories';
+			}	
 		}elseif($id!='' && $category==''){
 			$user = $this->common_model->join_two_tab_where_simple((" 'false' as favourite, username, users.id as employee_id, category_id, 
-			name as category_name, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name"), 
+			name as category_name, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name, latitude, longitude, country"), 
 			"users", "categories", "ON (categories.id=users.category_id)" , "user_type = 'employee'");
 			$data = $user->result();
 			foreach($data as $key=>$value){
@@ -746,10 +763,11 @@ class Api extends CI_Controller {
 			// "users", "favourite_user", "ON (favourite_user.employee_id=users.id)" ,"categories", "ON (categories.id=users.category_id)" ,
 			// array('employer_id'=>$id,  "category_id"=>$category));
 
+			$no_labours=$this->common_model->select_where("*", "users", array("category_id"=>$category));
+			if($no_labours->num_rows() > 0){
 			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
-			category_id, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name", "users", "categories", 
+			category_id, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name, latitude, longitude, country", "users", "categories", 
 			"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
-
 			$data = $user->result();
 			foreach($data as $key=>$value){
 				$favourite = $this->common_model->join_two_tab_where_simple((" favourite, username, employee_id"), "users", "favourite_user", 
@@ -761,17 +779,43 @@ class Api extends CI_Controller {
 			}
 
 			$message='All employee list for a specific user and specific category';
+			}else{
+				$user = $this->common_model->join_two_tab_where_simple((" 'false' as favourite, username, users.id as employee_id, category_id, 
+			name as category_name, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name, ur_name, latitude, longitude, country"), 
+			"users", "categories", "ON (categories.id=users.category_id)" , "user_type = 'employee'");
+			$data = $user->result();
+			foreach($data as $key=>$value){
+				$favourite = $this->common_model->join_two_tab_where_simple((" favourite, username, employee_id"), "users", "favourite_user", 
+						"ON (favourite_user.employer_id=users.id)" , array("favourite_user.employee_id"=>$value->employee_id, "users.id"=>$id));
+					$fav_data_num = $favourite->num_rows();
+					if($fav_data_num>0){
+						$data[$key]->favourite = 'true';				
+					}
+			}
+			$message='All employee list for a specific user where no employees in the specific category';
+			}
 		}
 		else{
 			
 			$user = $this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, 
-			name as category_name, category_id, user_type, phone_no, users.image, email, address, users.slug, ar_name, ur_name", "categories", "users", 
+			name as category_name, category_id, user_type, phone_no, users.image, email, address, users.slug, ar_name, ur_name, ur_name, latitude, longitude, country", "categories", "users", 
 			 "ON (categories.id=users.`category_id`)", "user_type = 'employee'");
 			 $data = $user->result();
 
 			$message='All employee list';
 		}
 
+		// $lat1 = 52.5200; // Latitude of location 1
+		// $lon1 = 13.4050; // Longitude of location 1
+		// $lat2 = 48.8566; // Latitude of location 2
+		// $lon2 = 2.3522;  // Longitude of location 2
+		// $distanceInKm = calculateDistance($lat1, $lon1, $lat2, $lon2);
+		// echo "Distance between the two locations: " . $distanceInKm . " km";
+		
+		
+		// Example usage:
+		
+		
 		if($multiLang != ''){
 			foreach($data as $key=>$value){
 				$en_array[$key]['favourite']=$value->favourite;
@@ -784,6 +828,18 @@ class Api extends CI_Controller {
 				$en_array[$key]['image']=$value->image;
 				$en_array[$key]['address']=$value->address;
 				$en_array[$key]['slug']=$value->slug;
+				// $en_array[$key]['latitude']=$value->latitude;
+				// $en_array[$key]['longitude']=$value->latitude;
+				if($employer_lat !=''  || $employer_long != ''){
+					if($value->latitude != null ||  $value->longitude != null){
+						$en_array[$key]['distance']=$this->calculateDistance($employer_lat, $employer_long, $value->latitude, $value->longitude);
+					}
+					
+				}else
+				{
+					$en_array[$key]['distance']="";
+				}
+				$en_array[$key]['country']=$value->country;
 	
 				$ur_array[$key]=$en_array[$key];
 				$ur_array[$key]['category_name']=$value->ur_name;
@@ -807,7 +863,32 @@ class Api extends CI_Controller {
 		$result['message']['msg']=$message;
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 		// echo "<pre>"; print_r($result); exit;
-
+	}
+	function calculateDistance($lat1, $lon1, $lat2, $lon2, $unit = 'km') {
+		// Convert latitude and longitude from degrees to radians
+		$lat1 = deg2rad($lat1);
+		$lon1 = deg2rad($lon1);
+		$lat2 = deg2rad($lat2);
+		$lon2 = deg2rad($lon2);
+		
+		// Earth radius (in kilometers)
+		$earthRadius = 6371;
+	
+		// Haversine formula
+		$dlat = $lat2 - $lat1;
+		$dlon = $lon2 - $lon1;
+		$a = sin($dlat / 2) * sin($dlat / 2) + cos($lat1) * cos($lat2) * sin($dlon / 2) * sin($dlon / 2);
+		$c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+		$distance = $earthRadius * $c;
+	
+		// Convert the distance to the desired unit (kilometers by default)
+		if ($unit === 'mi') {
+			$distance *= 0.621371; // 1 kilometer = 0.621371 miles
+		} elseif ($unit === 'nmi') {
+			$distance *= 0.539957; // 1 kilometer = 0.539957 nautical miles
+		}
+	
+		return number_format($distance , 2);
 	}
 
 	public function creatNewJob(){
