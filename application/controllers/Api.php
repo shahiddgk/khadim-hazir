@@ -340,7 +340,9 @@ class Api extends CI_Controller {
 				'email' => $row->email,
 				'image' => $row->image,
 				'phone_no' => $row->phone_no,
-				'address'=>$row->address
+				'address'=>$row->address,
+				'latitude'=>$row->latitude,
+				'longitude'=>$row->longitude
 			);
 			$result['message']['code']='500';
 			$result['message']['success'] = true;
