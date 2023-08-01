@@ -426,8 +426,8 @@ class Api extends CI_Controller {
 		// $data['user_ty$data['image']pe']= $this->input->post('user_type');
 		$data['category_id']= $this->input->post('category_id');
 		$data['slug']=str_replace(" ", "-", strtolower($data['username']));
-		$data['latitude']= $this->input->post('latitude');
-		$data['category_id']= $this->input->post('category_id');
+		$data['latitude']= @$this->input->post('latitude');
+		$data['longitude']= @$this->input->post('longitude');
 		if (isset($_FILES['image'])) {
 			$file = $_FILES['image'];
 			if ($file['error'] == UPLOAD_ERR_OK) {
