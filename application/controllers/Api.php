@@ -380,7 +380,7 @@ class Api extends CI_Controller {
 
 		$user_slug=@$this->input->post('user_slug');
 		$category_id=@$this->input->post('category_id');
-		// echo $category_slug; 
+		// echo $category_id; 
 		if($user_slug !=''){
 			$user = $this->common_model->select_where("id", "users", array('slug'=>$user_slug));
 			if ($user->num_rows() > 0){
@@ -389,16 +389,15 @@ class Api extends CI_Controller {
 			}
 		}
 		if($category_id == 0){
-			$data = $this->common_model->select_where("users.id as user_id, category_id, username, phone_no, users.image,user_type,  users.slug as user_slug, address, email, password", "users", array('users.id'=>$user_id));
+					// echo $user_slug; 
+			$data = $this->common_model->select_where("users.id as user_id, category_id, username, phone_no, users.image,user_type, users.slug as user_slug, address, email, password, country", "users", array('users.id'=>$user_id));
 		}else{
-			$data = $this->common_model->join_two_tab_where_simple("users.id as user_id, category_id, username, phone_no, users.image,user_type, categories.name as category_name, users.slug as user_slug, address, email, password", "users", "categories", "on (users.category_id=categories.id)", array('users.id'=>$user_id));	
+			$data = $this->common_model->join_two_tab_where_simple("users.id as user_id, category_id, username, phone_no, users.image,user_type, categories.name as category_name, users.slug as user_slug, address, email, password, country", "users", "categories", "on (users.category_id=categories.id)", array('users.id'=>$user_id));	
 		}
-		
-		
 		
 		if($data->num_rows()>0){	
 			$result['data']=$data->result();
-			// echo "<pre>"; print_r($data); exit;
+			// echo "<pre>"; print_r($result); exit;
 			$result['message']['code']='500';
 			$result['message']['success'] = true;
 			$result['message']['msg'] = 'Your Profile data';
@@ -409,7 +408,7 @@ class Api extends CI_Controller {
 			$result['message']['msg'] = 'Loading profile unsuccessful';
 		}
 		// unset($data['data']['password']);
-		echo json_encode($result);exit;
+		echo json_encode($result , JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;	
 		// $this->load->view('front/header');
 		// $this->load->view('front/user_profile',$data);
 		// $this->load->view('front/footer');
