@@ -418,11 +418,8 @@ class Api extends CI_Controller {
 	{
 		$id = $this->input->post('user_id');
 	  	$data['username']= $this->input->post('username');
-		// $data['phone_no']= $this->input->post('phone_no');
 		$data['phone_no']= (($this->input->post('phone_no')) ? ($this->input->post('phone_no')) : "");
-		// $data['address']= $this->input->post('address');
 		$data['address']= (($this->input->post('address')) ? ($this->input->post('address')) : "");
-		// $data['user_ty$data['image']pe']= $this->input->post('user_type');
 		$data['category_id']= $this->input->post('category_id');
 		$data['slug']=str_replace(" ", "-", strtolower($data['username']));
 		$data['latitude']= @$this->input->post('latitude');
