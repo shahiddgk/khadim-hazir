@@ -427,6 +427,7 @@ class Api extends CI_Controller {
 		$data['slug']=str_replace(" ", "-", strtolower($data['username']));
 		$data['latitude']= @$this->input->post('latitude');
 		$data['longitude']= @$this->input->post('longitude');
+		$data['country']= @$this->input->post('country');
 		if (isset($_FILES['image'])) {
 			$file = $_FILES['image'];
 			if ($file['error'] == UPLOAD_ERR_OK) {
@@ -758,12 +759,6 @@ class Api extends CI_Controller {
 			}
 			$message='All employee list for a specific user';
 		}elseif($id!='' && $category!=''){
-			//get specific employes againset category with favourit true as well
-			// $favourite=true;
-			// $user = $this->common_model->join_three_tab_where_rows((" 'true' as favourite, username, '$id' as user_id, category_id, name as category_name, user_type, phone_no, users.image"), 
-			// "users", "favourite_user", "ON (favourite_user.employee_id=users.id)" ,"categories", "ON (categories.id=users.category_id)" ,
-			// array('employer_id'=>$id,  "category_id"=>$category));
-
 			$no_labours=$this->common_model->select_where("*", "users", array("category_id"=>$category));
 			if($no_labours->num_rows() > 0){
 			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
@@ -806,18 +801,7 @@ class Api extends CI_Controller {
 			$message='All employee list';
 		}
 
-		// $lat1 = 52.5200; // Latitude of location 1
-		// $lon1 = 13.4050; // Longitude of location 1
-		// $lat2 = 48.8566; // Latitude of location 2
-		// $lon2 = 2.3522;  // Longitude of location 2
-		// $distanceInKm = calculateDistance($lat1, $lon1, $lat2, $lon2);
-		// echo "Distance between the two locations: " . $distanceInKm . " km";
-		
-		
-		// Example usage:
-		
-		
-		if($multiLang != ''){
+		if($user->num_rows()>0){
 			foreach($data as $key=>$value){
 				$en_array[$key]['favourite']=$value->favourite;
 				$en_array[$key]['username']=$value->username;
@@ -829,34 +813,78 @@ class Api extends CI_Controller {
 				$en_array[$key]['image']=$value->image;
 				$en_array[$key]['address']=$value->address;
 				$en_array[$key]['slug']=$value->slug;
-				// $en_array[$key]['latitude']=$value->latitude;
-				// $en_array[$key]['longitude']=$value->latitude;
 				if($employer_lat !=''  || $employer_long != ''){
 					if($value->latitude != null ||  $value->longitude != null){
 						$en_array[$key]['distance']=$this->calculateDistance($employer_lat, $employer_long, $value->latitude, $value->longitude);
-					}
-					
+					}else{
+						$en_array[$key]['distance']="";
+					}					
 				}else
 				{
 					$en_array[$key]['distance']="";
 				}
 				$en_array[$key]['country']=$value->country;
-	
 				$ur_array[$key]=$en_array[$key];
 				$ur_array[$key]['category_name']=$value->ur_name;
-				// $ur_array[$key]['price']=$value->ur_price;
 				$ar_array[$key]=$en_array[$key];
 				$ar_array[$key]['category_name']=$value->ar_name;
-				// $ar_array[$key]['price']=$value->ar_price;
 			}
 			$result['data']['en'] = $en_array;
 			$result['data']['ur'] = $ur_array;
 			$result['data']['ar'] = $ar_array;
+			$enArrWithoutDistance = array_filter($result['data']['en'], function($a) {
+				return $a['distance'] == '';
+			 });
+			 $arArrWithoutDistance = array_filter($result['data']['ar'], function($a) {
+				return $a['distance'] == '';
+			 });
+			 $urArrWithoutDistance = array_filter($result['data']['ur'], function($a) {
+				return $a['distance'] == '';
+			 });
+			 
+			 $enArrWithDistance = array_filter($result['data']['en'], function($a) {
+				return $a['distance'] != '';
+			 });
+			 $arArrWithDistance = array_filter($result['data']['ar'], function($a) {
+				return $a['distance'] != '';
+			 });
+			 $urArrWithDistance = array_filter($result['data']['ur'], function($a) {
+				return $a['distance'] != '';
+			 });
+			 
+			function extractDistance($distanceString) {
+				return (float) str_replace(',', '', $distanceString);
+			}
+			usort($enArrWithDistance, function($a, $b) {
+				$distanceA = extractDistance($a['distance']);
+				$distanceB = extractDistance($b['distance']);
+			
+				return $distanceA - $distanceB;
+			});
+			usort($urArrWithDistance, function($a, $b) {
+				$distanceA = extractDistance($a['distance']);
+				$distanceB = extractDistance($b['distance']);
+			
+				return $distanceA - $distanceB;
+			});
+			usort($arArrWithDistance, function($a, $b) {
+				$distanceA = extractDistance($a['distance']);
+				$distanceB = extractDistance($b['distance']);
+			
+				return $distanceA - $distanceB;
+			});
+
+
+			$result['data']['en']= array_merge($enArrWithDistance, $enArrWithoutDistance);
+			$result['data']['ur']= array_merge($enArrWithDistance, $enArrWithoutDistance);
+			$result['data']['ar']= array_merge($enArrWithDistance, $enArrWithoutDistance);
+			
+			// echo "<pre>"; print_r($result);exit;
 		}else{
 		$result['data']=$data;	
 		}
-		
 
+		
 		//$data = $user->result();
 		// $result['data']=$data;
 		$result['message']['success'] = true;
