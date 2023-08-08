@@ -730,13 +730,13 @@ class Api extends CI_Controller {
 			$no_labours=$this->common_model->select_where("*", "users", array("category_id"=>$category));
 			if($no_labours->num_rows() > 0){
 				$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
-				category_id, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name, ur_name, latitude, longitude, country", "users", "categories", 
+				category_id, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name, latitude, longitude, country", "users", "categories", 
 				"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
 				$data = $user->result();
 				$message='All employee list in a category';
 			}else{
 				$user = $this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, 
-			name as category_name, category_id, user_type, phone_no, users.image, email, address, users.slug, ar_name, ur_name, ur_name, latitude, longitude, country", "categories", "users", 
+			name as category_name, category_id, user_type, phone_no, users.image, email, address, users.slug, ar_name, ur_name, latitude, longitude, country", "categories", "users", 
 			 "ON (categories.id=users.`category_id`)", "user_type = 'employee'");
 			 $data = $user->result();
 				$message='No employee availible in this category, So we are showing employees in all other categories';
@@ -774,7 +774,7 @@ class Api extends CI_Controller {
 			$message='All employee list for a specific user and specific category';
 			}else{
 				$user = $this->common_model->join_two_tab_where_simple((" 'false' as favourite, username, users.id as employee_id, category_id, 
-			name as category_name, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name, ur_name, latitude, longitude, country"), 
+			name as category_name, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name, latitude, longitude, country"), 
 			"users", "categories", "ON (categories.id=users.category_id)" , "user_type = 'employee'");
 			$data = $user->result();
 			foreach($data as $key=>$value){
@@ -855,35 +855,24 @@ class Api extends CI_Controller {
 			usort($enArrWithDistance, function($a, $b) {
 				$distanceA = extractDistance($a['distance']);
 				$distanceB = extractDistance($b['distance']);
-			
 				return $distanceA - $distanceB;
 			});
 			usort($urArrWithDistance, function($a, $b) {
 				$distanceA = extractDistance($a['distance']);
 				$distanceB = extractDistance($b['distance']);
-			
 				return $distanceA - $distanceB;
 			});
 			usort($arArrWithDistance, function($a, $b) {
 				$distanceA = extractDistance($a['distance']);
 				$distanceB = extractDistance($b['distance']);
-			
 				return $distanceA - $distanceB;
 			});
-
-
 			$result['data']['en']= array_merge($enArrWithDistance, $enArrWithoutDistance);
-			$result['data']['ur']= array_merge($enArrWithDistance, $enArrWithoutDistance);
-			$result['data']['ar']= array_merge($enArrWithDistance, $enArrWithoutDistance);
-			
-			// echo "<pre>"; print_r($result);exit;
+			$result['data']['ur']= array_merge($urArrWithDistance, $urArrWithoutDistance);
+			$result['data']['ar']= array_merge($arArrWithDistance, $arArrWithoutDistance);
 		}else{
 		$result['data']=$data;	
 		}
-
-		
-		//$data = $user->result();
-		// $result['data']=$data;
 		$result['message']['success'] = true;
 		$result['message']['code']='500';
 		$result['message']['msg']=$message;
