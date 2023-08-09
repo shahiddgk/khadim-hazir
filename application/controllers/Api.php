@@ -244,11 +244,10 @@ class Api extends CI_Controller {
 		$data['image']='';
 		$data['status'] = 'active';
 		$data['slug']=str_replace(" ", "-", strtolower($data['username']));
-
-		$data['latitude']= @$this->input->post('latitude');
-		$data['longitude']= @$this->input->post('longitude');
-		$data['country']= @$this->input->post('country');
-		//echo "<pre>"; print_r($data);exit;
+		$data['latitude']= ($this->input->post('latitude'))? ($this->input->post('latitude')) : '';
+		$data['longitude']=($this->input->post('longitude')) ? ($this->input->post('longitude')) : '' ;
+		$data['country']= ($this->input->post('country')) ? ($this->input->post('country')) : '';
+		// echo "<pre>"; print_r($data);exit;
 		if (isset($_FILES['image'])) {
 			$file = $_FILES['image'];
 			if ($file['error'] == UPLOAD_ERR_OK) {
@@ -263,7 +262,7 @@ class Api extends CI_Controller {
 			  $data['image'] = $filename;
 			}
 		}
-		$res = $this->common_model->select_where("*", "users", array('email'=>$this->input->post('email')));		
+		$res = $this->common_model->select_where("*", "users", array('email'=>$this->input->post('email'), 'user_type'=>$usertype));		
 		$row = $res->row();
 		if($res->num_rows()>0){
 			// $data['user_id']=$row->id;
@@ -282,7 +281,9 @@ class Api extends CI_Controller {
 			$result['message']['success'] = false;
 			$result['message']['msg']='Already signed up';
 		}else{
-			
+			if($usertype == 'employer'){
+				$data['category_id'] = '' ;
+			}
 			$res1 =$this->common_model->insert_array('users', $data);
 			// $res2 = $this->common_model->select_all("*", "users");
 			$data['user_id']=strval($res1);
@@ -390,9 +391,9 @@ class Api extends CI_Controller {
 		}
 		if($category_id == 0){
 					// echo $user_slug; 
-			$data = $this->common_model->select_where("users.id as user_id, category_id, username, phone_no, users.image,user_type, users.slug as user_slug, address, email, password, country", "users", array('users.id'=>$user_id));
+			$data = $this->common_model->select_where("users.id as user_id, category_id, username, phone_no, users.image,user_type, users.slug as user_slug, address, email, country", "users", array('users.id'=>$user_id));
 		}else{
-			$data = $this->common_model->join_two_tab_where_simple("users.id as user_id, category_id, username, phone_no, users.image,user_type, categories.name as category_name, users.slug as user_slug, address, email, password, country", "users", "categories", "on (users.category_id=categories.id)", array('users.id'=>$user_id));	
+			$data = $this->common_model->join_two_tab_where_simple("users.id as user_id, category_id, username, phone_no, users.image,user_type, categories.name as category_name, users.slug as user_slug, address, email, country", "users", "categories", "on (users.category_id=categories.id)", array('users.id'=>$user_id));	
 		}
 		
 		if($data->num_rows()>0){	
@@ -422,9 +423,9 @@ class Api extends CI_Controller {
 		$data['address']= (($this->input->post('address')) ? ($this->input->post('address')) : "");
 		$data['category_id']= $this->input->post('category_id');
 		$data['slug']=str_replace(" ", "-", strtolower($data['username']));
-		$data['latitude']= @$this->input->post('latitude');
-		$data['longitude']= @$this->input->post('longitude');
-		$data['country']= @$this->input->post('country');
+		$data['latitude']= (($this->input->post('latitude')) ? ($this->input->post('latitude')) : '');
+		$data['longitude']= (($this->input->post('longitude')) ? ($this->input->post('longitude')) : '');
+		$data['country']= (($this->input->post('country')) ? ($this->input->post('country')) : '');
 		if (isset($_FILES['image'])) {
 			$file = $_FILES['image'];
 			if ($file['error'] == UPLOAD_ERR_OK) {
@@ -715,8 +716,8 @@ class Api extends CI_Controller {
 		$category=$data['category_id'];
 		
 		$category_slug = @$this->input->post('category_slug');
-		$employer_lat=@$this->input->post('employer_latitude');
-		$employer_long=@$this->input->post('employer_longitude');
+	$employer_lat=($this->input->post('employer_latitude')) ? ($this->input->post('employer_latitude')) : '';
+		$employer_long=($this->input->post('employer_longitude')) ? ($this->input->post('employer_longitude')) : '';
 
 		if($category_slug!=''){
 			$user = $this->common_model->select_where("id", "categories", array('slug'=>$category_slug));
@@ -725,7 +726,7 @@ class Api extends CI_Controller {
 				$category = $result[0]->id;
 			}	
 		}
-		// echo $employer_lat;exit;
+		
 		if($id=='' && $category!=''){
 			$no_labours=$this->common_model->select_where("*", "users", array("category_id"=>$category));
 			if($no_labours->num_rows() > 0){
@@ -734,6 +735,7 @@ class Api extends CI_Controller {
 				"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
 				$data = $user->result();
 				$message='All employee list in a category';
+				// echo "<pre>"; print_r($data);exit;
 			}else{
 				$user = $this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, 
 			name as category_name, category_id, user_type, phone_no, users.image, email, address, users.slug, ar_name, ur_name, latitude, longitude, country", "categories", "users", 
@@ -801,7 +803,7 @@ class Api extends CI_Controller {
 		if($user->num_rows()>0){
 			foreach($data as $key=>$value){
 				$en_array[$key]['favourite']=$value->favourite;
-				$en_array[$key]['username']=$value->username;
+				$en_array[$key]['username']=ucwords($value->username);
 				$en_array[$key]['employee_id']=$value->employee_id;
 				$en_array[$key]['category_id']=$value->category_id;
 				$en_array[$key]['category_name']=$value->category_name;
@@ -810,9 +812,13 @@ class Api extends CI_Controller {
 				$en_array[$key]['image']=$value->image;
 				$en_array[$key]['address']=$value->address;
 				$en_array[$key]['slug']=$value->slug;
-				if($employer_lat !=''  || $employer_long != ''){
+				if($employer_lat !=''  || $employer_long != '' || $employer_lat != 0 || $employer_long != 0){
 					if($value->latitude != null ||  $value->longitude != null){
-						$en_array[$key]['distance']=$this->calculateDistance($employer_lat, $employer_long, $value->latitude, $value->longitude);
+					    if($value->latitude == '0' || $value->longitude == '0'){
+					        $en_array[$key]['distance']="";
+					    }else{
+					     $en_array[$key]['distance']=$this->calculateDistance($employer_lat, $employer_long, $value->latitude, $value->longitude);   
+					    }
 					}else{
 						$en_array[$key]['distance']="";
 					}					
@@ -873,6 +879,7 @@ class Api extends CI_Controller {
 		}else{
 		$result['data']=$data;	
 		}
+		echo "<pre>"; print_r($result); exit;
 		$result['message']['success'] = true;
 		$result['message']['code']='500';
 		$result['message']['msg']=$message;
