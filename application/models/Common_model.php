@@ -473,5 +473,21 @@ class Common_model extends  CI_Model {
 		return $this->db->get();
 	}
 
+	function paginated_employees($select, $from, $jointable, $condition, $where, $pageSize, $offset){
+		$this->db->select($select);
+		$this->db->from( $from );
+		$this->db->join( $jointable , $condition );
+		$this->db->where( $where );
+        $this->db->limit($pageSize, $offset);
+		return $this->db->get();
+	}
+
+	function paginated_categories($select, $from, $pageSize, $offset){
+		$this->db->select($select);
+		$this->db->from( $from );
+        $this->db->limit($pageSize, $offset);
+		return $this->db->get();
+	}
+
 }
 ?>

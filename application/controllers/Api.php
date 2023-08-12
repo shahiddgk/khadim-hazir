@@ -38,68 +38,14 @@ class Api extends CI_Controller {
 		
 	}
 	
-	// Loading home page on front end.
-// 	public function index($category='') 
-// 	{
-// 		// echo $category; exit;
-// 		$result=array();
-// 		if($category != ''){
-// 		  //  $decodedString = $category.replace(/%20/g, ' ');
-// 			$user = $this->common_model->like_value("slug", "categories", 'slug', $category);	
-// 			$data=$user->result();
-// 			if($user->num_rows()>0){
-// 				$result['data']=$data;
-// 				$result['message']['code'] = '500';
-// 				$result['message']['success'] = true;
-// 				$result['message']['msg'] = 'Category listing';
-// 				echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
-// 			}else{
-// 				$result['data']=$data;
-// 				$result['message']['code'] = '500';
-// 				$result['message']['success'] = false;
-// 				$result['message']['msg'] = 'No category found';
-// 				echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
-// 			}
-// 		}else{
-// 			$data = $this->common_model->select_all("*", "categories")->result();	
-// 		}
-// 		//echo "<pre>"; print_r($data); exit;
-// 		foreach($data as $key=>$value){
-// 			$en_array[$key]['id']=$value->id;
-// 			$en_array[$key]['name']=$value->name;
-// 			$en_array[$key]['image']=$value->image;
-// 			$en_array[$key]['price']=$value->price;
-// 			$en_array[$key]['slug']=$value->slug;
-// 			$en_array[$key]['added_date']=$value->added_date;
-// 			$ur_array[$key]=$en_array[$key];
-// 			$ur_array[$key]['name']=$value->ur_name;
-// 			$ur_array[$key]['price']=$value->ur_price;
-// 			$ar_array[$key]=$en_array[$key];
-// 			$ar_array[$key]['name']=$value->ar_name;
-// 			$ar_array[$key]['price']=$value->ar_price;
-// 		}
-// 		$result['data']['en'] = $en_array;
-// 		$result['data']['ur'] = $ur_array;
-// 		$result['data']['ar'] = $ar_array;
-		
-// 		//echo "<pre>"; print_r($result); exit;
 
-// 		// $result['ar'] = $data;
-// 		$result['message']['code'] = '500';
-// 		$result['message']['success'] = true;
-// 		$result['message']['msg'] = 'Category listing';
-// 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
-// 		// echo json_encode($data);exit;
-// 		/*$this->load->view('front/header');
-// 		$this->load->view('front/home', $data);
-// 		$this->load->view('front/footer');*/
-// 	}
-
-public function index($column_to_search='') 
+	public function index($column_to_search='') 
 	{
-	   // echo "test";exit;
+	 
 		$cat_slug=@$this->input->post('category_slug');
-// 		echo $cat_slug; exit;		
+		$page=@$this->input->post('page');
+		$recordsPerPage=@$this->input->post('recordsPerPage');
+		//echo $cat_slug; exit;		
 		$result=array();
 		if($cat_slug != ''){
 			$cat_slug=str_replace("-", " ", ($cat_slug));
@@ -119,10 +65,16 @@ public function index($column_to_search='')
 				echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 			}
 		}else{
-			$data = $this->common_model->select_all("*", "categories")->result();	
+			$pageNumber=$page;
+			$pageSize=$recordsPerPage;
+			$offset = ($pageNumber - 1) * $pageSize;
+			$user = $this->common_model->select_all("*", "categories");
+			$data=$this->common_model->paginated_categories("*", 'categories', $pageSize, $offset)->result();
+			$totalCategories = $user->num_rows();
 		}
-// 		echo "<pre>"; print_r($data); exit;
+		// echo "<pre>"; print_r($data); exit;
 		foreach($data as $key=>$value){
+			$en_array[$key]['totalCategories']=$totalCategories;
 			$en_array[$key]['id']=$value->id;
 			$en_array[$key]['name']=$value->name;
 			$en_array[$key]['image']=$value->image;
@@ -286,101 +238,8 @@ public function index($column_to_search='')
         echo json_encode($result, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES); exit;
 	}
 
-// public function createUser() 
-// 	{
-// 		// echo 111111; exit;
-// 		$data=array();
-// 		$usertype=$data['user_type']= $this->input->post('user_type');	
-// 		$data['username']= $this->input->post('username');
-// 		$data['email']= $this->input->post('email');
-// 		// $email	=	$this->input->post('email');
-// 		$data['phone_no']= (($this->input->post('phone_no')) ? ($this->input->post('phone_no')) : "");
-// 		$data['category_id']= $this->input->post('category_id');
-// 		// $data['address']= $this->input->post('address');
-// 		$data['address']= (($this->input->post('address')) ? ($this->input->post('address')) : "");
-// 		$data['password']= sha1($this->input->post('password'));
-// 		$data['image']='';
-// 		$data['status'] = 'active';
-// 		$data['slug']=str_replace(" ", "-", strtolower($data['username']));
 
-// 		$data['latitude']= @$this->input->post('latitude');
-// 		$data['longitude']= @$this->input->post('longitude');
-// 		$data['country']= @$this->input->post('country');
-// 		//echo "<pre>"; print_r($data);exit;
-// 		if (isset($_FILES['image'])) {
-// 			$file = $_FILES['image'];
-// 			if ($file['error'] == UPLOAD_ERR_OK) {
-// 			  $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-	  
-// 			  $filename = uniqid() . '.' . $ext;
-	  
-// 			  $destination = "images/$filename";
-	  
-// 			  move_uploaded_file($file['tmp_name'], $destination);
-	  
-// 			  $data['image'] = $filename;
-// 			}
-// 		}
-// 		$res = $this->common_model->select_where("*", "users", array('email'=>$this->input->post('email')));		
-// 		$row = $res->row();
-// 		if($res->num_rows()>0){
-// 			// $data['user_id']=$row->id;
-// 			$data = array(
-// 				// 'user_id' => $row->id,
-// 				'user_id'=>$row->id,
-// 				'usertype' => $data['user_type'],
-// 				'username' => $data['username'],
-// 				'category_id'=>$data['category_id'],
-// 				'email' => $data['email'],
-// 				'image' => $data['image'],
-// 				'phone_no' => $data['phone_no'],
-// 				'address' => $data['address']
-// 			);
-// 			$result['message']['code']='500';
-// 			$result['message']['success'] = false;
-// 			$result['message']['msg']='Already signed up';
-// 		}else{
-			
-// 			$res1 =$this->common_model->insert_array('users', $data);
-// 			// $res2 = $this->common_model->select_all("*", "users");
-// 			$data['user_id']=strval($res1);
-// 			$data = array(
-// 				// 'user_created'  =>  TRUE,
-// 				// 'user_id' => $row->id,
-// 				'user_id'=>$data['user_id'],
-// 				'usertype' => $data['user_type'],
-// 				'username' => $data['username'],
-// 				'category_id'=>$data['category_id'],
-// 				'email' => $data['email'],
-// 				'image' => $data['image'],
-// 				'phone_no' => $data['phone_no'],
-// 				'address' => $data['address']
-// 			);			
-// 			if($res1){
-// 				// if($usertype=="employee"){
-// 				// 	$emp_categ=array(
-// 				// 		'employee_id'=>$data['user_id'],
-// 				// 		'subcategory_id'=>$subcategory,
-// 				// 		'status'=>'active'
-// 				// 	);
-// 				// 	$this->common_model->insert_array('user_category', $emp_categ);
-// 				// }
-// 				$result['message']['code']='500';
-// 				$result['message']['success'] = true;
-// 				$result['message']['msg']='Registration successful';
-// 			}else{
-// 				$result['message']['success'] = false;
-// 				$result['message']['code']='400';
-// 				$result['message']['error']='user registration error';
-// 			}
-// 		}
-// 		// echo "<pre>"; print_r($row); exit;
-// 		unset($data['password']);
-// 		$result['data'] = [$data];
-// 		echo json_encode($result , JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;		
-// 	}
-public function createUser() 
-	{
+	public function createUser(){
 		// echo 111111; exit;
 		$data=array();
 		$usertype=$data['user_type']= $this->input->post('user_type');	
@@ -396,9 +255,36 @@ public function createUser()
 		$data['status'] = 'active';
 		$data['slug']=str_replace(" ", "-", strtolower($data['username']));
 
-		$data['latitude']= ($this->input->post('latitude'))? ($this->input->post('latitude')) : '';
-		$data['longitude']=($this->input->post('longitude')) ? ($this->input->post('longitude')) : '' ;
-		$data['country']= ($this->input->post('country')) ? ($this->input->post('country')) : '';
+		// $data['latitude']= ($this->input->post('latitude'))? ($this->input->post('latitude')) : '';
+		// $data['longitude']=($this->input->post('longitude')) ? ($this->input->post('longitude')) : '' ;
+		// $data['country']= ($this->input->post('country')) ? ($this->input->post('country')) : '';
+
+		$address = $data['address']; // Your address here
+		$api_key = "AIzaSyC7dSggJbHZNMT7pOFMUOqLB9jCIGLeiqM"; // Replace with your API key
+
+		// Prepare the API request URL
+		$url = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($address) . "&key=" . $api_key;
+		$geocode = file_get_contents($url);
+        $json = json_decode($geocode);
+		if ($json->status === "OK") {
+			$lat = $json->results[0]->geometry->location->lat;
+			$lng = $json->results[0]->geometry->location->lng;
+			// Get country information from the address components
+			foreach ($json->results[0]->address_components as $component) {
+				if (in_array("country", $component->types)) {
+					$country = $component->long_name;
+					// $data['country_code'] = $component->short_name;
+					break;
+				}
+			}
+		
+		} else {
+			echo "Geocoding failed. Status: " . $json->status;
+		}	
+		$data['latitude']= ($lat)? ($lat) : '';
+		$data['longitude']=($lng) ? ($lng) : '' ;
+		$data['country']= ($country) ? ($country) : '';
+
 		// echo "<pre>"; print_r($data);exit;
 		if (isset($_FILES['image'])) {
 			$file = $_FILES['image'];
@@ -427,7 +313,10 @@ public function createUser()
 				'email' => $data['email'],
 				'image' => $data['image'],
 				'phone_no' => $data['phone_no'],
-				'address' => $data['address']
+				'address' => $data['address'],
+				'latitude' => $data['latitude'],
+				'longitude' => $data['longitude'],
+				'country' => $data['country'],
 			);
 			$result['message']['code']='500';
 			$result['message']['success'] = false;
@@ -449,7 +338,10 @@ public function createUser()
 				'email' => $data['email'],
 				'image' => $data['image'],
 				'phone_no' => $data['phone_no'],
-				'address' => $data['address']
+				'address' => $data['address'],
+				'latitude' => $data['latitude'],
+				'longitude' => $data['longitude'],
+				'country' => $data['country'],
 			);			
 			if($res1){
 				// if($usertype=="employee"){
@@ -475,42 +367,7 @@ public function createUser()
 		echo json_encode($result , JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;		
 	}
 	
-// 	public function loginUser() 
-// 	{
-// 		$email	=	$this->input->post('email');
-// 		$password	=	$this->input->post('password');
-// 		// echo $password; exit;
-// 		$data = $this->common_model->select_where("*","users", array('email'=>$email,'password'=>sha1($password)));
-// 		if($data->num_rows()>0){
-// 			// echo 1; exit;
-// 			$row = $data->row(); 
-// 			// echo "<pre>"; print_r($row); exit;
-// 			$data = array(
-// 				'user_id' => $row->id,
-// 				'usertype' => $row->user_type,
-// 				'username' => $row->username,
-// 				'category_id'=>$row->category_id,
-// 				'email' => $row->email,
-// 				'image' => $row->image,
-// 				'phone_no' => $row->phone_no,
-// 				'address'=>$row->address
-// 			);
-// 			$result['message']['code']='500';
-// 			$result['message']['success'] = true;
-// 			$result['message']['msg'] = 'You have logged in succesfully';
-// 			$result['data']=[$data];			
-// 		}else{
-// 			$result['data']= array();
-// 			$result['message']['code']='500';
-// 			$result['message']['success'] = false;
-// 			$result['message']['msg'] = 'Your Email or password is wrong';
-						
-// 		} 
-// 		echo json_encode($result , JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;		
-		
-// 	}
-
-public function loginUser() 
+	public function loginUser() 
 	{
 		$email	=	$this->input->post('email');
 		$password	=	$this->input->post('password');
@@ -577,13 +434,10 @@ public function loginUser()
 			}
 		}
 		if($category_id == 0){
-			$data = $this->common_model->select_where("users.id as user_id, category_id, username, phone_no, users.image,user_type,  users.slug as user_slug, address, email", "users", array('users.id'=>$user_id));
+			$data = $this->common_model->select_where("users.id as user_id, category_id, username, phone_no, users.image,user_type,  users.slug as user_slug, address, email, country", "users", array('users.id'=>$user_id));
 		}else{
-			$data = $this->common_model->join_two_tab_where_simple("users.id as user_id, category_id, username, phone_no, users.image,user_type, categories.name as category_name, users.slug as user_slug, address, email", "users", "categories", "on (users.category_id=categories.id)", array('users.id'=>$user_id));	
+			$data = $this->common_model->join_two_tab_where_simple("users.id as user_id, category_id, username, phone_no, users.image,user_type, categories.name as category_name, users.slug as user_slug, address, email, country", "users", "categories", "on (users.category_id=categories.id)", array('users.id'=>$user_id));	
 		}
-		
-		
-		
 		if($data->num_rows()>0){	
 			$result['data']=$data->result();
 			// echo "<pre>"; print_r($data); exit;
@@ -592,28 +446,54 @@ public function loginUser()
 			$result['message']['msg'] = 'Your Profile data';
 		}
 		else{
+			$result['data']=array();
 			$result['message']['code']='500';
 			$result['message']['success'] = false;
 			$result['message']['msg'] = 'Loading profile unsuccessful';
 		}
-// 		unset($data['data']['password']);
+		// unset($data['data']['password']);
 		echo json_encode($result);exit;
 		// $this->load->view('front/header');
 		// $this->load->view('front/user_profile',$data);
 		// $this->load->view('front/footer');
 	}
 
-public function updateProfile() 
-	{
+	public function updateProfile() {
 		$id = $this->input->post('user_id');
 	  	$data['username']= ucwords($this->input->post('username'));
 		$data['phone_no']= (($this->input->post('phone_no')) ? ($this->input->post('phone_no')) : "");
 		$data['address']= (($this->input->post('address')) ? ($this->input->post('address')) : "");
 		$data['category_id']= $this->input->post('category_id');
 		$data['slug']=str_replace(" ", "-", strtolower($data['username']));
-		$data['latitude']= (($this->input->post('latitude')) ? ($this->input->post('latitude')) : '');
-		$data['longitude']= (($this->input->post('longitude')) ? ($this->input->post('longitude')) : '');
-		$data['country']= (($this->input->post('country')) ? ($this->input->post('country')) : '');
+		// $data['latitude']= (($this->input->post('latitude')) ? ($this->input->post('latitude')) : '');
+		// $data['longitude']= (($this->input->post('longitude')) ? ($this->input->post('longitude')) : '');
+		// $data['country']= (($this->input->post('country')) ? ($this->input->post('country')) : '');
+		$address = $data['address']; // Your address here
+		$api_key = "AIzaSyC7dSggJbHZNMT7pOFMUOqLB9jCIGLeiqM"; // Replace with your API key
+
+		// Prepare the API request URL
+		$url = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($address) . "&key=" . $api_key;
+		$geocode = file_get_contents($url);
+        $json = json_decode($geocode);
+		if ($json->status === "OK") {
+			$lat = $json->results[0]->geometry->location->lat;
+			$lng = $json->results[0]->geometry->location->lng;
+			// Get country information from the address components
+			foreach ($json->results[0]->address_components as $component) {
+				if (in_array("country", $component->types)) {
+					$country = $component->long_name;
+					// $data['country_code'] = $component->short_name;
+					break;
+				}
+			}
+		
+		} else {
+			echo "Geocoding failed. Status: " . $json->status;
+		}	
+		$data['latitude']= ($lat)? ($lat) : '';
+		$data['longitude']=($lng) ? ($lng) : '' ;
+		$data['country']= ($country) ? ($country) : '';
+
 		if (isset($_FILES['image'])) {
 			$file = $_FILES['image'];
 			if ($file['error'] == UPLOAD_ERR_OK) {
@@ -645,6 +525,8 @@ public function updateProfile()
 				'address' => $data['address'],
 				'image' => @$data['image'],
 				'phone_no' => $data['phone_no'],
+				'latitude' => $data['latitude'],
+				'longitude' => $data['longitude'],
 			);
 			$result['message']['code']='500';
 			$result['message']['success'] = true;
@@ -658,6 +540,8 @@ public function updateProfile()
 				'address' => $data['address'],
 				'image' => @$data['image'],
 				'phone_no' => $data['phone_no'],
+				'latitude' => $data['latitude'],
+				'longitude' => $data['longitude'],
 			);
 			$result['message']['code']='500';
 			$result['message']['success'] = false;
@@ -897,113 +781,8 @@ public function forgotPassword(){
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
 	}
 
-// 	public function employeesListing($multilang=''){
-// 		$data['category_id']=$this->input->post('category_id');
-// 		$data['user_id']=$this->input->post('user_id');
-// 		$id=$data['user_id'];
-// 		$category=$data['category_id'];
+	public function employeesListing($multiLang=''){
 		
-// 		$category_slug = @$this->input->post('category_slug');
-// 		//echo $category_slug;exit;
-// 		if($category_slug!=''){
-// 			$user = $this->common_model->select_where("id", "categories", array('slug'=>$category_slug));
-// 			if ($user->num_rows() > 0){
-// 				$result =$user->result();
-// 				$category = $result[0]->id;
-// 			}	
-// 		}
-		
-		
-// 		if($id=='' && $category!=''){
-// 			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
-// 			category_id, user_type, phone_no, users.image, address, users.slug, ur_name, ar_name", "users", "categories", 
-// 			"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
-// 			$data = $user->result();
-
-// 			$message='All employee list in a category';
-// 		}elseif($id!='' && $category==''){
-// 			$user = $this->common_model->join_two_tab_where_simple((" 'false' as favourite, username, users.id as employee_id, category_id, 
-// 			name as category_name, user_type, phone_no, users.image, address, users.slug , ur_name, ar_name"), 
-// 			"users", "categories", "ON (categories.id=users.category_id)" , "user_type = 'employee'");
-// 			$data = $user->result();
-// 			foreach($data as $key=>$value){
-// 				$favourite = $this->common_model->join_two_tab_where_simple((" favourite, username, employee_id"), "users", "favourite_user", 
-// 						"ON (favourite_user.employer_id=users.id)" , array("favourite_user.employee_id"=>$value->employee_id, "users.id"=>$id));
-// 					$fav_data_num = $favourite->num_rows();
-// 					if($fav_data_num>0){
-// 						$data[$key]->favourite = 'true';				
-// 					}
-// 			}
-// 			$message='All employee list for a specific user';
-// 		}elseif($id!='' && $category!=''){
-// 			//get specific employes againset category with favourit true as well
-// 			// $favourite=true;
-// 			// $user = $this->common_model->join_three_tab_where_rows((" 'true' as favourite, username, '$id' as user_id, category_id, name as category_name, user_type, phone_no, users.image"), 
-// 			// "users", "favourite_user", "ON (favourite_user.employee_id=users.id)" ,"categories", "ON (categories.id=users.category_id)" ,
-// 			// array('employer_id'=>$id,  "category_id"=>$category));
-
-// 			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
-// 			category_id, user_type, phone_no, users.image, address, users.slug, ur_name, ar_name", "users", "categories", 
-// 			"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
-
-// 			$data = $user->result();
-// 			foreach($data as $key=>$value){
-// 				$favourite = $this->common_model->join_two_tab_where_simple((" favourite, username, employee_id"), "users", "favourite_user", 
-// 						"ON (favourite_user.employer_id=users.id)" , array("favourite_user.employee_id"=>$value->employee_id, "users.id"=>$id));
-// 					$fav_data_num = $favourite->num_rows();
-// 					if($fav_data_num>0){
-// 						$data[$key]->favourite = 'true';				
-// 					}
-// 			}
-
-// 			$message='All employee list for a specific user and specific category';
-// 		}
-// 		else{
-			
-// 			$user = $this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, 
-// 			name as category_name, category_id, user_type, phone_no, users.image, email, address, users.slug, ur_name, ar_name", "categories", "users", 
-// 			 "ON (categories.id=users.`category_id`)", "user_type = 'employee'");
-// 			 $data = $user->result();
-
-// 			$message='All employee list';
-// 		}
-// 		if($multilang != ''){
-// 			foreach($data as $key=>$value){
-// 				$en_array[$key]['favourite']=$value->favourite;
-// 				$en_array[$key]['username']=$value->username;
-// 				$en_array[$key]['employee_id']=$value->employee_id;
-// 				$en_array[$key]['category_id']=$value->category_id;
-// 				$en_array[$key]['category_name']=$value->category_name;
-// 				$en_array[$key]['user_type']=$value->user_type;
-// 				$en_array[$key]['phone_no']=$value->phone_no;
-// 				$en_array[$key]['image']=$value->image;
-// 				$en_array[$key]['address']=$value->address;
-// 				$en_array[$key]['slug']=$value->slug;
-	
-// 				$ur_array[$key]=$en_array[$key];
-// 				$ur_array[$key]['category_name']=$value->ur_name;
-// 				// $ur_array[$key]['price']=$value->ur_price;
-// 				$ar_array[$key]=$en_array[$key];
-// 				$ar_array[$key]['category_name']=$value->ar_name;
-// 				// $ar_array[$key]['price']=$value->ar_price;
-// 			}
-// 			$result['data']['en'] = $en_array;
-// 			$result['data']['ur'] = $ur_array;
-// 			$result['data']['ar'] = $ar_array;
-// 		}else{
-// 			$result['data']=$data;	
-// 		}
-// 		//$data = $user->result();
-// // 		$result['data']=$data;
-// 		$result['message']['success'] = true;
-// 		$result['message']['code']='500';
-// 		$result['message']['msg']=$message;
-// 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
-// 		// echo "<pre>"; print_r($result); exit;
-
-// 	}
-
-public function employeesListing($multiLang=''){
 		$data['category_id']=$this->input->post('category_id');
 		$data['user_id']=$this->input->post('user_id');
 		$id=$data['user_id'];
@@ -1013,6 +792,14 @@ public function employeesListing($multiLang=''){
 		$employer_lat=($this->input->post('employer_latitude')) ? ($this->input->post('employer_latitude')) : '';
 		$employer_long=($this->input->post('employer_longitude')) ? ($this->input->post('employer_longitude')) : '';
 
+		$page=@$this->input->post('page');
+		$recordsPerPage=@$this->input->Post('recordsPerPage');
+		$pageNumber=$page;
+		$pageSize=$recordsPerPage;
+		$offset = ($pageNumber - 1) * $pageSize;
+		// Funtion name in the model  is (paginated);
+		// echo $offset; exit;
+		
 		if($category_slug!=''){
 			$user = $this->common_model->select_where("id", "categories", array('slug'=>$category_slug));
 			if ($user->num_rows() > 0){
@@ -1022,24 +809,37 @@ public function employeesListing($multiLang=''){
 		}
 		// echo $employer_lat;exit;
 		if($id=='' && $category!=''){
+			
 			$no_labours=$this->common_model->select_where("*", "users", array("category_id"=>$category));
 			if($no_labours->num_rows() > 0){
-				$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
+				$user1 = $this->common_model->join_two_tab_where_simple("name", "categories", "users", 
+			"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
+			$totalEmployees=$user1->num_rows();
+
+				$user=$this->common_model->paginated_employees(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
 				category_id, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name, latitude, longitude, country", "users", "categories", 
-				"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
+				"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category), $recordsPerPage, $offset);
 				$data = $user->result();
 				$message='All employee list in a category';
 			}else{
-				$user = $this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, 
+				$user1 = $this->common_model->join_two_tab_where_simple("name", "categories", "users", 
+			"ON (categories.id=users.`category_id`)", "user_type = 'employee'");
+			$totalEmployees=$user1->num_rows();
+
+				$user = $this->common_model->paginated_employees(" 'false' as favourite, username, users.id as employee_id, 
 			name as category_name, category_id, user_type, phone_no, users.image, email, address, users.slug, ar_name, ur_name, latitude, longitude, country", "categories", "users", 
-			 "ON (categories.id=users.`category_id`)", "user_type = 'employee'");
+			 "ON (categories.id=users.`category_id`)", "user_type = 'employee'", $recordsPerPage, $offset);
 			 $data = $user->result();
 				$message='No employee availible in this category, So we are showing employees in all other categories';
 			}	
 		}elseif($id!='' && $category==''){
-			$user = $this->common_model->join_two_tab_where_simple((" 'false' as favourite, username, users.id as employee_id, category_id, 
+			$user1 = $this->common_model->join_two_tab_where_simple("name", "categories", "users", 
+			"ON (categories.id=users.`category_id`)", "user_type = 'employee'");
+			$totalEmployees=$user1->num_rows();
+
+			$user = $this->common_model->paginated_employees((" 'false' as favourite, username, users.id as employee_id, category_id, 
 			name as category_name, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name, latitude, longitude, country"), 
-			"users", "categories", "ON (categories.id=users.category_id)" , "user_type = 'employee'");
+			"users", "categories", "ON (categories.id=users.category_id)" , "user_type = 'employee'", $recordsPerPage, $offset);
 			$data = $user->result();
 			foreach($data as $key=>$value){
 				$favourite = $this->common_model->join_two_tab_where_simple((" favourite, username, employee_id"), "users", "favourite_user", 
@@ -1051,11 +851,17 @@ public function employeesListing($multiLang=''){
 			}
 			$message='All employee list for a specific user';
 		}elseif($id!='' && $category!=''){
+			
+
 			$no_labours=$this->common_model->select_where("*", "users", array("category_id"=>$category));
 			if($no_labours->num_rows() > 0){
-			$user=$this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
-			category_id, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name, latitude, longitude, country", "users", "categories", 
+			$user1 = $this->common_model->join_two_tab_where_simple("name", "categories", "users", 
 			"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category));
+			$totalEmployees=$user1->num_rows();
+
+			$user=$this->common_model->paginated_employees(" 'false' as favourite, username, users.id as employee_id, name as category_name, 
+			category_id, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name, latitude, longitude, country", "users", "categories", 
+			"ON (categories.id=users.`category_id`)", array("user_type"=>"employee", "category_id"=>$category), $recordsPerPage, $offset);
 			$data = $user->result();
 			foreach($data as $key=>$value){
 				$favourite = $this->common_model->join_two_tab_where_simple((" favourite, username, employee_id"), "users", "favourite_user", 
@@ -1068,9 +874,13 @@ public function employeesListing($multiLang=''){
 
 			$message='All employee list for a specific user and specific category';
 			}else{
-				$user = $this->common_model->join_two_tab_where_simple((" 'false' as favourite, username, users.id as employee_id, category_id, 
+				$user1 = $this->common_model->join_two_tab_where_simple("name", "categories", "users", 
+			"ON (categories.id=users.`category_id`)", "user_type = 'employee'");
+			$totalEmployees=$user1->num_rows();
+
+				$user = $this->common_model->paginated_employees((" 'false' as favourite, username, users.id as employee_id, category_id, 
 			name as category_name, user_type, phone_no, users.image, address, users.slug, ar_name, ur_name, latitude, longitude, country"), 
-			"users", "categories", "ON (categories.id=users.category_id)" , "user_type = 'employee'");
+			"users", "categories", "ON (categories.id=users.category_id)" , "user_type = 'employee'", $recordsPerPage, $offset);
 			$data = $user->result();
 			foreach($data as $key=>$value){
 				$favourite = $this->common_model->join_two_tab_where_simple((" favourite, username, employee_id"), "users", "favourite_user", 
@@ -1084,10 +894,12 @@ public function employeesListing($multiLang=''){
 			}
 		}
 		else{
-			
-			$user = $this->common_model->join_two_tab_where_simple(" 'false' as favourite, username, users.id as employee_id, 
+			$user1 = $this->common_model->join_two_tab_where_simple("name", "categories", "users", 
+			"ON (categories.id=users.`category_id`)", "user_type = 'employee'");
+			$totalEmployees=$user1->num_rows();
+			$user = $this->common_model->paginated_employees(" 'false' as favourite, username, users.id as employee_id, 
 			name as category_name, category_id, user_type, phone_no, users.image, email, address, users.slug, ar_name, ur_name, ur_name, latitude, longitude, country", "categories", "users", 
-			 "ON (categories.id=users.`category_id`)", "user_type = 'employee'");
+			"ON (categories.id=users.`category_id`)", "user_type = 'employee'" , $recordsPerPage, $offset);
 			 $data = $user->result();
 
 			$message='All employee list';
@@ -1121,6 +933,7 @@ public function employeesListing($multiLang=''){
 					$en_array[$key]['distance']="";
 				}
 				$en_array[$key]['country']=$value->country;
+				$en_array[$key]['totalEmployees']=$totalEmployees;
 				$ur_array[$key]=$en_array[$key];
 				$ur_array[$key]['category_name']=$value->ur_name;
 				$ar_array[$key]=$en_array[$key];
@@ -1721,5 +1534,48 @@ public function employeesListing($multiLang=''){
 			$result['message']['msg'] = 'Your Questions was not posted';
 		}
 		echo json_encode($result,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;
+	}
+
+	public function Paginated_employees() {
+		// echo "test";exit;
+		$pageNumber=2;
+		$pageSize=10;
+		$offset=10;
+
+		$user=$this->common_model->paginated(" '$pagNumber' as page_number,'false' as favourite, username, users.id as employee_id, 
+		name as category_name, category_id, user_type, phone_no, users.image, email, address, users.slug, ar_name, ur_name, ur_name, latitude, longitude, country", 'categories', 'users', 
+		 "ON (categories.id=users.`category_id`)", "user_type = 'employee'",$pageSize, $offset);
+		$data=$user->result();
+		echo "<pre>"; print_r($data); exit;
+	}
+
+	public function Address(){
+		$address = "Azakhel Bala, Pakistan"; // Your address here
+		$api_key = "AIzaSyC7dSggJbHZNMT7pOFMUOqLB9jCIGLeiqM"; // Replace with your API key
+
+		// Prepare the API request URL
+		$url = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($address) . "&key=" . $api_key;
+		$geocode = file_get_contents($url);
+        $json = json_decode($geocode);
+        // $data['lat'] = $json->results[0]->geometry->location->lat;
+        // $data['lng'] = $json->results[0]->geometry->location->lng;
+		if ($json->status === "OK") {
+			$data['lat'] = $json->results[0]->geometry->location->lat;
+			$data['lng'] = $json->results[0]->geometry->location->lng;
+		
+			// Get country information from the address components
+			foreach ($json->results[0]->address_components as $component) {
+				if (in_array("country", $component->types)) {
+					$data['country'] = $component->long_name;
+					$data['country_code'] = $component->short_name;
+					break;
+				}
+			}
+		
+		} else {
+			echo "Geocoding failed. Status: " . $json->status;
+		}	
+        // return $data;
+		echo "<pre>";print_r($data['country']);exit;
 	}
 }
